@@ -1,4 +1,4 @@
-# Solar System Explorer - TON Crypto Game
+/o# Solar System Explorer - TON Crypto Game
 
 ## Overview
 
@@ -12,9 +12,6 @@ Preferred communication style: Simple, everyday language.
 
 ### STAR Token Overview
 - **Total Supply**: 1 billion STAR tokens (fixed with burn deflation)
-<<<<<<< HEAD
-- **Distribution Model**: 45% discovery, 20% challenges, 10% daily logins, 15% passive income, 10% events
-=======
 - **Bootstrap System**: Genesis faucet gives 10 STAR to all new players (no wallet pre-req)
 - **Referral Rewards**: 5-50 STAR per referral with tiered bonuses + 10% passive income bonus for 30 days
 - **Distribution Model**: 
@@ -22,7 +19,6 @@ Preferred communication style: Simple, everyday language.
   - Discovery: 2,373 STAR total (8 planets + 7 dwarfs + 13 asteroids)
   - Passive income: ~312 STAR/day at full collection
   - Referrals: 5-50 STAR per friend invited
->>>>>>> 0b64c5e (Updates)
 - **Burn Rate**: 5-10 million STAR/month (estimated, creates 200-400 year deflation cycle)
 - **Economic Philosophy**: Early abundant rewards → Mid balanced economy → Late scarcity-driven prestige
 
@@ -45,13 +41,6 @@ Burning STAR creates prestige loops:
 
 ### Frontend Architecture
 
-<<<<<<< HEAD
-The frontend is built as a component-based application using React 18 with TypeScript. It leverages React Three Fiber and React Three Drei for declarative 3D rendering, creating a full-viewport 3D canvas with overlaid UI components. Radix UI provides accessible interface primitives, and Tailwind CSS is used for styling with custom space-themed design tokens. Vite serves as the build tool, ensuring a fast development experience. State management is handled by Zustand, with separate stores for game progression (`useSolarSystem`), audio controls (`useAudio`), and game phases (`useGame`), utilizing persistence for game progress. Data architecture relies on static TypeScript data structures (`planetsData`) for planet properties and educational content, enforcing sequential planet discovery.
-
-### 3D Scene Architecture
-
-The 3D scene is constructed with React Three Fiber, featuring a `Canvas` root, a `SolarSystem` container, a `Sun` with a pulsing glow, and reusable `Planet` components with orbital groups, hover effects, and click handlers. `OrbitControls` manage camera manipulation. Animations are driven by `useFrame` hooks for individual planet rotation and orbital motion, optimized with Suspense boundaries and asset preloading.
-=======
 The frontend is built as a component-based application using React 18 with TypeScript. It leverages React Three Fiber and React Three Drei for declarative 3D rendering, creating a full-viewport 3D canvas with overlaid UI components. Radix UI provides accessible interface primitives, and Tailwind CSS is used for styling with custom space-themed design tokens. Vite serves as the build tool, ensuring a fast development experience. State management is handled by Zustand, with separate stores for game progression (`useSolarSystem`), audio controls (`useAudio`), game phases (`useGame`), game balance (`useGameBalance`), and referral tracking (`useReferral`), utilizing persistence for game progress. Data architecture relies on static TypeScript data structures (`planetsData`, `asteroidData`, `allCelestialObjects`) for celestial object properties and educational content, enforcing sequential discovery.
 
 ### 3D Scene Architecture
@@ -62,14 +51,11 @@ The 3D scene is constructed with React Three Fiber, featuring a `Canvas` root, a
 - **13 Asteroids**: Box geometry (1×0.8×0.6 ratio) for irregular appearance
 
 Objects animate with individual rotation, orbital motion, and orbital inclination for varied orbital planes. `OrbitControls` manage camera manipulation. Animations are driven by `useFrame` hooks, optimized with Suspense boundaries.
->>>>>>> 0b64c5e (Updates)
 
 ### Backend Architecture
 
 The backend utilizes an Express.js server, currently configured for static file serving in production and integrated with Vite middleware for development. While currently using in-memory storage, the system is designed with a storage interface to easily transition to PostgreSQL using Drizzle ORM. The database schema, defined in `shared/schema.ts`, includes a basic user table. Future expansion points include user authentication, leaderboards, and TON blockchain transaction recording.
 
-<<<<<<< HEAD
-=======
 ## STAR Token Smart Contracts
 
 ### Token Contracts
@@ -117,21 +103,15 @@ The backend utilizes an Express.js server, currently configured for static file 
   - All with proper colors, sizes, and orbital parameters
 - **Future**: Replace with detailed .glb models per object type
 
->>>>>>> 0b64c5e (Updates)
 ## External Dependencies
 
 ### Blockchain Integration
 
 - **TON Connect**: Used for wallet connection, NFT minting, and token distribution.
-<<<<<<< HEAD
-- **TON NFT System (Custom)**: Manages SEQ-based planet NFTs with dynamic metadata, deployed on the TON testnet. Minting occurs upon planet discovery.
-- **TON SDKs (`@ton/ton`, `@ton/core`)**: Facilitate interaction with the TON blockchain API for NFT minting and contract verification.
-=======
 - **TON NFT System (Custom)**: Manages SEQ-based planet NFTs with dynamic metadata, deployed on the TON testnet. Minting occurs upon celestial object discovery.
 - **TON STAR Token (Custom)**: Fixed-supply token contract with burn mechanics and passive income distribution.
 - **TON Referral Faucet (Tact)**: Tiered referral rewards with 10% passive income bonus for 30 days.
 - **TON SDKs (`@ton/ton`, `@ton/core`)**: Facilitate interaction with the TON blockchain API for contract deployment and transaction execution.
->>>>>>> 0b64c5e (Updates)
 
 ### Database
 
@@ -163,8 +143,4 @@ The backend utilizes an Express.js server, currently configured for static file 
 ### Development Tools
 
 - **Vite**: Build tool with React plugin, TypeScript, PostCSS, and esbuild.
-<<<<<<< HEAD
 - `@replit/vite-plugin-runtime-error-modal`: For development error handling.
-=======
-- `@replit/vite-plugin-runtime-error-modal`: For development error handling.
->>>>>>> 0b64c5e (Updates)
