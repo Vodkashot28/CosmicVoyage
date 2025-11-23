@@ -1,9 +1,5 @@
 import { Canvas } from "@react-three/fiber";
-<<<<<<< HEAD
-import { Suspense } from "react";
-=======
 import { Suspense, useState } from "react";
->>>>>>> 0b64c5e (Updates)
 import { TonConnectUIProvider } from "@tonconnect/ui-react";
 import "@fontsource/inter";
 import { SolarSystem } from "./components/SolarSystem";
@@ -12,47 +8,28 @@ import { PlanetCard } from "./components/PlanetCard";
 import { SoundManager } from "./components/SoundManager";
 import { TokenParticles } from "./components/TokenParticles";
 import { TokenTutorial } from "./components/TokenTutorial";
-<<<<<<< HEAD
-=======
 import { GameOnboarding } from "./components/GameOnboarding";
 import { StarBalanceDisplay } from "./components/StarBalanceDisplay";
 import { ReferralInvite } from "./components/ReferralInvite";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/ui/tabs";
->>>>>>> 0b64c5e (Updates)
+import { Tabs, TabsList, TabsTrigger } from "./components/ui/tabs";
 import { Toaster } from "./components/ui/sonner";
 
-const manifestUrl = "https://ton-connect.github.io/demo-dapp-with-wallet/tonconnect-manifest.json";
+const manifestUrl =
+  "https://ton-connect.github.io/demo-dapp-with-wallet/tonconnect-manifest.json";
 
 function App() {
-<<<<<<< HEAD
-  return (
-    <TonConnectUIProvider manifestUrl={manifestUrl}>
-      <div style={{ width: '100vw', height: '100vh', position: 'relative', overflow: 'hidden' }}>
-        <Canvas
-          camera={{
-            position: [0, 30, 60],
-            fov: 60,
-            near: 0.1,
-            far: 1000
-          }}
-          gl={{
-            antialias: true,
-            powerPreference: "high-performance"
-          }}
-        >
-          <Suspense fallback={null}>
-            <SolarSystem />
-          </Suspense>
-        </Canvas>
-        
-        <GameUI />
-        <PlanetCard />
-=======
   const [activeTab, setActiveTab] = useState("game");
 
   return (
     <TonConnectUIProvider manifestUrl={manifestUrl}>
-      <div style={{ width: '100vw', height: '100vh', position: 'relative', overflow: 'hidden' }}>
+      <div
+        style={{
+          width: "100vw",
+          height: "100vh",
+          position: "relative",
+          overflow: "hidden",
+        }}
+      >
         {activeTab === "game" ? (
           <>
             <Canvas
@@ -60,18 +37,18 @@ function App() {
                 position: [0, 30, 60],
                 fov: 60,
                 near: 0.1,
-                far: 1000
+                far: 1000,
               }}
               gl={{
                 antialias: true,
-                powerPreference: "high-performance"
+                powerPreference: "high-performance",
               }}
             >
               <Suspense fallback={null}>
                 <SolarSystem />
               </Suspense>
             </Canvas>
-            
+
             <StarBalanceDisplay />
             <GameUI />
             <PlanetCard />
@@ -85,16 +62,29 @@ function App() {
         )}
 
         <div className="fixed bottom-4 left-4 z-50">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="bg-slate-900/80 border border-cyan-500/30 rounded-lg">
+          <Tabs
+            value={activeTab}
+            onValueChange={setActiveTab}
+            className="bg-slate-900/80 border border-cyan-500/30 rounded-lg"
+          >
             <TabsList className="bg-slate-800 p-1">
-              <TabsTrigger value="game" className="data-[state=active]:bg-cyan-600">🎮 Game</TabsTrigger>
-              <TabsTrigger value="referral" className="data-[state=active]:bg-purple-600">🎯 Referral</TabsTrigger>
+              <TabsTrigger
+                value="game"
+                className="data-[state=active]:bg-cyan-600"
+              >
+                🎮 Game
+              </TabsTrigger>
+              <TabsTrigger
+                value="referral"
+                className="data-[state=active]:bg-purple-600"
+              >
+                🎯 Referral
+              </TabsTrigger>
             </TabsList>
           </Tabs>
         </div>
 
         <GameOnboarding />
->>>>>>> 0b64c5e (Updates)
         <SoundManager />
         <TokenParticles />
         <TokenTutorial />
