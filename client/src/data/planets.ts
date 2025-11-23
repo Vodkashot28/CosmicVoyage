@@ -307,6 +307,7 @@ export const planetsData: PlanetData[] = [
       moons: "1 (S/2015 MK 2)",
       funFact: "Makemake means 'creation' in the Rapa Nui language and was likely the one bright object visible in the night sky to ancient Easter Islanders!"
     }
+<<<<<<< HEAD
   }
 ];
 
@@ -357,3 +358,381 @@ export const asteroidData = [
 
 // Dwarf planet set for set bonus
 export const dwarfPlanets = planetsData.filter(p => p.type === "dwarfPlanet");
+=======
+  },
+  // Additional Dwarf Planets
+  {
+    name: "Gonggong",
+    size: 0.18,
+    color: "#8B8B7A",
+    orbitRadius: 66,
+    orbitSpeed: 0.035,
+    rotationSpeed: 0.016,
+    tokenReward: 190,
+    type: "dwarfPlanet",
+    passiveIncomeRate: 0.7,
+    mintingCost: 180,
+    orbitalInclination: 0.126,
+    facts: {
+      description: "A scattered disk object with a reddish tint, Gonggong is one of the largest known dwarf planets beyond Neptune.",
+      diameter: "1,230 km",
+      distanceFromSun: "7.5 billion km",
+      orbitalPeriod: "552 Earth years",
+      dayLength: "19.4 hours",
+      moons: "1 known moon",
+      funFact: "Gonggong is named after a water deity in Chinese mythology!"
+    }
+  },
+  {
+    name: "Orcus",
+    size: 0.17,
+    color: "#5F4A3C",
+    orbitRadius: 63,
+    orbitSpeed: 0.042,
+    rotationSpeed: 0.014,
+    tokenReward: 185,
+    type: "dwarfPlanet",
+    passiveIncomeRate: 0.7,
+    mintingCost: 180,
+    orbitalInclination: 0.089,
+    facts: {
+      description: "A plutino in the Kuiper Belt with a mysterious dark surface, Orcus is similar in size to Pluto.",
+      diameter: "910 km",
+      distanceFromSun: "6.0 billion km",
+      orbitalPeriod: "245 Earth years",
+      dayLength: "10.5 hours",
+      moons: "1 (Vanth)",
+      funFact: "Orcus is the god of oaths and the underworld in Roman mythology!"
+    }
+  }
+];
+
+// Asteroids as PlanetData objects (simple geometric shapes)
+export const asteroidData: PlanetData[] = [
+  // Common Asteroids
+  {
+    name: "Vesta",
+    size: 0.12,
+    color: "#D4A574",
+    orbitRadius: 25,
+    orbitSpeed: 0.3,
+    rotationSpeed: 0.025,
+    tokenReward: 5,
+    type: "asteroid",
+    passiveIncomeRate: 0.1,
+    mintingCost: 5,
+    orbitalInclination: 0.089,
+    facts: {
+      description: "The brightest asteroid in the night sky, Vesta is one of the largest objects in the asteroid belt.",
+      diameter: "525 km",
+      distanceFromSun: "353 million km",
+      orbitalPeriod: "3.63 years",
+      dayLength: "5.3 hours",
+      moons: "0",
+      funFact: "Vesta is so bright that it can be seen from Earth with the naked eye on rare occasions!"
+    }
+  },
+  {
+    name: "Pallas",
+    size: 0.13,
+    color: "#8B8680",
+    orbitRadius: 26,
+    orbitSpeed: 0.28,
+    rotationSpeed: 0.018,
+    tokenReward: 5,
+    type: "asteroid",
+    passiveIncomeRate: 0.1,
+    mintingCost: 5,
+    orbitalInclination: 0.131,
+    facts: {
+      description: "An exceptionally large asteroid with an irregular shape, Pallas is the second-largest body in the asteroid belt.",
+      diameter: "582 km",
+      distanceFromSun: "413 million km",
+      orbitalPeriod: "4.62 years",
+      dayLength: "7.8 hours",
+      moons: "0",
+      funFact: "Pallas has one of the highest orbital inclinations of any asteroid, making it rarely pass through the ecliptic!"
+    }
+  },
+  // Uncommon Asteroids
+  {
+    name: "Juno",
+    size: 0.11,
+    color: "#A9927D",
+    orbitRadius: 27,
+    orbitSpeed: 0.25,
+    rotationSpeed: 0.022,
+    tokenReward: 8,
+    type: "asteroid",
+    passiveIncomeRate: 0.15,
+    mintingCost: 8,
+    orbitalInclination: 0.128,
+    facts: {
+      description: "A metallic asteroid discovered in 1804, Juno is one of the original four asteroids known.",
+      diameter: "247 km",
+      distanceFromSun: "503 million km",
+      orbitalPeriod: "5.35 years",
+      dayLength: "7.2 hours",
+      moons: "0",
+      funFact: "Juno was the first asteroid discovered on New Year's Day!"
+    }
+  },
+  {
+    name: "Hygiea",
+    size: 0.14,
+    color: "#696969",
+    orbitRadius: 28,
+    orbitSpeed: 0.24,
+    rotationSpeed: 0.019,
+    tokenReward: 8,
+    type: "asteroid",
+    passiveIncomeRate: 0.15,
+    mintingCost: 8,
+    orbitalInclination: 0.108,
+    facts: {
+      description: "The fourth-largest asteroid in the solar system, Hygiea has a dark surface similar to carbonaceous chondrite meteorites.",
+      diameter: "407 km",
+      distanceFromSun: "550 million km",
+      orbitalPeriod: "5.35 years",
+      dayLength: "27.6 hours",
+      moons: "0",
+      funFact: "Hygiea is named after the Greek goddess of health and hygiene!"
+    }
+  },
+  {
+    name: "Astraea",
+    size: 0.1,
+    color: "#C0C0C0",
+    orbitRadius: 29,
+    orbitSpeed: 0.22,
+    rotationSpeed: 0.021,
+    tokenReward: 8,
+    type: "asteroid",
+    passiveIncomeRate: 0.15,
+    mintingCost: 8,
+    orbitalInclination: 0.105,
+    facts: {
+      description: "A stony asteroid discovered in 1845, Astraea is linked to Greek mythology of justice.",
+      diameter: "119 km",
+      distanceFromSun: "580 million km",
+      orbitalPeriod: "4.13 years",
+      dayLength: "16.8 hours",
+      moons: "0",
+      funFact: "Astraea is the goddess of justice in Greek mythology!"
+    }
+  },
+  // Rare Asteroids
+  {
+    name: "Apophis",
+    size: 0.15,
+    color: "#CD7F32",
+    orbitRadius: 35,
+    orbitSpeed: 0.18,
+    rotationSpeed: 0.026,
+    tokenReward: 12,
+    type: "asteroid",
+    passiveIncomeRate: 0.2,
+    mintingCost: 12,
+    orbitalInclination: 0.191,
+    facts: {
+      description: "A near-Earth asteroid with its own moon, Apophis will make a close approach to Earth in 2029.",
+      diameter: "390 m",
+      distanceFromSun: "varies",
+      orbitalPeriod: "0.90 years",
+      dayLength: "30.4 hours",
+      moons: "1 moon",
+      funFact: "Apophis will pass closer to Earth than some satellites on April 13, 2029!"
+    }
+  },
+  {
+    name: "Bennu",
+    size: 0.14,
+    color: "#8B4513",
+    orbitRadius: 36,
+    orbitSpeed: 0.17,
+    rotationSpeed: 0.024,
+    tokenReward: 12,
+    type: "asteroid",
+    passiveIncomeRate: 0.2,
+    mintingCost: 12,
+    orbitalInclination: 0.204,
+    facts: {
+      description: "A carbonaceous asteroid studied by NASA's OSIRIS-REx spacecraft, Bennu provides clues to the solar system's origin.",
+      diameter: "560 m",
+      distanceFromSun: "varies",
+      orbitalPeriod: "1.20 years",
+      dayLength: "4.3 hours",
+      moons: "0",
+      funFact: "NASA collected samples from Bennu in 2020 and brought them back to Earth in 2023!"
+    }
+  },
+  {
+    name: "Itokawa",
+    size: 0.13,
+    color: "#A9A9A9",
+    orbitRadius: 37,
+    orbitSpeed: 0.16,
+    rotationSpeed: 0.023,
+    tokenReward: 12,
+    type: "asteroid",
+    passiveIncomeRate: 0.2,
+    mintingCost: 12,
+    orbitalInclination: 0.312,
+    facts: {
+      description: "A near-Earth asteroid explored by Japan's Hayabusa spacecraft, Itokawa resembles a floating rubble pile.",
+      diameter: "535 m",
+      distanceFromSun: "varies",
+      orbitalPeriod: "1.52 years",
+      dayLength: "12.8 hours",
+      moons: "0",
+      funFact: "Itokawa's shape has been compared to a peanut or potato!"
+    }
+  },
+  // Epic Asteroids
+  {
+    name: "Eros",
+    size: 0.16,
+    color: "#FFB347",
+    orbitRadius: 40,
+    orbitSpeed: 0.15,
+    rotationSpeed: 0.027,
+    tokenReward: 18,
+    type: "asteroid",
+    passiveIncomeRate: 0.3,
+    mintingCost: 18,
+    orbitalInclination: 0.223,
+    facts: {
+      description: "A large S-type asteroid that is one of the largest near-Earth asteroids, visited by NASA's NEAR spacecraft.",
+      diameter: "16.8 × 16.2 × 34.4 km",
+      distanceFromSun: "varies",
+      orbitalPeriod: "1.76 years",
+      dayLength: "5.27 hours",
+      moons: "0",
+      funFact: "NEAR Shoemaker spacecraft orbited Eros for over a year, the first spacecraft to orbit an asteroid!"
+    }
+  },
+  {
+    name: "Psyche",
+    size: 0.17,
+    color: "#D3D3D3",
+    orbitRadius: 41,
+    orbitSpeed: 0.14,
+    rotationSpeed: 0.025,
+    tokenReward: 18,
+    type: "asteroid",
+    passiveIncomeRate: 0.3,
+    mintingCost: 18,
+    orbitalInclination: 0.131,
+    facts: {
+      description: "A metallic asteroid possibly composed of iron and nickel, Psyche is the target of NASA's Psyche mission.",
+      diameter: "226 km",
+      distanceFromSun: "505 million km",
+      orbitalPeriod: "4.99 years",
+      dayLength: "4.196 hours",
+      moons: "0",
+      funFact: "Psyche might be the exposed iron core of a protoplanet - worth an estimated $700 quintillion!"
+    }
+  },
+  {
+    name: "Varda",
+    size: 0.15,
+    color: "#4B0082",
+    orbitRadius: 42,
+    orbitSpeed: 0.13,
+    rotationSpeed: 0.026,
+    tokenReward: 18,
+    type: "asteroid",
+    passiveIncomeRate: 0.3,
+    mintingCost: 18,
+    orbitalInclination: 0.088,
+    facts: {
+      description: "A scattered disk object with a moonlet, Varda is one of the more unusual distant objects.",
+      diameter: "1,000 km",
+      distanceFromSun: "6.4 billion km",
+      orbitalPeriod: "559 years",
+      dayLength: "3.8 hours",
+      moons: "1 known moon",
+      funFact: "Varda means 'destiny' in Tolkien's Elvish - fitting for a distant, mysterious object!"
+    }
+  },
+  // Legendary Asteroids
+  {
+    name: "Oumuamua",
+    size: 0.18,
+    color: "#FF4500",
+    orbitRadius: 48,
+    orbitSpeed: 0.08,
+    rotationSpeed: 0.035,
+    tokenReward: 35,
+    type: "asteroid",
+    passiveIncomeRate: 0.5,
+    mintingCost: 35,
+    orbitalInclination: 1.193,
+    facts: {
+      description: "An interstellar visitor from another star system, Oumuamua is the first known interstellar asteroid.",
+      diameter: "100-160 m",
+      distanceFromSun: "varies (leaving)",
+      orbitalPeriod: "N/A (hyperbolic orbit)",
+      dayLength: "~8 hours",
+      moons: "0",
+      funFact: "Oumuamua means 'a messenger from afar' in Hawaiian - discovered in 2017, it's the first known object from another star!"
+    }
+  },
+  {
+    name: "Comet Halley (Core)",
+    size: 0.19,
+    color: "#FFFACD",
+    orbitRadius: 49,
+    orbitSpeed: 0.07,
+    rotationSpeed: 0.033,
+    tokenReward: 35,
+    type: "asteroid",
+    passiveIncomeRate: 0.5,
+    mintingCost: 35,
+    orbitalInclination: 0.162,
+    facts: {
+      description: "The famous periodic comet nucleus, returns to Earth's vicinity every 75-76 years.",
+      diameter: "15 × 8 × 7 km",
+      distanceFromSun: "varies (35.3 AU at aphelion)",
+      orbitalPeriod: "75-76 years",
+      dayLength: "varies",
+      moons: "0",
+      funFact: "Halley's Comet is named after Edmund Halley, who first predicted its return - it was last visible in 1986!"
+    }
+  },
+  {
+    name: "Chiron",
+    size: 0.16,
+    color: "#DEB887",
+    orbitRadius: 50,
+    orbitSpeed: 0.06,
+    rotationSpeed: 0.029,
+    tokenReward: 35,
+    type: "asteroid",
+    passiveIncomeRate: 0.5,
+    mintingCost: 35,
+    orbitalInclination: 0.383,
+    facts: {
+      description: "A rare comet-asteroid hybrid orbiting between Saturn and Uranus, behaving as both asteroid and comet.",
+      diameter: "219 km",
+      distanceFromSun: "varies (8.5-18.9 AU)",
+      orbitalPeriod: "50.7 years",
+      dayLength: "5.91 hours",
+      moons: "0",
+      funFact: "Chiron is named after the wise centaur in Greek mythology - it's the first Centaur discovered in the outer solar system!"
+    }
+  }
+];
+
+// Combine all celestial objects
+export const allCelestialObjects = [
+  ...planetsData,
+  ...asteroidData
+];
+
+// Dwarf planet set for set bonus
+export const dwarfPlanets = planetsData.filter(p => p.type === "dwarfPlanet");
+
+// Asteroid set for set bonus
+export const asteroids = allCelestialObjects.filter(p => p.type === "asteroid");
+>>>>>>> 0b64c5e (Updates)
