@@ -7,31 +7,22 @@ export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
-<<<<<<< HEAD
-=======
   getUserByWallet(walletAddress: string): Promise<any>;
   createPlayerWithGenesis(walletAddress: string, starBalance: number, claimedAt: Date): Promise<any>;
   updateUserStarBalance(userId: number, starBalance: number, genesisClaimedAt?: Date): Promise<void>;
   generateReferralCode(walletAddress: string): Promise<string>;
   recordReferral(referrerWallet: string, newPlayerWallet: string, bonusAmount: number): Promise<void>;
   getReferralStats(walletAddress: string): Promise<any>;
->>>>>>> 0b64c5e (Updates)
 }
 
 export class MemStorage implements IStorage {
   private users: Map<number, User>;
-<<<<<<< HEAD
-=======
   private walletUsers: Map<string, any>;
->>>>>>> 0b64c5e (Updates)
   currentId: number;
 
   constructor() {
     this.users = new Map();
-<<<<<<< HEAD
-=======
     this.walletUsers = new Map();
->>>>>>> 0b64c5e (Updates)
     this.currentId = 1;
   }
 
@@ -47,14 +38,8 @@ export class MemStorage implements IStorage {
 
   async createUser(insertUser: InsertUser): Promise<User> {
     const id = this.currentId++;
-<<<<<<< HEAD
-    const user: User = { ...insertUser, id };
-    this.users.set(id, user);
-    return user;
-  }
-=======
-    const user: User = { 
-      ...insertUser, 
+    const user: User = {
+      ...insertUser,
       id,
       walletAddress: null,
       starBalance: 0,
@@ -104,9 +89,9 @@ export class MemStorage implements IStorage {
   async generateReferralCode(walletAddress: string): Promise<string> {
     const user = this.walletUsers.get(walletAddress);
     if (!user) return "";
-    
+
     // Generate 8-char code: first 4 of wallet + random 4
-    const code = walletAddress.slice(2, 6).toUpperCase() + 
+    const code = walletAddress.slice(2, 6).toUpperCase() +
       Math.random().toString(36).substring(2, 6).toUpperCase();
     user.referralCode = code;
     this.walletUsers.set(walletAddress, user);
@@ -116,12 +101,12 @@ export class MemStorage implements IStorage {
   async recordReferral(referrerWallet: string, newPlayerWallet: string, bonusAmount: number): Promise<void> {
     const referrer = this.walletUsers.get(referrerWallet);
     const newPlayer = this.walletUsers.get(newPlayerWallet);
-    
+
     if (referrer && newPlayer) {
       referrer.referralCount = (referrer.referralCount || 0) + 1;
       referrer.referralBonusEarned = (referrer.referralBonusEarned || 0) + bonusAmount;
       newPlayer.referredByWallet = referrerWallet;
-      
+
       this.walletUsers.set(referrerWallet, referrer);
       this.walletUsers.set(newPlayerWallet, newPlayer);
     }
@@ -130,7 +115,7 @@ export class MemStorage implements IStorage {
   async getReferralStats(walletAddress: string): Promise<any> {
     const user = this.walletUsers.get(walletAddress);
     if (!user) return null;
-    
+
     return {
       referralCode: user.referralCode,
       count: user.referralCount || 0,
@@ -139,7 +124,6 @@ export class MemStorage implements IStorage {
       referredBy: user.referredByWallet,
     };
   }
->>>>>>> 0b64c5e (Updates)
 }
 
 export const storage = new MemStorage();

@@ -9,8 +9,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // use storage to perform CRUD operations on the storage interface
   // e.g. storage.insertUser(user) or storage.getUserByUsername(username)
 
-<<<<<<< HEAD
-=======
   // Genesis Faucet: New players get 10 STAR to bootstrap
   app.post("/api/player/claim-genesis", async (req, res) => {
     try {
@@ -228,7 +226,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
->>>>>>> 0b64c5e (Updates)
   const httpServer = createServer(app);
 
   return httpServer;
