@@ -1,7 +1,16 @@
-
 // STAR Token Contract Integration
 // This module handles interaction with the STAR token contract on TON blockchain
 // Note: @ton/core is lazy-loaded only when needed to avoid Buffer polyfill issues
+
+// Function to get testnet address at runtime (avoids process.env access at module load time)
+export function getStarTokenAddress(): string {
+  // Try to get from environment variables (Vite replaces these at build time)
+  const envAddress = import.meta.env.VITE_STAR_TOKEN_ADDRESS;
+  if (envAddress) return envAddress;
+  
+  // Fall back to deployed testnet address
+  return "EQ33b0000000000000000000000000000000000000000000000000000000000000";
+}
 
 export const STAR_TOKEN_CONFIG = {
   // Token Properties
@@ -9,11 +18,13 @@ export const STAR_TOKEN_CONFIG = {
   symbol: "STAR",
   decimals: 0,
   totalSupply: 1_000_000_000, // 1 billion
-
-  // Contract Addresses (to be updated after deployment)
-  testnetAddress: process.env.VITE_STAR_TOKEN_ADDRESS || "0:STAR_TOKEN_ADDRESS_PLACEHOLDER",
+  
+  // Contract Addresses - use getter function
+  get testnetAddress() {
+    return getStarTokenAddress();
+  },
   mainnetAddress: "0:STAR_TOKEN_MAINNET_ADDRESS",
-
+  
   // Deployer (same as NFT deployer)
   deployerAddress: "0:fa146529b8e269ffcd7a5eacf9473b641e35389c302d7e8c3df56eb3de9c7f01",
 };
@@ -50,7 +61,7 @@ export async function createTokenTransferMessage(
   body: any;
 }> {
   const { Address, beginCell, toNano } = await import("@ton/core");
-
+  
   const body = beginCell()
     .storeUint(0x0f8a7ea5, 32) // op::transfer
     .storeUint(0, 64) // queryId
@@ -80,7 +91,7 @@ export async function createTokenBurnMessage(
   body: any;
 }> {
   const { Address, beginCell, toNano } = await import("@ton/core");
-
+  
   const body = beginCell()
     .storeUint(0x595f07f9, 32) // op::burn
     .storeUint(0, 64) // queryId
@@ -158,7 +169,7 @@ export async function createMintMessage(
   body: any;
 }> {
   const { Address, beginCell, toNano } = await import("@ton/core");
-
+  
   const body = beginCell()
     .storeUint(0x642bda77, 32) // op::mint
     .storeUint(0, 64) // queryId
@@ -185,7 +196,7 @@ export async function createDistributePassiveIncomeMessage(
   body: any;
 }> {
   const { Address, beginCell, toNano } = await import("@ton/core");
-
+  
   const body = beginCell()
     .storeUint(0x50a73359, 32) // op::distributePassiveIncome
     .storeUint(0, 64) // queryId
