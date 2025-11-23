@@ -1,7 +1,7 @@
+
 // STAR Token Contract Integration
 // This module handles interaction with the STAR token contract on TON blockchain
-
-import { Address, beginCell, Cell, toNano } from "@ton/core";
+// Note: @ton/core is lazy-loaded only when needed to avoid Buffer polyfill issues
 
 export const STAR_TOKEN_CONFIG = {
   // Token Properties
@@ -9,11 +9,11 @@ export const STAR_TOKEN_CONFIG = {
   symbol: "STAR",
   decimals: 0,
   totalSupply: 1_000_000_000, // 1 billion
-  
+
   // Contract Addresses (to be updated after deployment)
   testnetAddress: process.env.VITE_STAR_TOKEN_ADDRESS || "0:STAR_TOKEN_ADDRESS_PLACEHOLDER",
   mainnetAddress: "0:STAR_TOKEN_MAINNET_ADDRESS",
-  
+
   // Deployer (same as NFT deployer)
   deployerAddress: "0:fa146529b8e269ffcd7a5eacf9473b641e35389c302d7e8c3df56eb3de9c7f01",
 };
@@ -40,54 +40,57 @@ export interface PassiveIncomeRecord {
 }
 
 // Create token transfer message
-export function createTokenTransferMessage(
-  destination: Address,
+export async function createTokenTransferMessage(
+  destination: string,
   amount: number,
-  walletAddress: Address
-): {
-  to: Address;
+  walletAddress: string
+): Promise<{
+  to: string;
   amount: string;
-  init?: Cell;
-  body: Cell;
-} {
+  body: any;
+}> {
+  const { Address, beginCell, toNano } = await import("@ton/core");
+
   const body = beginCell()
     .storeUint(0x0f8a7ea5, 32) // op::transfer
     .storeUint(0, 64) // queryId
     .storeCoins(toNano(amount.toString()))
-    .storeAddress(destination)
-    .storeAddress(walletAddress) // responseDestination
+    .storeAddress(Address.parse(destination))
+    .storeAddress(Address.parse(walletAddress)) // responseDestination
     .storeUint(0, 1) // customPayload (null)
     .storeCoins(toNano("0.001")) // forwardTonAmount
     .storeUint(0, 1) // forwardPayload (empty)
     .endCell();
 
   return {
-    to: Address.parse(STAR_TOKEN_CONFIG.testnetAddress),
+    to: STAR_TOKEN_CONFIG.testnetAddress,
     amount: toNano("0.05").toString(), // gas fee
     body: body,
   };
 }
 
 // Create token burn message
-export function createTokenBurnMessage(
+export async function createTokenBurnMessage(
   amount: number,
-  walletAddress: Address,
+  walletAddress: string,
   utility?: string
-): {
-  to: Address;
+): Promise<{
+  to: string;
   amount: string;
-  body: Cell;
-} {
+  body: any;
+}> {
+  const { Address, beginCell, toNano } = await import("@ton/core");
+
   const body = beginCell()
     .storeUint(0x595f07f9, 32) // op::burn
     .storeUint(0, 64) // queryId
     .storeCoins(toNano(amount.toString()))
-    .storeAddress(walletAddress)
+    .storeAddress(Address.parse(walletAddress))
     .storeUint(0, 1) // customPayload
     .endCell();
 
   return {
-    to: Address.parse(STAR_TOKEN_CONFIG.testnetAddress),
+    to: STAR_TOKEN_CONFIG.testnetAddress,
     amount: toNano("0.05").toString(),
     body: body,
   };
@@ -146,48 +149,52 @@ export function getTokenInfo(): {
 }
 
 // Create mint message (admin only)
-export function createMintMessage(
-  receiver: Address,
+export async function createMintMessage(
+  receiver: string,
   amount: number
-): {
-  to: Address;
+): Promise<{
+  to: string;
   amount: string;
-  body: Cell;
-} {
+  body: any;
+}> {
+  const { Address, beginCell, toNano } = await import("@ton/core");
+
   const body = beginCell()
     .storeUint(0x642bda77, 32) // op::mint
     .storeUint(0, 64) // queryId
     .storeCoins(toNano(amount.toString()))
-    .storeAddress(receiver)
+    .storeAddress(Address.parse(receiver))
     .storeCoins(toNano("0.001")) // forwardTonAmount
     .storeUint(0, 1) // forwardPayload (empty)
     .endCell();
 
   return {
-    to: Address.parse(STAR_TOKEN_CONFIG.testnetAddress),
+    to: STAR_TOKEN_CONFIG.testnetAddress,
     amount: toNano("0.05").toString(),
     body: body,
   };
 }
 
 // Create passive income distribution message (admin only)
-export function createDistributePassiveIncomeMessage(
-  nftHolder: Address,
+export async function createDistributePassiveIncomeMessage(
+  nftHolder: string,
   amount: number
-): {
-  to: Address;
+): Promise<{
+  to: string;
   amount: string;
-  body: Cell;
-} {
+  body: any;
+}> {
+  const { Address, beginCell, toNano } = await import("@ton/core");
+
   const body = beginCell()
     .storeUint(0x50a73359, 32) // op::distributePassiveIncome
     .storeUint(0, 64) // queryId
-    .storeAddress(nftHolder)
+    .storeAddress(Address.parse(nftHolder))
     .storeCoins(toNano(amount.toString()))
     .endCell();
 
   return {
-    to: Address.parse(STAR_TOKEN_CONFIG.testnetAddress),
+    to: STAR_TOKEN_CONFIG.testnetAddress,
     amount: toNano("0.05").toString(),
     body: body,
   };
