@@ -1,0 +1,23 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "dist/index.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "dist/index.js"
+    },
+    {
+      "src": "/tonconnect-manifest.json",
+      "dest": "dist/public/tonconnect-manifest.json"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "dist/public/$1"
+    }
+  ]
+}
