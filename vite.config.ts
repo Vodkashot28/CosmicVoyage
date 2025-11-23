@@ -10,7 +10,7 @@ const __dirname = dirname(__filename);
 export default defineConfig({
   plugins: [
     react(),
-    glsl(), // Add GLSL shader support
+    glsl(), // GLSL shader support
   ],
   resolve: {
     alias: {
@@ -20,9 +20,9 @@ export default defineConfig({
   },
   root: path.resolve(__dirname, "client"),
   build: {
-    outDir: path.resolve(__dirname, "dist/public"),
+    outDir: path.resolve(__dirname, "dist"), // flatten for Pages
     emptyOutDir: true,
   },
-  // Add support for large models and audio files
+  base: "/CosmicVoyage/", // critical for GitHub Pages asset paths
   assetsInclude: ["**/*.gltf", "**/*.glb", "**/*.mp3", "**/*.ogg", "**/*.wav"],
 });
