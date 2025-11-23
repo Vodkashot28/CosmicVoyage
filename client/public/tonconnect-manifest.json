@@ -1,8 +1,8 @@
 {
-  "url": "https://solar-system.xyz",
+  "url": "https://cosmicvoyage-xi.vercel.app",
   "name": "Solar System Explorer",
-  "iconUrl": "https://solar-system.xyz/icons/icon-180x180.png",
-  "termsOfUseUrl": "https://solar-system.xyz/terms",
-  "privacyPolicyUrl": "https://solar-system.xyz/privacy",
+  "iconUrl": "https://cosmicvoyage-xi.vercel.app/icons/sun.png", 
+  "termsOfUseUrl": "https://cosmicvoyage-xi.vercel.app/terms.html",
+  "privacyPolicyUrl": "https://cosmicvoyage-xi.vercel.app/privacy.html",
   "manifestVersion": 2
 }
