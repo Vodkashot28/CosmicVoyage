@@ -2,22 +2,34 @@
 // Handles interaction with the Planet NFT collection on TON blockchain
 // Note: @ton/core is lazy-loaded only when needed to avoid Buffer polyfill issues
 
+// Function to get collection address at runtime (avoids process.env access at module load time)
+export function getCollectionAddress(): string {
+  // Try to get from environment variables (Vite replaces these at build time)
+  const envAddress = import.meta.env.VITE_PLANET_NFT_ADDRESS;
+  if (envAddress) return envAddress;
+  
+  // Fall back to deployed testnet address from contracts.ts
+  return "EQ34c0000000000000000000000000000000000000000000000000000000000000";
+}
+
 export const PLANET_NFT_CONFIG = {
   // Collection Metadata
   name: "Solar System Planets",
   symbol: "PLANET",
   description: "Discover and own planets in the Solar System Explorer game",
-
-  // Contract Addresses
-  collectionAddress: process.env.VITE_PLANET_NFT_ADDRESS || "0:PLANET_NFT_ADDRESS_PLACEHOLDER",
+  
+  // Contract Addresses - use getter function
+  get collectionAddress() {
+    return getCollectionAddress();
+  },
   collectionMainnet: "0:PLANET_NFT_MAINNET_ADDRESS",
-
+  
   // Deployer
   deployerAddress: "0:fa146529b8e269ffcd7a5eacf9473b641e35389c302d7e8c3df56eb3de9c7f01",
-
+  
   // Metadata Base URI
   baseMetadataURI: "https://solarsystemexplorer.com/nft/",
-
+  
   // Royalty Configuration
   royaltyPercent: 5,
   royaltyDenominator: 100,
@@ -61,7 +73,7 @@ export interface NFTTransferParams {
 }
 
 export const DEPLOYER_ADDRESS = '0:fa146529b8e269ffcd7a5eacf9473b641e35389c302d7e8c3df56eb3de9c7f01';
-export const CONTRACT_ADDRESS = process.env.VITE_PLANET_NFT_ADDRESS || PLANET_NFT_CONFIG.collectionAddress;
+export const CONTRACT_ADDRESS = getCollectionAddress();
 
 // Get rarity based on discovery order for planets/dwarf planets
 // First discovered = easiest = common
@@ -118,7 +130,7 @@ export function getGlowColorForPlanet(planetName: string): string {
 export function generatePlanetNFTMetadata(planetName: string, discoveryOrder: number, planetData: any) {
   const rarity = getPlanetRarity(discoveryOrder);
   const glowColor = getGlowColorForPlanet(planetName);
-
+  
   return {
     name: `Planet ${planetName} #${discoveryOrder}`,
     description: `A discovered planet in the Solar System Explorer game. Rarity: ${rarity}. Earns 0.5 STAR per hour.`,
@@ -172,7 +184,7 @@ export async function createNFTMintMessage(params: NFTMintParams): Promise<{
   body: any;
 }> {
   const { Address, beginCell, toNano } = await import("@ton/core");
-
+  
   const body = beginCell()
     .storeUint(0x642bda77, 32) // op::mint
     .storeUint(0, 64) // queryId
@@ -195,7 +207,7 @@ export async function createNFTTransferMessage(params: NFTTransferParams): Promi
   body: any;
 }> {
   const { Address, beginCell, toNano } = await import("@ton/core");
-
+  
   const body = beginCell()
     .storeUint(0x5fcc3d14, 32) // op::transfer
     .storeUint(0, 64) // queryId
@@ -240,9 +252,9 @@ export interface SetBonus {
 export function calculateSetBonuses(ownedPlanets: string[]): SetBonus[] {
   const innerPlanets = ["Mercury", "Venus", "Earth", "Mars"];
   const outerPlanets = ["Jupiter", "Saturn", "Uranus", "Neptune"];
-
+  
   const bonuses: SetBonus[] = [];
-
+  
   // Check inner planets set
   const innerCount = ownedPlanets.filter(p => innerPlanets.includes(p)).length;
   if (innerCount === 4) {
@@ -253,7 +265,7 @@ export function calculateSetBonuses(ownedPlanets: string[]): SetBonus[] {
       dailyBonus: 25,
     });
   }
-
+  
   // Check outer planets set
   const outerCount = ownedPlanets.filter(p => outerPlanets.includes(p)).length;
   if (outerCount === 4) {
@@ -264,7 +276,7 @@ export function calculateSetBonuses(ownedPlanets: string[]): SetBonus[] {
       dailyBonus: 50,
     });
   }
-
+  
   // Check all planets set
   if (innerCount === 4 && outerCount === 4) {
     bonuses.push({
@@ -274,7 +286,7 @@ export function calculateSetBonuses(ownedPlanets: string[]): SetBonus[] {
       dailyBonus: 100,
     });
   }
-
+  
   return bonuses;
 }
 
