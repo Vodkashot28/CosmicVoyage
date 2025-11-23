@@ -4,7 +4,7 @@ import { storage } from "./storage";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // ============ GENESIS FAUCET ROUTES ============
-  
+
   // Claim genesis bonus (10 STAR for new players)
   app.post("/api/player/claim-genesis", async (req, res) => {
     try {
@@ -358,7 +358,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       let bonusApplied = false;
       if (referralCode) {
-        const entries = Array.from((storage as any).walletUsers?.entries?.() || []);
+        const entries = Array.from((storage as any).walletUsers?.entries?.() || []) as [string, any][];
         for (const [, referrer] of entries) {
           if (referrer.referralCode === referralCode && referrer.walletAddress !== walletAddress) {
             const count = referrer.referralCount || 0;
@@ -417,16 +417,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get referral leaderboard
   app.get("/api/leaderboard/referrals", async (req, res) => {
     try {
-      const entries = Array.from((storage as any).walletUsers?.entries?.() || []);
+      const entries = Array.from((storage as any).walletUsers?.entries?.() || []) as [string, any][];
       const leaderboard = entries
-        .map(([, user]) => ({
+        .map(([, user]: [string, any]) => ({
           wallet: user.walletAddress,
           code: user.referralCode,
           count: user.referralCount || 0,
           bonus: user.referralBonusEarned || 0,
         }))
-        .filter((u) => u.count > 0)
-        .sort((a, b) => b.count - a.count)
+        .filter((u: any) => u.count > 0)
+        .sort((a: any, b: any) => b.count - a.count)
         .slice(0, 10);
 
       res.json(leaderboard);
