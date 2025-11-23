@@ -1,3 +1,4 @@
+
 export interface PlanetFacts {
   description: string;
   diameter: string;
@@ -307,58 +308,6 @@ export const planetsData: PlanetData[] = [
       moons: "1 (S/2015 MK 2)",
       funFact: "Makemake means 'creation' in the Rapa Nui language and was likely the one bright object visible in the night sky to ancient Easter Islanders!"
     }
-<<<<<<< HEAD
-  }
-];
-
-export const asteroidData = [
-  {
-    name: "Ceres-A1",
-    rarity: "common",
-    passiveIncomeRate: 0.1,
-    tokenReward: 5
-  },
-  {
-    name: "Vesta",
-    rarity: "uncommon",
-    passiveIncomeRate: 0.15,
-    tokenReward: 10
-  },
-  {
-    name: "Pallas",
-    rarity: "rare",
-    passiveIncomeRate: 0.2,
-    tokenReward: 15
-  },
-  {
-    name: "Juno",
-    rarity: "epic",
-    passiveIncomeRate: 0.3,
-    tokenReward: 25
-  },
-  {
-    name: "Hygiea",
-    rarity: "epic",
-    passiveIncomeRate: 0.3,
-    tokenReward: 25
-  },
-  {
-    name: "Apophis",
-    rarity: "legendary",
-    passiveIncomeRate: 0.5,
-    tokenReward: 50
-  },
-  {
-    name: "Bennu",
-    rarity: "legendary",
-    passiveIncomeRate: 0.5,
-    tokenReward: 50
-  }
-];
-
-// Dwarf planet set for set bonus
-export const dwarfPlanets = planetsData.filter(p => p.type === "dwarfPlanet");
-=======
   },
   // Additional Dwarf Planets
   {
@@ -735,4 +684,3 @@ export const dwarfPlanets = planetsData.filter(p => p.type === "dwarfPlanet");
 
 // Asteroid set for set bonus
 export const asteroids = allCelestialObjects.filter(p => p.type === "asteroid");
->>>>>>> 0b64c5e (Updates)

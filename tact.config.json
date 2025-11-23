@@ -1,0 +1,25 @@
+{
+  "$schema": "https://raw.githubusercontent.com/tact-lang/tact/main/src/config/configSchema.json",
+  "projects": [
+    {
+      "name": "STARToken",
+      "path": "contracts/s_t_a_r_token.tact",
+      "output": "build/STARToken",
+      "options": {
+        "debug": false,
+        "external": false
+      },
+      "mode": "full"
+    },
+    {
+      "name": "PlanetNFT",
+      "path": "contracts/planet_n_f_t.tact",
+      "output": "build/PlanetNFT",
+      "options": {
+        "debug": false,
+        "external": false
+      },
+      "mode": "full"
+    }
+  ]
+}
