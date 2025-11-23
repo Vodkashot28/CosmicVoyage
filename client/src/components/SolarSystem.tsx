@@ -1,12 +1,7 @@
 import { OrbitControls, Stars } from "@react-three/drei";
 import { Sun } from "./Sun";
-<<<<<<< HEAD
-import { Planet } from "./Planet";
-import { planetsData } from "@/data/planets";
-=======
 import { CelestialObject } from "./CelestialObject";
 import { allCelestialObjects } from "@/data/planets";
->>>>>>> 0b64c5e (Updates)
 
 export function SolarSystem() {
   return (
@@ -27,13 +22,8 @@ export function SolarSystem() {
 
       <Sun />
 
-<<<<<<< HEAD
-      {planetsData.map((planetData) => (
-        <Planet key={planetData.name} data={planetData} />
-=======
       {allCelestialObjects.map((objectData) => (
         <CelestialObject key={objectData.name} data={objectData} />
->>>>>>> 0b64c5e (Updates)
       ))}
 
       <OrbitControls
