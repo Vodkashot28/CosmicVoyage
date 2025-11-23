@@ -143,4 +143,3 @@ The backend utilizes an Express.js server, currently configured for static file 
 ### Development Tools
 
 - **Vite**: Build tool with React plugin, TypeScript, PostCSS, and esbuild.
-- `@replit/vite-plugin-runtime-error-modal`: For development error handling.
