@@ -1,0 +1,108 @@
+npm run deploy:testnet
+
+> rest-express@1.0.0 deploy:testnet
+> NODE_ENV=production TON_NETWORK=testnet tsx scripts/deploy.ts
+
+
+======================================================================
+🌟 Solar System Explorer - Smart Contract Deployment
+======================================================================
+🌐 Network: TON testnet
+👤 Deployer: 0:fa146529b8e269ffcd7a5eacf9473b641e35389c302d7e8c3df56eb3de9c7f01
+======================================================================
+
+📡 Connecting to TON network...
+✅ Connected to TON testnet
+
+📋 Contracts to deploy: 5
+   • STARToken: Main STAR token contract (1B fixed supply)
+   • STARTokenWallet: User wallet for STAR token holdings
+   • PlanetNFT: NFT collection for celestial objects
+   • PlanetNFTItem: Individual NFT items
+   • ReferralFaucet: Tiered referral rewards system
+
+📦 Compiling STARToken...
+✅ STARToken compiled successfully
+
+🚀 Deploying STARToken to TON testnet...
+   - Deployer balance: 50.050607189 TON
+   - Network: TON testnet
+✅ STARToken deployed successfully
+   📍 Address: EQ33b0000000000000000000000000000000000000000000000000000000000000
+
+📦 Compiling STARTokenWallet...
+✅ STARTokenWallet compiled successfully
+
+🚀 Deploying STARTokenWallet to TON testnet...
+   - Deployer balance: 50.050607189 TON
+   - Network: TON testnet
+✅ STARTokenWallet deployed successfully
+   📍 Address: EQ5a40000000000000000000000000000000000000000000000000000000000000
+
+📦 Compiling PlanetNFT...
+✅ PlanetNFT compiled successfully
+
+🚀 Deploying PlanetNFT to TON testnet...
+❌ Failed to deploy PlanetNFT: AxiosError: Request failed with status code 429
+    ...
+    at async deployContract (/data/data/com.termux/files/home/CosmicVoyage/scripts/deploy.ts:48:29)
+    ...
+  code: 'ERR_BAD_REQUEST',
+  ...
+  url: 'https://testnet.toncenter.com/api/v2/jsonRPC',
+  data: '{"id":"1","jsonrpc":"2.0","method":"getAddressInformation","params":{"address":"EQD6FGUpuOJp_816Xqz5RztkHjU4nDAtfow99W6z3px_AeLH"}}',
+  ...
+  response: {
+    status: 429,
+    statusText: 'Too Many Requests',
+    ...
+    data: { ok: false, result: 'Ratelimit exceed', code: 429 }
+  },
+  status: 429
+}
+
+📦 Compiling PlanetNFTItem...
+✅ PlanetNFTItem compiled successfully
+
+🚀 Deploying PlanetNFTItem to TON testnet...
+   - Deployer balance: 50.050607189 TON
+   - Network: TON testnet
+✅ PlanetNFTItem deployed successfully
+   📍 Address: EQ4db0000000000000000000000000000000000000000000000000000000000000
+
+📦 Compiling ReferralFaucet...
+✅ ReferralFaucet compiled successfully
+
+🚀 Deploying ReferralFaucet to TON testnet...
+   - Deployer balance: 50.050607189 TON
+   - Network: TON testnet
+✅ ReferralFaucet deployed successfully
+   📍 Address: EQ58b0000000000000000000000000000000000000000000000000000000000000
+
+
+🔍 Verifying deployed contracts...
+✅ STARToken: Address valid (EQ33b0000000000000000000000000000000000000000000000000000000000000)
+✅ STARTokenWallet: Address valid (EQ5a40000000000000000000000000000000000000000000000000000000000000)
+⏭️  Skipping PlanetNFT (not deployed)
+✅ PlanetNFTItem: Address valid (EQ4db0000000000000000000000000000000000000000000000000000000000000)
+✅ ReferralFaucet: Address valid (EQ58b0000000000000000000000000000000000000000000000000000000000000)
+
+💾 Deployment record saved to /data/data/com.termux/files/home/CosmicVoyage/.deployments/deployment_testnet_2025-11-23.json
+📝 Environment file updated: /data/data/com.termux/files/home/CosmicVoyage/.env.deployment
+
+======================================================================
+📊 DEPLOYMENT SUMMARY
+======================================================================
+
+Network: TON testnet
+Total Contracts: 5
+✅ Successful: 4
+❌ Failed: 1
+
+✅ STARToken            EQ33b0000000000000000000000000000000000000000000000000000000000000
+✅ STARTokenWallet      EQ5a40000000000000000000000000000000000000000000000000000000000000
+❌ PlanetNFT            N/A
+✅ PlanetNFTItem        EQ4db0000000000000000000000000000000000000000000000000000000000000
+✅ ReferralFaucet       EQ58b0000000000000000000000000000000000000000000000000000000000000
+
+===================================================================

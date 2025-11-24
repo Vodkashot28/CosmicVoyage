@@ -1,0 +1,62 @@
+
+
+🛠️ Cosmic Burn Dashboard (UI Copy + Layout Concept)
+
+🔮 Modal Title:
+“Cosmic Utilities: Burn STAR, Bend Reality”
+
+---
+
+🌟 Section 1: Your STAR Balance
+STAR Tokens Available: 525  
+Passive Income Rate: +2.0 STAR/hour  
+NFTs Owned: 4 planets  
+Burn History: Last burn: Cosmic Boost (Nov 20)
+
+---
+
+🔥 Section 2: Available Burn Modes
+
+| Utility Mode         | Cost (STAR) | Effect Summary                              | Status       |
+|----------------------|-------------|---------------------------------------------|--------------|
+| Cosmic Boost     | 50          | 2× token rewards for next 5 discoveries      | 🔄 Available |
+| Void Jump        | 100         | Skip next planet requirement (mint out of order) | 🔄 Available |
+| Celestial Shield | 75          | Free NFT minting (no gas fee)               | 🔄 Available |
+| Asteroid Mining  | 75          | Unlock asteroid loot session (cosmetics/fragments) | 🔄 Available |
+| Dwarf Planet Unlock | 200      | Mint rare dwarf planet NFT (Pluto, Ceres…)  | 🔄 Available |
+| Supernova Mode   | 150         | 3× token rewards for next 3 discoveries      | 🔄 Available |
+| Wormhole Mode    | 250         | Skip up to 3 planets in sequence            | 🔄 Available |
+| Cosmic Forge     | 100 + fragment | Craft prestige cosmetics from fragments     | 🔄 Available |
+
+---
+
+🧪 Section 3: ROI Estimator (Dynamic UI Component)
+> Selected Mode: Cosmic Boost  
+> Estimated Return: +250 STAR  
+> Net Gain: +200 STAR  
+> Recommended Use: Before discovering Mars–Jupiter
+
+---
+
+🧭 Section 4: Lore Integration (Optional Flavor Text)
+> “The stars whisper to those who burn. Every token sacrificed bends the fabric of space, unlocking paths unseen and treasures unclaimed.”
+
+---
+
+🧩 Section 5: Burn Action Panel
+[Activate Cosmic Boost]  
+[Mine Asteroids]  
+[Unlock Pluto]  
+[Forge Cosmetic]
+
+---
+
+🧼 UX Notes
+- Use Framer Motion or GSAP for smooth modal transitions and button feedback.  
+- Include cooldown timers and burn history logs for transparency.  
+- Add hover tooltips with lore snippets for each utility.  
+- Consider animated burn effects (e.g., token dissolving into stardust).
+
+---
+
+Would you like me to mock up a visual wireframe of this dashboard next, or help you integrate it into your current React/Three.js layout using Zustand state slices?
