@@ -20,9 +20,9 @@ export default defineConfig({
   },
   root: path.resolve(__dirname, "client"),
   build: {
-    outDir: path.resolve(__dirname, "dist"), // flatten for Pages
+    outDir: path.resolve(__dirname, "dist"),
     emptyOutDir: true,
   },
-  base: "/CosmicVoyage/", // critical for GitHub Pages asset paths
+  base: "/", // use "/" locally; set "/CosmicVoyage/" only for GitHub Pages
   assetsInclude: ["**/*.gltf", "**/*.glb", "**/*.mp3", "**/*.ogg", "**/*.wav"],
 });
