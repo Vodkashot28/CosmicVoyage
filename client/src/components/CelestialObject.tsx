@@ -15,6 +15,7 @@ interface CelestialObjectProps {
 
 export function CelestialObject({ data }: CelestialObjectProps) {
   const meshRef = useRef<THREE.Mesh>(null);
+  const glowRef = useRef<THREE.Mesh>(null);
   const orbitGroupRef = useRef<THREE.Group>(null);
   const inclinationGroupRef = useRef<THREE.Group>(null);
   const [hovered, setHovered] = useState(false);
@@ -43,13 +44,21 @@ export function CelestialObject({ data }: CelestialObjectProps) {
     }
     
     if (meshRef.current) {
-      meshRef.current.rotation.y += data.rotationSpeed;
+      // Enhanced rotation: faster when hovering
+      const rotationSpeed = hovered && canDiscover ? data.rotationSpeed * 2 : data.rotationSpeed;
+      meshRef.current.rotation.y += rotationSpeed;
       
       if (hovered && !discovered && canDiscover) {
-        meshRef.current.scale.setScalar(data.size * 1.2);
+        meshRef.current.scale.setScalar(data.size * 1.3);
       } else {
         meshRef.current.scale.setScalar(data.size);
       }
+    }
+    
+    // Pulsing glow effect
+    if (glowRef.current) {
+      const pulse = Math.sin(state.clock.elapsedTime * 2) * 0.3 + 0.7;
+      glowRef.current.scale.setScalar(discovered ? (isAsteroid ? 1.3 : 1.4) * pulse : 1.3 * pulse);
     }
   });
   
@@ -168,27 +177,27 @@ export function CelestialObject({ data }: CelestialObjectProps) {
             </mesh>
           )}
           
-          {/* Outer glow for discovered objects */}
+          {/* Outer glow for discovered objects with pulsing animation */}
           {discovered && !isAsteroid && (
-            <mesh position={[data.orbitRadius, 0, 0]}>
+            <mesh ref={glowRef} position={[data.orbitRadius, 0, 0]}>
               <sphereGeometry args={[data.size * 1.3, 32, 32]} />
               <meshBasicMaterial
                 color={getRingColor()}
                 transparent
-                opacity={0.15}
+                opacity={0.25}
                 side={THREE.BackSide}
               />
             </mesh>
           )}
 
-          {/* Asteroid discovered glow */}
+          {/* Asteroid discovered glow with pulsing */}
           {discovered && isAsteroid && (
-            <mesh position={[data.orbitRadius, 0, 0]}>
+            <mesh ref={glowRef} position={[data.orbitRadius, 0, 0]}>
               <boxGeometry args={[1.2, 1.0, 0.8]} />
               <meshBasicMaterial
                 color={getRingColor()}
                 transparent
-                opacity={0.2}
+                opacity={0.3}
                 side={THREE.BackSide}
               />
             </mesh>
