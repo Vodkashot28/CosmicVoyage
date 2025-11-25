@@ -14,7 +14,7 @@ import { ReferralInvite } from "./components/ReferralInvite";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/ui/tabs";
 import { Toaster } from "./components/ui/sonner";
 
-const manifestUrl = "https://ton-connect.github.io/demo-dapp-with-wallet/tonconnect-manifest.json";
+const manifestUrl = "/tonconnect-manifest.json";
 
 function App() {
   const [activeTab, setActiveTab] = useState("game");
