@@ -91,7 +91,7 @@ export function GameUI() {
               </Button>
 
               {/* TON Wallet Button - Visible on all devices */}
-              <div className="hidden sm:block">
+              <div className="block">
                 <WalletConnectButton />
               </div>
 

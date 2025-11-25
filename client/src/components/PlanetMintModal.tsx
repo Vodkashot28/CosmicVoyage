@@ -28,7 +28,8 @@ export function PlanetMintModal({
   onMintConfirm,
 }: PlanetMintModalProps) {
   const [isMinting, setIsMinting] = useState(false);
-  const { claimDiscoveryReward, markNFTMinted } = useSolarSystem();
+  const [useCelestialShield, setUseCelestialShield] = useState(false);
+  const { claimDiscoveryReward, markNFTMinted, totalTokens } = useSolarSystem();
   const { playSuccess } = useAudio();
 
   if (!planet) return null;
@@ -65,7 +66,48 @@ export function PlanetMintModal({
   const cost = getMintingCost();
   const shield = getCelestialShieldAlternative();
 
+  // Check resource availability
+  const hasEnoughResources = () => {
+    if (useCelestialShield && shield.available) {
+      // Using Celestial Shield: check STAR balance
+      return totalTokens >= shield.cost;
+    } else {
+      // Using TON: assume we check this at wallet level, but also validate STAR for dwarf planets
+      if (cost.star > 0) {
+        return totalTokens >= cost.star;
+      }
+      return true; // TON check happens at wallet level
+    }
+  };
+
+  const getMissingResources = () => {
+    if (useCelestialShield && shield.available) {
+      const missing = Math.max(0, shield.cost - totalTokens);
+      if (missing > 0) {
+        return `Missing ${missing} STAR (need ${shield.cost}, have ${totalTokens})`;
+      }
+    } else {
+      if (cost.star > 0) {
+        const missing = Math.max(0, cost.star - totalTokens);
+        if (missing > 0) {
+          return `Missing ${missing} STAR (need ${cost.star}, have ${totalTokens})`;
+        }
+      }
+    }
+    return null;
+  };
+
+  const canMint = hasEnoughResources();
+  const missingResources = getMissingResources();
+
   const handleMintConfirm = async () => {
+    if (!canMint) {
+      toast.error("Insufficient resources", {
+        description: missingResources || "You don't have enough resources to mint",
+      });
+      return;
+    }
+
     setIsMinting(true);
     try {
       // Simulate blockchain transaction
@@ -161,13 +203,33 @@ export function PlanetMintModal({
 
           {/* Celestial Shield Alternative */}
           {shield.available && (
-            <div className="bg-purple-900/30 rounded-lg p-4 border border-purple-500/30">
-              <p className="text-sm text-purple-300">
-                💫 <span className="font-bold">Alternative:</span> {shield.description}
+            <div className={`rounded-lg p-4 border ${useCelestialShield ? 'bg-purple-900/50 border-purple-400' : 'bg-purple-900/20 border-purple-500/30'}`}>
+              <label className="flex items-start gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={useCelestialShield}
+                  onChange={(e) => setUseCelestialShield(e.target.checked)}
+                  className="mt-1"
+                />
+                <div>
+                  <p className="text-sm text-purple-300">
+                    💫 <span className="font-bold">Use Celestial Shield:</span> {shield.description}
+                  </p>
+                  <p className="text-xs text-purple-300/70 mt-2">
+                    Recommended if you have extra STAR and are low on TON
+                  </p>
+                </div>
+              </label>
+            </div>
+          )}
+
+          {/* Resource Status */}
+          {missingResources && (
+            <div className="bg-red-900/30 rounded-lg p-4 border border-red-500/50">
+              <p className="text-sm text-red-300">
+                ⚠️ <span className="font-bold">Insufficient Resources:</span>
               </p>
-              <p className="text-xs text-purple-300/70 mt-2">
-                Recommended if you have extra STAR and are low on TON
-              </p>
+              <p className="text-xs text-red-300/80 mt-1">{missingResources}</p>
             </div>
           )}
 
@@ -194,8 +256,9 @@ export function PlanetMintModal({
           </Button>
           <Button
             onClick={handleMintConfirm}
-            disabled={isMinting}
-            className="bg-green-600 hover:bg-green-700"
+            disabled={isMinting || !canMint}
+            className={`${canMint ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-600 opacity-50 cursor-not-allowed'}`}
+            title={missingResources ? `Cannot mint: ${missingResources}` : "Confirm and mint"}
           >
             {isMinting ? "Minting..." : `Confirm & Mint (${planet.tokenReward} STAR)`}
           </Button>
