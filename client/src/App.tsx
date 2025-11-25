@@ -1,6 +1,7 @@
 import { Canvas } from "@react-three/fiber";
 import { Suspense, useState, useMemo } from "react";
 import { TonConnectUIProvider } from "@tonconnect/ui-react";
+import { Analytics } from "@vercel/analytics/react";
 import "@fontsource/inter";
 import { SolarSystem } from "./components/SolarSystem";
 import { GameUI } from "./components/MobileGameUI";
@@ -104,6 +105,7 @@ function App() {
         <TokenParticles />
         <TokenTutorial />
         <Toaster />
+        <Analytics />
       </div>
     </TonConnectUIProvider>
   );
