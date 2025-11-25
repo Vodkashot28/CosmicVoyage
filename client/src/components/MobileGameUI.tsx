@@ -44,7 +44,11 @@ export function GameUI() {
   const handleClaimRewards = () => {
     if (bonusTokens > 0) {
       claimRewards();
+<<<<<<< HEAD
+      toast.success(`ðŸ’Ž ${bonusTokens} tokens transferred to your wallet!`);
+=======
       toast.success(`💎 ${bonusTokens} tokens transferred to your wallet!`);
+>>>>>>> c297bfc4245e6f3d5429419ed9a7c68f69074ccc
     }
   };
 
@@ -84,6 +88,14 @@ export function GameUI() {
                 {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
               </Button>
 
+<<<<<<< HEAD
+              {/* TON Wallet Button - Visible on all devices */}
+              <div className="hidden sm:block">
+                <TonConnectButton />
+              </div>
+
+=======
+>>>>>>> c297bfc4245e6f3d5429419ed9a7c68f69074ccc
               <Button
                 variant="ghost"
                 size="icon"
@@ -98,6 +110,32 @@ export function GameUI() {
           {/* Mobile Menu */}
           {showMenu && (
             <div className="md:hidden border-t border-purple-500/30 p-3 space-y-2 bg-slate-900/80 backdrop-blur-sm">
+<<<<<<< HEAD
+              {/* Wallet Button - Mobile only */}
+              <div className="bg-slate-800/50 border border-purple-500/40 rounded p-2 mb-2">
+                <TonConnectButton />
+              </div>
+
+              {/* Music Toggle Button */}
+              <Button
+                onClick={toggleMute}
+                className="w-full bg-slate-700 hover:bg-slate-600 text-white mb-2 flex items-center justify-center gap-2"
+              >
+                {isMuted ? (
+                  <>
+                    <VolumeX className="w-4 h-4" />
+                    <span>Sound: OFF</span>
+                  </>
+                ) : (
+                  <>
+                    <Volume2 className="w-4 h-4" />
+                    <span>Sound: ON</span>
+                  </>
+                )}
+              </Button>
+              
+=======
+>>>>>>> c297bfc4245e6f3d5429419ed9a7c68f69074ccc
               <div className="grid grid-cols-3 gap-2">
                 <Button
                   onClick={() => { setActiveTab("game"); setShowMenu(false); }}
@@ -289,7 +327,11 @@ export function GameUI() {
                       <div key={name} className="bg-white/5 rounded-lg p-3 text-center">
                         <div className="w-8 h-8 rounded-full mx-auto mb-2" style={{backgroundColor: planet?.color}} />
                         <div className="text-white text-sm font-semibold">{name}</div>
+<<<<<<< HEAD
+                        <div className="text-white/60 text-xs">NFT âœ“</div>
+=======
                         <div className="text-white/60 text-xs">NFT ✓</div>
+>>>>>>> c297bfc4245e6f3d5429419ed9a7c68f69074ccc
                       </div>
                     );
                   })}
@@ -361,14 +403,22 @@ export function GameUI() {
       {/* Instructions - Desktop Only */}
       <div className="hidden md:block fixed bottom-4 left-1/2 -translate-x-1/2 pointer-events-auto">
         <Card className="bg-slate-900/80 backdrop-blur-md border-purple-500/40 p-3 text-white/70 text-sm text-center">
+<<<<<<< HEAD
+          <div>Use mouse to rotate â€¢ Scroll to zoom â€¢ Click planets to discover</div>
+=======
           <div>Use mouse to rotate • Scroll to zoom • Click planets to discover</div>
+>>>>>>> c297bfc4245e6f3d5429419ed9a7c68f69074ccc
         </Card>
       </div>
 
       {/* Mobile Instructions */}
       <div className="md:hidden fixed bottom-4 left-4 right-4 pointer-events-auto">
         <Card className="bg-slate-900/80 backdrop-blur-md border-purple-500/40 p-2 text-white/70 text-xs text-center">
+<<<<<<< HEAD
+          <div>Tap planets to discover â€¢ Use menu for economy & challenges</div>
+=======
           <div>Tap planets to discover • Use menu for economy & challenges</div>
+>>>>>>> c297bfc4245e6f3d5429419ed9a7c68f69074ccc
         </Card>
       </div>
     </>

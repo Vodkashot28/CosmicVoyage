@@ -6,7 +6,12 @@ import express, { type Express } from "express";
 import runApp from "./app";
 
 export async function serveStatic(app: Express, _server: Server) {
+<<<<<<< HEAD
+  // ✅ point to dist instead of public
+  const distPath = path.resolve(import.meta.dirname, "../dist");
+=======
   const distPath = path.resolve(import.meta.dirname, "public");
+>>>>>>> c297bfc4245e6f3d5429419ed9a7c68f69074ccc
 
   if (!fs.existsSync(distPath)) {
     throw new Error(
