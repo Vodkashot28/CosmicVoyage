@@ -22,10 +22,18 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/ui/tabs";
 import { Toaster } from "./components/ui/sonner";
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 const manifestUrl = "/tonconnect-manifest.json";
 =======
 const manifestUrl = "https://ton-connect.github.io/demo-dapp-with-wallet/tonconnect-manifest.json";
 >>>>>>> c297bfc4245e6f3d5429419ed9a7c68f69074ccc
+>>>>>>> refs/remotes/origin/main
+=======
+const manifestUrl = "https://ton-connect.github.io/demo-dapp-with-wallet/tonconnect-manifest.json";
+>>>>>>> c297bfc4245e6f3d5429419ed9a7c68f69074ccc
+=======
+const manifestUrl = "/tonconnect-manifest.json";
+>>>>>>> bb6550b21e48b8387c65c00f78083d6abe9b6a1a
 >>>>>>> refs/remotes/origin/main
 
 function App() {

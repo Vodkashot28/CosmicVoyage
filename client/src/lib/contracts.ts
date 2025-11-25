@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 // ============================================
 // CONTRACT ADDRESSES - TESTNET DEPLOYMENT
 // ============================================
@@ -6,6 +7,8 @@
 // Network: TON Testnet
 // Deployer: 0:fa146529b8e269ffcd7a5eacf9473b641e35389c302d7e8c3df56eb3de9c7f01
 =======
+=======
+>>>>>>> refs/remotes/origin/main
 <<<<<<< HEAD
 import { Address } from "@ton/core";
 
@@ -17,6 +20,17 @@ import { Address } from "@ton/core";
  * Deployment Date: 2025-11-23
  * Deployer: 0:fa146529b8e269ffcd7a5eacf9473b641e35389c302d7e8c3df56eb3de9c7f01
  */
+<<<<<<< HEAD
+>>>>>>> refs/remotes/origin/main
+=======
+=======
+// ============================================
+// CONTRACT ADDRESSES - TESTNET DEPLOYMENT
+// ============================================
+// Updated: 2025-11-25
+// Network: TON Testnet
+// Deployer: 0:fa146529b8e269ffcd7a5eacf9473b641e35389c302d7e8c3df56eb3de9c7f01
+>>>>>>> bb6550b21e48b8387c65c00f78083d6abe9b6a1a
 >>>>>>> refs/remotes/origin/main
 
 export const CONTRACT_ADDRESSES = {
@@ -37,11 +51,14 @@ export const CONTRACT_ADDRESSES = {
 } as const;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 export const NETWORK = {
   type: "testnet",
   endpoint: "https://testnet.toncenter.com/api/v2/jsonRPC",
   explorer: "https://testnet.tonscan.org",
 =======
+=======
+>>>>>>> refs/remotes/origin/main
 /**
 <<<<<<< HEAD
  * Get contract address by name
@@ -104,6 +121,15 @@ export const CONTRACT_INFO = {
     address: CONTRACT_ADDRESSES.referralFaucet,
     network: "testnet",
   },
+<<<<<<< HEAD
+>>>>>>> refs/remotes/origin/main
+=======
+=======
+export const NETWORK = {
+  type: "testnet",
+  endpoint: "https://testnet.toncenter.com/api/v2/jsonRPC",
+  explorer: "https://testnet.tonscan.org",
+>>>>>>> bb6550b21e48b8387c65c00f78083d6abe9b6a1a
 >>>>>>> refs/remotes/origin/main
 } as const;
 
