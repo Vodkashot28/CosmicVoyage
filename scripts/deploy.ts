@@ -25,11 +25,7 @@ async function compileContract(
 
   try {
     const contractCode = fs.readFileSync(contractPath, "utf-8");
-<<<<<<< HEAD
 
-=======
-    
->>>>>>> c297bfc4245e6f3d5429419ed9a7c68f69074ccc
     // For development/testing - in production use actual Blueprint compiler
     console.log(`✅ ${contractName} compiled successfully`);
     return `compiled_${contractName}_${Date.now()}`;
@@ -76,240 +72,103 @@ async function deployContract(
       name: contractName,
       address: mockAddress,
       success: true,
-      message: `Successfully deployed ${contractName}`,
+      message: "Deployment successful (mock)",
       timestamp: new Date().toISOString(),
     };
   } catch (error) {
-    console.error(`❌ Failed to deploy ${contractName}:`, error);
+    console.error(`❌ Deployment failed for ${contractName}:`, error);
     return {
       name: contractName,
       address: "",
       success: false,
-      message: `Failed to deploy ${contractName}: ${error}`,
-      timestamp: new Date().toISOString(),
+      message: String(error),
     };
   }
 }
 
-async function saveDeploymentConfig(
-  results: DeploymentResult[]
-): Promise<void> {
-  const configDir = path.join(process.cwd(), ".deployments");
-  if (!fs.existsSync(configDir)) {
-    fs.mkdirSync(configDir, { recursive: true });
-  }
+async function main() {
+  console.log("🌍 TON Blockchain - Smart Contract Deployment");
+  console.log(`📍 Network: ${NETWORK}`);
+  console.log(`👤 Deployer: ${DEPLOYER_ADDRESS}`);
 
-  const timestamp = results[0]?.timestamp || new Date().toISOString();
-  const filename = `deployment_${NETWORK}_${timestamp.split("T")[0]}.json`;
-  const configPath = path.join(configDir, filename);
-
-  const deploymentRecord = {
-    network: NETWORK,
-    deployer: DEPLOYER_ADDRESS,
-    timestamp,
-    contracts: results.map((r) => ({
-      name: r.name,
-      address: r.address,
-      success: r.success,
-      message: r.message,
-    })),
-  };
-
-  fs.writeFileSync(configPath, JSON.stringify(deploymentRecord, null, 2));
-  console.log(`\n💾 Deployment record saved to ${configPath}`);
-
-  // Also create/update .env.deployment for easy reference
-  const envPath = path.join(process.cwd(), ".env.deployment");
-  const successfulDeployments = results.filter((r) => r.success);
-  const envContent = [
-    `# TON Smart Contract Deployment - ${NETWORK}`,
-    `# Generated: ${timestamp}`,
-    `# Deployer: ${DEPLOYER_ADDRESS}`,
-    ``,
-    ...successfulDeployments.map(
-      (r) => `${r.name.toUpperCase()}_ADDRESS=${r.address}`
-    ),
-    ``,
-    `# Add these addresses to your .env file`,
-  ].join("\n");
-
-  fs.writeFileSync(envPath, envContent);
-  console.log(`📝 Environment file updated: ${envPath}`);
-}
-
-async function verifyContracts(
-  results: DeploymentResult[],
-  client: TonClient
-): Promise<void> {
-  console.log("\n\n🔍 Verifying deployed contracts...");
-
-  for (const result of results) {
-    if (!result.success || !result.address) {
-      console.log(`⏭️  Skipping ${result.name} (not deployed)`);
-      continue;
-    }
-
-    try {
-      // Note: In production, verify against actual on-chain code
-      console.log(`✅ ${result.name}: Address valid (${result.address})`);
-    } catch (error) {
-      console.warn(`⚠️  ${result.name}: Verification warning - ${error}`);
-    }
-  }
-}
-
-async function printDeploymentSummary(
-  results: DeploymentResult[]
-): Promise<void> {
-  console.log("\n" + "=".repeat(70));
-  console.log("📊 DEPLOYMENT SUMMARY");
-  console.log("=".repeat(70));
-
-  const successful = results.filter((r) => r.success).length;
-  const failed = results.filter((r) => !r.success).length;
-
-  console.log(`\nNetwork: TON ${NETWORK}`);
-  console.log(`Total Contracts: ${results.length}`);
-  console.log(`✅ Successful: ${successful}`);
-  console.log(`❌ Failed: ${failed}\n`);
-
-  results.forEach((result) => {
-    const status = result.success ? "✅" : "❌";
-    console.log(`${status} ${result.name.padEnd(20)} ${result.address || "N/A"}`);
+  const client = new TonClient({
+    endpoint: NETWORK === "testnet"
+      ? "https://testnet.toncenter.com/api/v2/jsonRPC"
+      : "https://toncenter.com/api/v2/jsonRPC",
   });
 
-  console.log("\n" + "=".repeat(70));
+  const contracts = [
+    {
+      name: "STARToken",
+      path: "./contracts/STARToken.tact",
+    },
+    {
+      name: "STARTokenWallet",
+      path: "./contracts/STARTokenWallet.tact",
+    },
+    {
+      name: "PlanetNFT",
+      path: "./contracts/PlanetNFT.tact",
+    },
+    {
+      name: "PlanetNFTItem",
+      path: "./contracts/PlanetNFTItem.tact",
+    },
+    {
+      name: "ReferralFaucet",
+      path: "./contracts/ReferralFaucet.tact",
+    },
+  ];
 
-  if (successful === results.length) {
-    console.log("\n🎉 All contracts deployed successfully!\n");
-    console.log("📋 Next steps:");
-    console.log("   1. ✅ Copy addresses from .env.deployment");
-    console.log("   2. ✅ Update client/src/lib/contracts.ts with addresses");
-    console.log("   3. ✅ Test contract interactions via TON Connect UI");
-    console.log("   4. ✅ Verify balances and state on tonscan.org");
-    console.log("   5. ✅ Once verified, proceed with mainnet deployment\n");
-  } else {
-    console.log("\n⚠️  Some contracts failed to deploy. Check the logs above.\n");
-  }
+  const deploymentResults: DeploymentResult[] = [];
 
-  console.log("=".repeat(70) + "\n");
-}
-
-async function main() {
-  console.log("\n" + "=".repeat(70));
-  console.log("🌟 Solar System Explorer - Smart Contract Deployment");
-  console.log("=".repeat(70));
-  console.log(`🌐 Network: TON ${NETWORK}`);
-  console.log(`👤 Deployer: ${DEPLOYER_ADDRESS}`);
-  console.log("=".repeat(70));
-
-  try {
-    // Initialize TON client
-    console.log("\n📡 Connecting to TON network...");
-    const endpoint =
-      NETWORK === "mainnet"
-        ? "https://toncenter.com/api/v2/jsonRPC"
-        : "https://testnet.toncenter.com/api/v2/jsonRPC";
-    const client = new TonClient({ endpoint });
-
-    console.log(`✅ Connected to TON ${NETWORK}`);
-
-    const results: DeploymentResult[] = [];
-
-    // Define contracts to deploy in order
-    const contracts = [
-      {
-        name: "STARToken",
-        path: "contracts/STARToken.tact",
-        description: "Main STAR token contract (1B fixed supply)",
-      },
-      {
-        name: "STARTokenWallet",
-        path: "contracts/STARTokenWallet.tact",
-        description: "User wallet for STAR token holdings",
-      },
-      {
-        name: "PlanetNFT",
-        path: "contracts/PlanetNFT.tact",
-        description: "NFT collection for celestial objects",
-      },
-      {
-        name: "PlanetNFTItem",
-        path: "contracts/PlanetNFTItem.tact",
-        description: "Individual NFT items",
-      },
-      {
-        name: "ReferralFaucet",
-        path: "contracts/ReferralFaucet.tact",
-        description: "Tiered referral rewards system",
-      },
-    ];
-
-    console.log(`\n📋 Contracts to deploy: ${contracts.length}\n`);
-    contracts.forEach((c) => {
-      console.log(`   • ${c.name}: ${c.description}`);
-    });
-
-    // Compile and deploy each contract
-    for (const contract of contracts) {
-      try {
-        const contractPath = path.join(process.cwd(), contract.path);
-
-        if (!fs.existsSync(contractPath)) {
-          console.error(`\n⚠️  Contract file not found: ${contractPath}`);
-          results.push({
-            name: contract.name,
-            address: "",
-            success: false,
-            message: `Contract file not found: ${contract.path}`,
-            timestamp: new Date().toISOString(),
-          });
-          continue;
-        }
-
-        const compiledCode = await compileContract(
-          contract.name,
-          contractPath
-        );
-
-        const deploymentResult = await deployContract(
-          contract.name,
-          compiledCode,
-          client
-        );
-
-        results.push(deploymentResult);
-      } catch (error) {
-        console.error(`\n💥 Error deploying ${contract.name}:`, error);
-        results.push({
-          name: contract.name,
-          address: "",
-          success: false,
-          message: `Error: ${error}`,
-          timestamp: new Date().toISOString(),
-        });
-      }
+  for (const contract of contracts) {
+    try {
+      const compiled = await compileContract(contract.name, contract.path);
+      const result = await deployContract(contract.name, compiled, client);
+      deploymentResults.push(result);
+    } catch (error) {
+      console.error(`Failed to deploy ${contract.name}:`, error);
+      deploymentResults.push({
+        name: contract.name,
+        address: "",
+        success: false,
+        message: String(error),
+      });
     }
-
-    // Verify contracts
-    await verifyContracts(results, client);
-
-    // Save configuration
-    await saveDeploymentConfig(results);
-
-    // Print summary
-    await printDeploymentSummary(results);
-
-    // Exit with appropriate code
-    const allSuccess = results.every((r) => r.success);
-    process.exit(allSuccess ? 0 : 1);
-  } catch (error) {
-    console.error("\n💥 Deployment script failed:", error);
-    process.exit(1);
   }
+
+  // Save results to file
+  const resultsPath = path.join(
+    path.dirname(import.meta.url),
+    "..",
+    "deployment-results.json"
+  );
+  fs.writeFileSync(resultsPath, JSON.stringify(deploymentResults, null, 2));
+
+  // Print summary
+  console.log("\n📊 Deployment Summary:");
+  console.log("=".repeat(60));
+
+  const successful = deploymentResults.filter((r) => r.success);
+  const failed = deploymentResults.filter((r) => !r.success);
+
+  successful.forEach((result) => {
+    console.log(`✅ ${result.name}`);
+    console.log(`   Address: ${result.address}`);
+  });
+
+  if (failed.length > 0) {
+    console.log("\n❌ Failed Deployments:");
+    failed.forEach((result) => {
+      console.log(`   ${result.name}: ${result.message}`);
+    });
+  }
+
+  console.log("\n💾 Results saved to deployment-results.json");
+  console.log("=".repeat(60));
+
+  process.exit(failed.length > 0 ? 1 : 0);
 }
 
-main().catch((error) => {
-  console.error("Fatal error:", error);
-  process.exit(1);
-});
+main().catch(console.error);

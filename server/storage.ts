@@ -38,13 +38,8 @@ export class MemStorage implements IStorage {
 
   async createUser(insertUser: InsertUser): Promise<User> {
     const id = this.currentId++;
-<<<<<<< HEAD
     const user: User = {
       ...insertUser,
-=======
-    const user: User = { 
-      ...insertUser, 
->>>>>>> c297bfc4245e6f3d5429419ed9a7c68f69074ccc
       id,
       walletAddress: null,
       starBalance: 0,
@@ -94,15 +89,9 @@ export class MemStorage implements IStorage {
   async generateReferralCode(walletAddress: string): Promise<string> {
     const user = this.walletUsers.get(walletAddress);
     if (!user) return "";
-<<<<<<< HEAD
 
     // Generate 8-char code: first 4 of wallet + random 4
     const code = walletAddress.slice(2, 6).toUpperCase() +
-=======
-    
-    // Generate 8-char code: first 4 of wallet + random 4
-    const code = walletAddress.slice(2, 6).toUpperCase() + 
->>>>>>> c297bfc4245e6f3d5429419ed9a7c68f69074ccc
       Math.random().toString(36).substring(2, 6).toUpperCase();
     user.referralCode = code;
     this.walletUsers.set(walletAddress, user);
@@ -112,20 +101,12 @@ export class MemStorage implements IStorage {
   async recordReferral(referrerWallet: string, newPlayerWallet: string, bonusAmount: number): Promise<void> {
     const referrer = this.walletUsers.get(referrerWallet);
     const newPlayer = this.walletUsers.get(newPlayerWallet);
-<<<<<<< HEAD
 
-=======
-    
->>>>>>> c297bfc4245e6f3d5429419ed9a7c68f69074ccc
     if (referrer && newPlayer) {
       referrer.referralCount = (referrer.referralCount || 0) + 1;
       referrer.referralBonusEarned = (referrer.referralBonusEarned || 0) + bonusAmount;
       newPlayer.referredByWallet = referrerWallet;
-<<<<<<< HEAD
-
-=======
-      
->>>>>>> c297bfc4245e6f3d5429419ed9a7c68f69074ccc
+      referrer.lastReferralBonus = new Date();
       this.walletUsers.set(referrerWallet, referrer);
       this.walletUsers.set(newPlayerWallet, newPlayer);
     }
@@ -134,19 +115,16 @@ export class MemStorage implements IStorage {
   async getReferralStats(walletAddress: string): Promise<any> {
     const user = this.walletUsers.get(walletAddress);
     if (!user) return null;
-<<<<<<< HEAD
 
-=======
-    
->>>>>>> c297bfc4245e6f3d5429419ed9a7c68f69074ccc
     return {
-      referralCode: user.referralCode,
-      count: user.referralCount || 0,
-      bonusEarned: user.referralBonusEarned || 0,
-      maxBonus: 50,
-      referredBy: user.referredByWallet,
+      referralCode: user.referralCode || null,
+      referralCount: user.referralCount || 0,
+      referralBonusEarned: user.referralBonusEarned || 0,
+      lastReferralBonus: user.lastReferralBonus || null,
+      referredByWallet: user.referredByWallet || null,
     };
   }
 }
 
+// Use memory store for now, can be replaced with database later
 export const storage = new MemStorage();
