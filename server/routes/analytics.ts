@@ -1,7 +1,8 @@
 import { Router } from "express";
 import type { Request, Response } from "express";
 import { getDb } from "../db";
-import { analyticsEvents } from "@shared/schema";
+import { analyticsEvents, users, discoveries, nfts } from "@shared/schema";
+import { eq } from "drizzle-orm";
 
 const router = Router();
 
@@ -51,6 +52,69 @@ router.post("/events", async (req, res) => {
   } catch (error) {
     console.error("Analytics error:", error);
     res.status(500).json({ error: "Failed to process events" });
+  }
+});
+
+// Get player stats (discoveries, NFTs, earnings)
+router.get("/player-stats/:walletAddress", async (req: Request, res: Response) => {
+  try {
+    const { walletAddress } = req.params;
+    const db = await getDb();
+
+    if (!db) {
+      return res.json({
+        walletAddress,
+        discoveredCount: 0,
+        nftCount: 0,
+        totalEarned: 0,
+        passiveIncomePerDay: 0,
+      });
+    }
+
+    // Get user
+    const user = await db
+      .select()
+      .from(users)
+      .where(eq(users.walletAddress, walletAddress))
+      .limit(1);
+
+    if (user.length === 0) {
+      return res.json({
+        walletAddress,
+        discoveredCount: 0,
+        nftCount: 0,
+        totalEarned: 0,
+        passiveIncomePerDay: 0,
+      });
+    }
+
+    // Get discoveries count
+    const discoveryList = await db
+      .select()
+      .from(discoveries)
+      .where(eq(discoveries.walletAddress, walletAddress));
+
+    // Get NFTs count
+    const nftList = await db
+      .select()
+      .from(nfts)
+      .where(eq(nfts.walletAddress, walletAddress));
+
+    const passiveIncomePerDay = nftList.length * 0.5 * 24; // 0.5 STAR per hour per NFT
+
+    return res.json({
+      walletAddress,
+      discoveredCount: discoveryList.length,
+      nftCount: nftList.length,
+      totalEarned: discoveryList.reduce(
+        (sum, d) => sum + (d.tokenRewardAwarded || 0),
+        0
+      ),
+      passiveIncomePerDay,
+    });
+  } catch (error) {
+    console.error("Player stats error:", error);
+    res.status(500).json({ error: "Failed to fetch player stats" });
   }
 });
 

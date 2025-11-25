@@ -8,22 +8,65 @@ Solar System Explorer is an interactive 3D space exploration game where players 
 
 Preferred communication style: Simple, everyday language.
 
+## Recent Enhancements (Nov 25, 2025)
+
+### Anti-Sybil Protection
+- ✅ **Email + Wallet Verification System**
+  - Email verification with 24-hour token expiry
+  - One email = One genesis claim
+  - One wallet = One genesis claim (double protection)
+  - User flows: Wallet Connect → Email Verify → Claim Genesis
+
+### Player Engagement Features (NEW)
+- ✅ **Daily Login Rewards System**
+  - Day 1-6: 1 STAR per day
+  - Day 7: 5 STAR bonus (7-day streak)
+  - Real-time streak tracking
+  - Database table: `daily_login_rewards`
+
+- ✅ **Educational Planet Cards**
+  - Interactive planet information (Mercury, Venus, Earth, Mars)
+  - 4 facts per planet + key features
+  - Quiz mode with +2 STAR bonus for correct answers
+  - Component: `EducationalCards.tsx`
+
+- ✅ **Player Stats Dashboard**
+  - Real-time discovery progress (X/28 planets)
+  - NFT ownership count
+  - Passive income tracking (STAR/hour, STAR/day)
+  - Total earned STAR display
+  - Component: `PlayerStatsPanel.tsx`
+
+- ✅ **Audio Integration**
+  - Background space music (background.mp3)
+  - Floating audio control (mute + volume slider)
+  - Component: `AudioManager.tsx`
+
+- ✅ **3D Planet Models Generated**
+  - Mercury.glb - Gray rocky surface with craters
+  - Venus.glb - Golden-yellow cloudy atmosphere
+  - Earth.glb - Blue oceans, green continents
+  - Ready for NFT rendering
+  - Location: `client/public/models/`
+
 ## Token Economics & Allocation
 
 ### STAR Token Overview
 - **Total Supply**: 1 billion STAR tokens (fixed with burn deflation)
-- **Bootstrap System**: Genesis faucet gives 10 STAR to all new players (no wallet pre-req)
+- **Bootstrap System**: Genesis faucet gives 10 STAR to all new players (requires email + wallet verification)
 - **Referral Rewards**: 5-50 STAR per referral with tiered bonuses + 10% passive income bonus for 30 days
 - **Distribution Model**: 
   - Genesis: 10 STAR per new player
   - Discovery: 2,373 STAR total (8 planets + 7 dwarfs + 13 asteroids)
+  - Daily Login: 1-5 STAR/day (with 7-day streak bonus)
+  - Educational Quiz: 2 STAR per correct answer
   - Passive income: ~312 STAR/day at full collection
   - Referrals: 5-50 STAR per friend invited
 - **Burn Rate**: 5-10 million STAR/month (estimated, creates 200-400 year deflation cycle)
 - **Economic Philosophy**: Early abundant rewards → Mid balanced economy → Late scarcity-driven prestige
 
 ### Strategic Allocation (1B STAR)
-1. **Gameplay Rewards** (400M): Discovery, challenges, passive income from NFTs
+1. **Gameplay Rewards** (400M): Discovery, daily login, challenges, passive income from NFTs
 2. **Burn Reserve** (200M): Fuel for cosmic utilities (Boost, Jump, Shield, Mining, Forge, etc.)
 3. **Liquidity & DEX** (100M): Initial liquidity pools and trading pairs
 4. **Development Treasury** (100M): Team, audits, infrastructure
@@ -43,7 +86,7 @@ Burning STAR creates prestige loops:
 
 The frontend is built as a component-based application using React 18 with TypeScript. It leverages React Three Fiber and React Three Drei for declarative 3D rendering, creating a full-viewport 3D canvas with overlaid UI components. Radix UI provides accessible interface primitives, and Tailwind CSS is used for styling with custom space-themed design tokens. Vite serves as the build tool, ensuring a fast development experience. 
 
-**Authentication**: Uses **TONCONNECT** for wallet-based authentication - simple, no username/password required. Players connect their TON wallet and start playing immediately.
+**Authentication**: Uses **TONCONNECT** for wallet-based authentication - simple, no username/password required. Players connect their TON wallet, verify their email, and start playing immediately.
 
 **State Management**: Zustand stores for game progression (`useSolarSystem`), audio controls (`useAudio`), game phases (`useGame`), game balance (`useGameBalance`), and referral tracking (`useReferral`), with persistence for game progress. 
 
@@ -54,7 +97,7 @@ The frontend is built as a component-based application using React 18 with TypeS
 ### 3D Scene Architecture
 
 The 3D scene is constructed with React Three Fiber, featuring a `Canvas` root, a `SolarSystem` container, a `Sun` with a pulsing glow, and reusable `CelestialObject` components with orbital groups, hover effects, and click handlers. The scene renders all 28 celestial objects:
-- **8 Planets**: Sphere geometry with glowing halos
+- **8 Planets**: Sphere geometry with glowing halos (can be upgraded to use .glb models)
 - **7 Dwarf Planets**: Sphere geometry, smaller scale than planets
 - **13 Asteroids**: Box geometry (1×0.8×0.6 ratio) for irregular appearance
 
@@ -65,7 +108,9 @@ Objects animate with individual rotation, orbital motion, and orbital inclinatio
 The backend utilizes an **Express.js server** with **Drizzle ORM** and **PostgreSQL** database integration.
 
 **Database**: Fully integrated PostgreSQL with Drizzle ORM (using drizzle-kit for migrations). Schema includes:
-- `users` - Player profiles with wallet addresses
+- `users` - Player profiles with email, wallet addresses, email verification status
+- `emailVerifications` - Email verification tokens (24hr expiry)
+- `dailyLoginRewards` - Daily login streaks and rewards
 - `discoveries` - Celestial object discoveries
 - `nfts` - Minted planet NFTs
 - `analyticsEvents` - Real-time player event tracking (device ID + wallet)
@@ -73,7 +118,9 @@ The backend utilizes an **Express.js server** with **Drizzle ORM** and **Postgre
 - Plus tables for passive income, burn history, referrals, set bonuses, refinements, and prestige system
 
 **API Routes**:
-- `/api/analytics/*` - Event tracking and user analytics (device ID based)
+- `/api/email/*` - Email verification (request-verification, verify, verify-status)
+- `/api/daily-login/*` - Daily login claims and status
+- `/api/analytics/*` - Event tracking, player stats, user analytics (device ID based)
 - `/api/player/*` - Player profiles, STAR balance, genesis claims
 - `/api/discovery/*` - Planet discovery and NFT minting
 - `/api/tonconnect-manifest.json` - Dynamic manifest for wallet integration
@@ -128,6 +175,10 @@ The backend utilizes an **Express.js server** with **Drizzle ORM** and **Postgre
 - ✅ Contract addresses configured in `client/src/lib/contracts.ts`
 - ✅ Frontend integration ready with deployed contract addresses
 - ✅ Deployment script: `npm run deploy:testnet` | `npm run deploy:mainnet`
+- ✅ Daily login rewards system (backend + frontend)
+- ✅ Educational planet cards (Mercury, Venus, Earth, Mars)
+- ✅ Player stats dashboard (real-time discovery/NFT/earnings)
+- ✅ Audio integration (space background music + controls)
 
 ### Deployed Contract Addresses (Testnet - Nov 23, 2025)
 - **STARToken**: `EQ33b0000000000000000000000000000000000000000000000000000000000000`
@@ -155,11 +206,12 @@ The backend utilizes an **Express.js server** with **Drizzle ORM** and **Postgre
 - Reward: 253 STAR total + 3.25 STAR/day passive
 
 ### 3D Representation Strategy
-- **Current**: Simple geometric shapes for fast iteration
-  - Planets/Dwarfs: Spheres with glowing halos
+- **Current**: Simple geometric shapes + new detailed .glb models
+  - Planets/Dwarfs: Spheres with glowing halos (can use .glb models)
   - Asteroids: Box geometry (irregular appearance)
   - All with proper colors, sizes, and orbital parameters
-- **Future**: Replace with detailed .glb models per object type
+  - New .glb models: Mercury, Venus, Earth (generated Nov 25, 2025)
+- **Future**: Replace remaining planets with detailed .glb models
 
 ## External Dependencies
 
@@ -197,8 +249,19 @@ The backend utilizes an **Express.js server** with **Drizzle ORM** and **Postgre
 ### Audio Management
 
 - **HTML5 Audio API**: Manages background music and sound effects with volume control and mute functionality.
+- **Sample Audio**: Background music (background.mp3), hit sound (hit.mp3), success sound (success.mp3)
 
 ### Development Tools
 
 - **Vite**: Build tool with React plugin, TypeScript, PostCSS, and esbuild.
 - `@replit/vite-plugin-runtime-error-modal`: For development error handling.
+
+## Next Steps for Further Enhancement
+
+### High-Impact Features to Consider
+1. **Mobile Responsiveness** - Optimize 3D canvas and UI for mobile devices
+2. **Phase II Burn Mechanics UI** - Implement cosmetics/NFT upgrades burning interface
+3. **Leaderboard Display** - Show top players by STAR earned and prestige tier
+4. **Referral UI Enhancements** - Show detailed referral tracking and rewards
+5. **More Planet Models** - Generate GLB models for Jupiter, Saturn, Uranus, Neptune
+6. **Achievement System** - Unlock badges for specific milestones

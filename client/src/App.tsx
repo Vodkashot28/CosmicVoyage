@@ -11,6 +11,9 @@ import { TokenTutorial } from "./components/TokenTutorial";
 import { GameOnboarding } from "./components/GameOnboarding";
 import { StarBalanceDisplay } from "./components/StarBalanceDisplay";
 import { ReferralInvite } from "./components/ReferralInvite";
+import { DailyLoginReward } from "./components/DailyLoginReward";
+import { AudioManager } from "./components/AudioManager";
+import { PlayerStatsPanel } from "./components/PlayerStatsPanel";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/ui/tabs";
 import { Toaster } from "./components/ui/sonner";
 
@@ -59,6 +62,7 @@ function App() {
             </Canvas>
 
             <StarBalanceDisplay />
+            <PlayerStatsPanel />
             <GameUI />
             <PlanetCard />
           </>
@@ -94,6 +98,8 @@ function App() {
         </div>
 
         <GameOnboarding />
+        <DailyLoginReward />
+        <AudioManager />
         <SoundManager />
         <TokenParticles />
         <TokenTutorial />

@@ -97,6 +97,23 @@ export const insertPassiveIncomeSchema = createInsertSchema(passiveIncomeRecords
 export type InsertPassiveIncomeRecord = z.infer<typeof insertPassiveIncomeSchema>;
 export type PassiveIncomeRecord = typeof passiveIncomeRecords.$inferSelect;
 
+// ============ DAILY LOGIN REWARDS TABLE ============
+// Track daily login streaks and rewards
+export const dailyLoginRewards = pgTable("daily_login_rewards", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  walletAddress: text("wallet_address").notNull(),
+  streak: integer("streak").default(1), // Current login streak
+  lastLoginDate: timestamp("last_login_date").defaultNow(),
+  totalLoginDays: integer("total_login_days").default(1),
+  totalRewardsClaimed: integer("total_rewards_claimed").default(0),
+  lastClaimedAt: timestamp("last_claimed_at").defaultNow(),
+});
+
+export const insertDailyLoginRewardSchema = createInsertSchema(dailyLoginRewards);
+export type InsertDailyLoginReward = z.infer<typeof insertDailyLoginRewardSchema>;
+export type DailyLoginReward = typeof dailyLoginRewards.$inferSelect;
+
 // ============ BURN HISTORY TABLE ============
 // Track STAR token burns for cosmic utilities
 export const burnHistory = pgTable("burn_history", {

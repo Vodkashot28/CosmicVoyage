@@ -6,10 +6,14 @@ import { users } from "@shared/schema";
 import { eq, and } from "drizzle-orm";
 import analyticsRouter from "./routes/analytics";
 import emailRouter from "./routes/email";
+import dailyLoginRouter from "./routes/dailyLogin";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // ============ EMAIL VERIFICATION ROUTES ============
   app.use("/api/email", emailRouter);
+
+  // ============ DAILY LOGIN ROUTES ============
+  app.use("/api/daily-login", dailyLoginRouter);
 
   // ============ ANALYTICS ROUTES ============
   app.use("/api/analytics", analyticsRouter);
