@@ -25,6 +25,10 @@ interface SolarSystemState {
   lastDailyLoginTime: number; // timestamp of last daily login claim
   dailyLoginStreak: number; // consecutive days logged in
   totalDailyLoginsEarned: number; // total STAR earned from daily logins
+  refinementLevels: Record<string, number>; // planet -> refinement level
+  immortalStatus: boolean; // achieved immortal collector status
+  immortalityScore: number; // cumulative burn score from ledger
+  totalStarBurned: number; // total STAR burned across all mechanics
   
   discoverPlanet: (planetName: string) => void;
   claimDiscoveryReward: (planetName: string) => boolean; // Award tokens after minting
@@ -48,6 +52,11 @@ interface SolarSystemState {
   validateAndFixState: () => void;
   claimDailyLogin: () => boolean; // returns true if claimed, false if already claimed today
   getStreakBonus: () => number; // returns bonus tokens based on current streak
+  refineNFT: (planetName: string, starCost: number) => boolean; // Burn STAR for refinement
+  getRefinementLevel: (planetName: string) => number;
+  getRefinementYieldMultiplier: (planetName: string) => number; // 1.0 + 0.02 per level
+  achieveImmortal: () => boolean; // Burn STAR + NFTs for prestige
+  addImmortalityScore: (amount: number, burnType: string) => void; // Record burn to ledger
 }
 
 function validateDiscoveries(discoveries: Discovery[]): Discovery[] {
@@ -110,6 +119,10 @@ export const useSolarSystem = create<SolarSystemState>()(
       lastDailyLoginTime: 0,
       dailyLoginStreak: 0,
       totalDailyLoginsEarned: 0,
+      refinementLevels: {},
+      immortalStatus: false,
+      immortalityScore: 0,
+      totalStarBurned: 0,
       
       discoverPlanet: (planetName: string) => {
         const state = get();
@@ -390,6 +403,63 @@ export const useSolarSystem = create<SolarSystemState>()(
             totalTokens: recalculatedTokens
           });
         }
+      },
+      
+      refineNFT: (planetName: string, starCost: number) => {
+        const state = get();
+        if (state.totalTokens < starCost) return false;
+        
+        const currentLevel = state.refinementLevels[planetName] || 0;
+        if (currentLevel >= 8) return false;
+        
+        set(s => ({
+          refinementLevels: { ...s.refinementLevels, [planetName]: currentLevel + 1 },
+          totalTokens: s.totalTokens - starCost,
+          totalStarBurned: s.totalStarBurned + starCost
+        }));
+        
+        console.log(`Refined ${planetName} to level ${currentLevel + 1}`);
+        return true;
+      },
+      
+      getRefinementLevel: (planetName: string) => {
+        return get().refinementLevels[planetName] || 0;
+      },
+      
+      getRefinementYieldMultiplier: (planetName: string) => {
+        const level = get().getRefinementLevel(planetName);
+        return 1 + (level * 0.02);
+      },
+      
+      achieveImmortal: () => {
+        const state = get();
+        if (state.immortalStatus || state.totalTokens < 2500) return false;
+        
+        set(s => ({
+          immortalStatus: true,
+          totalTokens: s.totalTokens - 2500,
+          totalStarBurned: s.totalStarBurned + 2500,
+          immortalityScore: s.immortalityScore + 7500
+        }));
+        
+        console.log("Achieved Immortal Collector status!");
+        return true;
+      },
+      
+      addImmortalityScore: (amount: number, burnType: string) => {
+        const multipliers: Record<string, number> = {
+          refinement: 1.0,
+          smb: 1.5,
+          repair: 1.2,
+          utility: 0.8,
+          unification: 3.0
+        };
+        
+        const multiplier = multipliers[burnType] || 1.0;
+        set(s => ({
+          immortalityScore: s.immortalityScore + Math.round(amount * multiplier * 100),
+          totalStarBurned: s.totalStarBurned + amount
+        }));
       }
     }),
     {

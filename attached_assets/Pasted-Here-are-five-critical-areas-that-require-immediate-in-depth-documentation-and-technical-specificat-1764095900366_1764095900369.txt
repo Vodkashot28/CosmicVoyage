@@ -1,0 +1,15 @@
+Here are five critical areas that require immediate, in-depth documentation and technical specification to move this redesign into the smart contract phase:
+​1. Dynamic Emission Control Mechanics
+​This is the most critical modification for addressing the Fixed Supply Inflexibility flaw. We need to define exactly how the system measures inflation and how the R_{\text{factor}} adjustment is calculated and applied.
+​Key Question: What are the specific threshold metrics (e.g., M_{\text{inflow}} / M_{\text{outflow}} > 1.2 for 3 months) that trigger a DAO vote to adjust the R_{\text{factor}}? How is the new, proposed R_{\text{factor}} determined?
+​2. Cosmic Refinement Logarithmic Cost Curve
+​The success of the Cosmic Refinement sink depends entirely on its cost curve. The burn must be steep enough to absorb emissions without being prohibitively expensive for most players.
+​Key Question: What is the precise mathematical formula for the logarithmic cost curve? For instance, C_{\text{level}} = C_0 \cdot \log(k \cdot \text{level} + 1), where C_0 is the base cost (50 STAR) and k is the scaling factor. This formula needs definition and testing.
+​3. Economic Balancing Treasury (EBT) Operations
+​The EBT is the new heart of the monetary policy. Its functions (buybacks, liquidity provision, dynamic emission funding) must be clearly segregated and governed.
+​Key Question: What are the specific smart contract rules for EBT funds deployment? For example, is there a maximum percentage of the EBT that can be used for liquidity provision in any given quarter?
+​4. NFT Degradation and Repair Costs
+​The NFT Lifecycle Contracts introduce a repeatable sink via repair/maintenance. The degradation rate and repair cost must be carefully calibrated to avoid punishing players while ensuring a constant burn.
+​Key Question: What is the average degradation period (e.g., 90 days)? How is the repair cost calculated (e.g., 20\% \cdot \text{original mint cost}), and what penalty does the NFT suffer if it is not repaired?
+​5. Immortality Ledger Data Structure
+​The Immortality Ledger is a social layer that turns economic activity into legacy. The underlying data structure on the blockchain needs to be efficient.
