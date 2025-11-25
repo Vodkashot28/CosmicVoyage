@@ -21,8 +21,12 @@ const manifestUrl =
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/ui/tabs";
 import { Toaster } from "./components/ui/sonner";
 
+<<<<<<< HEAD
 const manifestUrl = "https://ton-connect.github.io/demo-dapp-with-wallet/tonconnect-manifest.json";
 >>>>>>> c297bfc4245e6f3d5429419ed9a7c68f69074ccc
+=======
+const manifestUrl = "/tonconnect-manifest.json";
+>>>>>>> bb6550b21e48b8387c65c00f78083d6abe9b6a1a
 
 function App() {
   const [activeTab, setActiveTab] = useState("game");
