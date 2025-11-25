@@ -1,0 +1,14 @@
+{
+  "name": "ton-contracts",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "build": "blueprint build",
+    "deploy": "blueprint deploy",
+    "test": "blueprint test"
+  },
+  "devDependencies": {
+    "@ton/blueprint": "^0.15.0",
+    "@ton/ton": "^16.0.0"
+  }
+}
