@@ -1,18 +1,8 @@
 {
-  "url": "https://cosmic-voyage.replit.dev",
+  "url": "https://cosmicvoyage.replit.dev",
   "name": "Cosmic Voyage",
-  "description": "Explore planets and earn STAR tokens in the TON blockchain. Trade, mint NFTs, and build your cosmic empire.",
-  "specification": "https://github.com/ton-blockchain/ton-connect/blob/main/TonConnect-Specification.md",
-  "nativeDeepLink": "https://cosmic-voyage.replit.dev",
-  "platforms": [
-    "iphone",
-    "android",
-    "windows",
-    "macos",
-    "linux"
-  ],
-  "icons": [
-    "https://cosmic-voyage.replit.dev/icon-192.png",
-    "https://cosmic-voyage.replit.dev/icon-512.png"
-  ]
+  "iconUrl": "https://cosmicvoyage.replit.dev/icons/sun.png",
+  "termsOfUseUrl": "https://cosmicvoyage.replit.dev/terms.html",
+  "privacyPolicyUrl": "https://cosmicvoyage.replit.dev/privacy.html",
+  "manifestVersion": 2
 }
