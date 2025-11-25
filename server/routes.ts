@@ -21,27 +21,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // ============ GENESIS FAUCET ROUTES ============
 
   // Claim genesis bonus (10 STAR for new players)
-  // Requires email verification + wallet address for anti-sybil protection
+  // Wallet-based claim (one wallet per genesis bonus)
   app.post("/api/player/claim-genesis", async (req, res) => {
     try {
-      const { walletAddress, email } = req.body;
+      const { walletAddress } = req.body;
 
-      if (!walletAddress || !email) {
-        return res.status(400).json({ error: "Wallet address and verified email required" });
-      }
-
-      // Verify email is actually verified
-      const db = await getDb();
-      if (db) {
-        const verifiedEmail = await db
-          .select()
-          .from(users)
-          .where(and(eq(users.email, email), eq(users.emailVerified, true)))
-          .limit(1);
-
-        if (verifiedEmail.length === 0) {
-          return res.status(400).json({ error: "Email not verified" });
-        }
+      if (!walletAddress) {
+        return res.status(400).json({ error: "Wallet address required" });
       }
 
       const existingUser = await storage.getUserByWallet(walletAddress);

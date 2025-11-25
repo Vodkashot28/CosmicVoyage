@@ -4,14 +4,11 @@ import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { useGameBalance } from "@/lib/stores/useGameBalance";
 import { useTonConnectUI, useTonWallet } from "@tonconnect/ui-react";
-import { EmailVerification } from "./EmailVerification";
 
 export function GameOnboarding() {
   const wallet = useTonWallet();
   const { walletAddress, starBalance, genesisClaimedAt, setWalletAddress, setStarBalance, setGenesisClaimedAt } = useGameBalance();
   const [showOnboarding, setShowOnboarding] = useState(false);
-  const [showEmailVerification, setShowEmailVerification] = useState(false);
-  const [verifiedEmail, setVerifiedEmail] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -24,18 +21,11 @@ export function GameOnboarding() {
   }, [wallet?.account.address, walletAddress, setWalletAddress]);
 
   useEffect(() => {
-    // Show email verification if wallet connected but no email verified yet
-    if (walletAddress && !verifiedEmail && showEmailVerification === false) {
-      setShowEmailVerification(true);
-    }
-  }, [walletAddress, verifiedEmail]);
-
-  useEffect(() => {
-    // Show onboarding if email verified but no genesis bonus claimed
-    if (verifiedEmail && !genesisClaimedAt && showOnboarding === false) {
+    // Show onboarding if wallet connected but no genesis bonus claimed
+    if (walletAddress && !genesisClaimedAt && showOnboarding === false) {
       setShowOnboarding(true);
     }
-  }, [verifiedEmail, genesisClaimedAt]);
+  }, [walletAddress, genesisClaimedAt]);
 
   const checkGenesisStatus = async (address: string) => {
     try {
@@ -57,19 +47,12 @@ export function GameOnboarding() {
       return;
     }
 
-    if (!verifiedEmail) {
-      toast.error("Verify email first");
-      setShowOnboarding(false);
-      setShowEmailVerification(true);
-      return;
-    }
-
     setLoading(true);
     try {
       const response = await fetch("/api/player/claim-genesis", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ walletAddress, email: verifiedEmail }),
+        body: JSON.stringify({ walletAddress }),
       });
 
       const data = await response.json();
@@ -99,15 +82,7 @@ export function GameOnboarding() {
   };
 
   return (
-    <>
-      <EmailVerification
-        open={showEmailVerification}
-        onVerified={(email) => {
-          setVerifiedEmail(email);
-          setShowEmailVerification(false);
-        }}
-      />
-      <Dialog open={showOnboarding} onOpenChange={setShowOnboarding}>
+    <Dialog open={showOnboarding} onOpenChange={setShowOnboarding}>
       <DialogContent className="sm:max-w-md bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border border-cyan-500/30 shadow-2xl">
         <DialogHeader>
           <DialogTitle className="text-center text-2xl bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
@@ -173,6 +148,5 @@ export function GameOnboarding() {
         </div>
       </DialogContent>
     </Dialog>
-    </>
   );
 }
