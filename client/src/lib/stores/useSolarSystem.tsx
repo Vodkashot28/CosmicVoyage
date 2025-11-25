@@ -30,6 +30,7 @@ interface SolarSystemState {
   immortalStatus: boolean; // achieved immortal collector status
   immortalityScore: number; // cumulative burn score from ledger
   totalStarBurned: number; // total STAR burned across all mechanics
+  orbitalOffsets: Record<string, number>; // celestial object -> orbital angle (0-2π)
   
   discoverPlanet: (planetName: string) => void;
   claimDiscoveryReward: (planetName: string) => boolean; // Award tokens after minting
@@ -58,6 +59,9 @@ interface SolarSystemState {
   getRefinementYieldMultiplier: (planetName: string) => number; // 1.0 + 0.02 per level
   achieveImmortal: () => boolean; // Burn STAR + NFTs for prestige
   addImmortalityScore: (amount: number, burnType: string) => void; // Record burn to ledger
+  setOrbitalOffsets: (offsets: Record<string, number>) => void;
+  initializeOrbitalOffsets: () => void; // Randomize offsets if not set
+  getOrbitalOffset: (celestialObjectName: string) => number;
 }
 
 function validateDiscoveries(discoveries: Discovery[]): Discovery[] {
@@ -124,6 +128,7 @@ export const useSolarSystem = create<SolarSystemState>()(
       immortalStatus: false,
       immortalityScore: 0,
       totalStarBurned: 0,
+      orbitalOffsets: {},
       
       discoverPlanet: (planetName: string) => {
         const state = get();
@@ -461,6 +466,27 @@ export const useSolarSystem = create<SolarSystemState>()(
           immortalityScore: s.immortalityScore + Math.round(amount * multiplier * 100),
           totalStarBurned: s.totalStarBurned + amount
         }));
+      },
+
+      setOrbitalOffsets: (offsets: Record<string, number>) => {
+        set({ orbitalOffsets: offsets });
+      },
+
+      initializeOrbitalOffsets: () => {
+        const state = get();
+        if (Object.keys(state.orbitalOffsets).length === 0) {
+          // Generate random orbital offsets for all celestial objects
+          const newOffsets: Record<string, number> = {};
+          for (const planet of planetsData) {
+            newOffsets[planet.name] = Math.random() * Math.PI * 2;
+          }
+          set({ orbitalOffsets: newOffsets });
+        }
+      },
+
+      getOrbitalOffset: (celestialObjectName: string) => {
+        const state = get();
+        return state.orbitalOffsets[celestialObjectName] ?? 0;
       }
     }),
     {

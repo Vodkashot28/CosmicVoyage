@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Line, Text } from "@react-three/drei";
 import * as THREE from "three";
@@ -23,15 +23,23 @@ export function Planet({ data }: PlanetProps) {
     discoverPlanet, 
     isPlanetDiscovered, 
     canDiscoverPlanet,
-    setSelectedPlanet 
+    setSelectedPlanet,
+    getOrbitalOffset,
+    initializeOrbitalOffsets
   } = useSolarSystem();
   const { playSuccess, playHit } = useAudio();
   
   const discovered = isPlanetDiscovered(data.name);
   const canDiscover = canDiscoverPlanet(data.name);
   
+  // Initialize orbital offsets on first render
+  useMemo(() => {
+    initializeOrbitalOffsets();
+  }, [initializeOrbitalOffsets]);
+  
   // Use orbital inclination to create varied orbital planes
   const orbitalTilt = data.orbitalInclination || 0;
+  const orbitalOffset = getOrbitalOffset(data.name);
   
   useFrame((state) => {
     // Inclination group: tilts the entire orbital plane
@@ -39,9 +47,9 @@ export function Planet({ data }: PlanetProps) {
       inclinationGroupRef.current.rotation.x = orbitalTilt;
     }
     
-    // Orbit group: handles the orbital motion around the sun
+    // Orbit group: handles the orbital motion around the sun (with random starting offset)
     if (orbitGroupRef.current) {
-      orbitGroupRef.current.rotation.y += data.orbitSpeed * 0.001;
+      orbitGroupRef.current.rotation.y = orbitalOffset + data.orbitSpeed * 0.001 * state.clock.elapsedTime;
     }
     
     if (meshRef.current) {

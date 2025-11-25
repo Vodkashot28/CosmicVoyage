@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Line, Text } from "@react-three/drei";
 import * as THREE from "three";
@@ -25,22 +25,32 @@ export function CelestialObject({ data }: CelestialObjectProps) {
     discoverPlanet, 
     isPlanetDiscovered, 
     canDiscoverPlanet,
-    setSelectedPlanet 
+    setSelectedPlanet,
+    getOrbitalOffset,
+    initializeOrbitalOffsets
   } = useSolarSystem();
   const { playSuccess, playHit } = useAudio();
   
   const discovered = isPlanetDiscovered(data.name);
   const canDiscover = canDiscoverPlanet(data.name);
+  
+  // Initialize orbital offsets on first render
+  useMemo(() => {
+    initializeOrbitalOffsets();
+  }, [initializeOrbitalOffsets]);
+  
   const orbitalTilt = data.orbitalInclination || 0;
   const isAsteroid = data.type === "asteroid";
+  const orbitalOffset = getOrbitalOffset(data.name);
   
   useFrame((state) => {
     if (inclinationGroupRef.current) {
       inclinationGroupRef.current.rotation.x = orbitalTilt;
     }
     
+    // Orbit group: handles the orbital motion around the sun (with random starting offset)
     if (orbitGroupRef.current) {
-      orbitGroupRef.current.rotation.y += data.orbitSpeed * 0.001;
+      orbitGroupRef.current.rotation.y = orbitalOffset + data.orbitSpeed * 0.001 * state.clock.elapsedTime;
     }
     
     if (meshRef.current) {

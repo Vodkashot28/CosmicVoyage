@@ -7,6 +7,7 @@ import { eq, and } from "drizzle-orm";
 import analyticsRouter from "./routes/analytics";
 import emailRouter from "./routes/email";
 import dailyLoginRouter from "./routes/dailyLogin";
+import { orbitalRouter } from "./routes/orbital";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // ============ EMAIL VERIFICATION ROUTES ============
@@ -17,6 +18,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // ============ ANALYTICS ROUTES ============
   app.use("/api/analytics", analyticsRouter);
+
+  // ============ ORBITAL ROUTES ============
+  app.use("/api/orbital", orbitalRouter);
 
   // ============ GENESIS FAUCET ROUTES ============
 

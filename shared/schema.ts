@@ -17,6 +17,7 @@ export const users = pgTable("users", {
   lastReferralBonus: timestamp("last_referral_bonus"),
   totalPassiveIncomeClaimed: integer("total_passive_income_claimed").default(0),
   lastPassiveIncomeClaim: timestamp("last_passive_income_claim"),
+  orbitalOffsets: text("orbital_offsets"), // JSON: { "Mercury": 0.5, "Venus": 1.2, ... } - stored orbital angles
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
