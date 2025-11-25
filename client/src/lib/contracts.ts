@@ -2,22 +2,40 @@ import { Address } from "@ton/core";
 
 /**
  * Smart Contract Addresses for Solar System Explorer
- * Network: TON Testnet
- * Deployment Date: 2025-11-25
+ * 
+ * ⚠️  IMPORTANT: These Are MOCK ADDRESSES - Update After Deployment
+ * 
+ * CURRENT STATUS: 🔴 Mock Mode
+ * - Contracts NOT deployed to TON blockchain yet
+ * - Game uses mock token system only
+ * - Frontend shows real UI but backend is test data
+ * 
+ * TO DEPLOY CONTRACTS:
+ * 1. Read: BLOCKCHAIN_DEPLOYMENT_GUIDE.md (root directory)
+ * 2. Build: cd contracts-blueprint && npx blueprint build
+ * 3. Deploy: npx blueprint run deployAll
+ * 4. Copy addresses from deployments/testnet-deployment.json
+ * 5. Replace these addresses with REAL addresses
+ * 6. Rebuild app: npm run build
+ * 
+ * Network: TON Testnet (development), TON Mainnet (production)
  * Deployer: 0:fa146529b8e269ffcd7a5eacf9473b641e35389c302d7e8c3df56eb3de9c7f01
+ * Explorer: https://testnet.tonscan.org/address/[address]
+ * 
+ * After deployment, all these addresses will be REAL, not mock!
  */
 
 export const CONTRACT_ADDRESSES = {
-  // STAR Token - Main token contract for the game
+  // STAR Token - Main token contract (1B supply)
   STAR_TOKEN: "EQAlDehTswGQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAOip",
 
-  // STAR Token Wallet - User token wallets
+  // STAR Token Wallet - User token wallets  
   STAR_TOKEN_WALLET: "EQC7GGyx-8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAOYw",
 
-  // Planet NFT - NFT collection contract
+  // Planet NFT - NFT collection contract (SEQ Standard)
   PLANET_NFT: "EQAftBcDQ7mAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPWq",
 
-  // Planet NFT Item - Individual NFT contract
+  // Planet NFT Item - Individual NFT items
   PLANET_NFT_ITEM: "EQAtB-8TV43gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIot",
 
   // Referral Faucet - Referral reward system

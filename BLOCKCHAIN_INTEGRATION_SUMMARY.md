@@ -164,27 +164,44 @@ client/src/lib/ton/
 └── .env.local                         # Environment variables
 ```
 
-## Next Steps
+## Next Steps: Deploy Contracts to TON Testnet
 
-1. **Compile Contracts** (Blueprint)
+**📖 See [BLOCKCHAIN_DEPLOYMENT_GUIDE.md](./BLOCKCHAIN_DEPLOYMENT_GUIDE.md) for detailed instructions**
+
+### Quick Start
+```bash
+cd contracts-blueprint
+npx blueprint build          # Compile contracts
+npx blueprint run deployAll  # Deploy to testnet
+```
+
+### Full Process
+1. **Compile Contracts** 
    ```bash
+   cd contracts-blueprint
    npx blueprint build
    ```
+   ✓ Tact compiler validates all contracts
+   ✓ Generates bytecode cells
 
 2. **Deploy to Testnet**
    ```bash
-   npx blueprint deploy STARToken
-   npx blueprint deploy PlanetNFT
+   npx blueprint run deployAll
    ```
+   ✓ Uses TON_MNEMONIC from Replit Secrets
+   ✓ Deploys all 5 contracts sequentially
+   ✓ Saves real addresses to `deployments/testnet-deployment.json`
 
-3. **Update Environment Variables**
-   - Set contract addresses in `.env.local`
+3. **Update Client with Real Addresses**
+   - Copy addresses from `deployments/testnet-deployment.json`
+   - Update `client/src/lib/contracts.ts` with real addresses
+   - Rebuild and redeploy frontend
 
-4. **Test Integration**
-   - Mint first NFT
-   - Transfer tokens
-   - Claim passive income
-   - Burn for utilities
+4. **Test Full On-Chain Integration**
+   - Discover planets → NFTs created on-chain
+   - Collect tokens → STAR tokens received
+   - Burn utilities → Transactions visible on explorer
+   - Check https://testnet.tonscan.org/address/[contract-address]
 
 5. **Validate Metrics**
    - Check token balance tracking
