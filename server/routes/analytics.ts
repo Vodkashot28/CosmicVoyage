@@ -1,6 +1,7 @@
 import { Router } from "express";
 import type { Request, Response } from "express";
 import { getDb } from "../db";
+import { analyticsEvents } from "@shared/schema";
 
 const router = Router();
 
@@ -19,19 +20,23 @@ router.post("/events", async (req, res) => {
     if (db) {
       try {
         for (const event of events) {
-          await db.execute(`
-            INSERT INTO analytics_events (device_id, wallet_address, event_type, event_data)
-            VALUES ($1, $2, $3, $4)
-          `, [
-            event.deviceId,
-            event.walletAddress || null,
-            event.eventType,
-            JSON.stringify(event.data),
-          ]);
+          await db.insert(analyticsEvents).values({
+            deviceId: event.deviceId,
+            walletAddress: event.walletAddress || null,
+            eventType: event.eventType,
+            eventData: JSON.stringify(event.data),
+            createdAt: new Date(),
+          });
         }
-        console.log(`[DB] Stored ${events.length} analytics events`);
+        console.log(`✅ [DB] Stored ${events.length} analytics events`);
       } catch (dbError) {
-        console.error("Database storage error, falling back to memory:", dbError);
+        console.error("❌ Database storage error:", dbError);
+        // Fallback: log to console
+        events.forEach((event: any) => {
+          console.log(
+            `[ANALYTICS] ${event.eventType} - Device: ${event.deviceId} - Wallet: ${event.walletAddress || "N/A"}`
+          );
+        });
       }
     } else {
       // Fallback: log to console

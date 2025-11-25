@@ -171,7 +171,35 @@ export const dailyStats = pgTable("daily_stats", {
 export const insertDailyStatsSchema = createInsertSchema(dailyStats);
 export type InsertDailyStats = z.infer<typeof insertDailyStatsSchema>;
 export type DailyStats = typeof dailyStats.$inferSelect;
-<<<<<<< HEAD
 
-=======
->>>>>>> 307bd37 (Remove leftover code from a previous merge conflict)
+// ============ ANALYTICS EVENTS TABLE ============
+// Track all player actions for analytics (device ID + wallet support)
+export const analyticsEvents = pgTable("analytics_events", {
+  id: serial("id").primaryKey(),
+  deviceId: varchar("device_id", { length: 255 }),
+  walletAddress: varchar("wallet_address", { length: 255 }),
+  eventType: varchar("event_type", { length: 100 }).notNull(),
+  eventData: text("event_data"), // JSON stringified
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const insertAnalyticsEventSchema = createInsertSchema(analyticsEvents);
+export type InsertAnalyticsEvent = z.infer<typeof insertAnalyticsEventSchema>;
+export type AnalyticsEvent = typeof analyticsEvents.$inferSelect;
+
+// ============ DAILY ANALYTICS STATS TABLE ============
+// Aggregated daily statistics for performance
+export const dailyAnalyticsStats = pgTable("daily_analytics_stats", {
+  id: serial("id").primaryKey(),
+  date: varchar("date", { length: 10 }).unique(),
+  totalNewPlayers: integer("total_new_players").default(0),
+  totalDiscoveries: integer("total_discoveries").default(0),
+  totalNFTsMinted: integer("total_nfts_minted").default(0),
+  totalStarDistributed: integer("total_star_distributed").default(0),
+  totalStarBurned: integer("total_star_burned").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const insertDailyAnalyticsStatsSchema = createInsertSchema(dailyAnalyticsStats);
+export type InsertDailyAnalyticsStats = z.infer<typeof insertDailyAnalyticsStatsSchema>;
+export type DailyAnalyticsStats = typeof dailyAnalyticsStats.$inferSelect;
