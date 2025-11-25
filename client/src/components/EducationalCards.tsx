@@ -1,7 +1,8 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from "./ui/dialog";
 import { Button } from "./ui/button";
 import { useState } from "react";
 import { toast } from "sonner";
+import { X } from "lucide-react";
 
 interface PlanetInfo {
   name: string;
@@ -102,41 +103,46 @@ export function EducationalCard({ planet, onClose }: EducationalCardsProps) {
 
   return (
     <Dialog open={true} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border border-cyan-500/30">
-        <DialogHeader>
-          <DialogTitle className="text-center text-3xl">
-            <span className="text-5xl">{data.emoji}</span> {data.name}
+      <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border border-cyan-500/30">
+        <DialogHeader className="flex items-center justify-between pr-8">
+          <DialogTitle className="text-2xl">
+            <span className="text-4xl">{data.emoji}</span> {data.name}
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-6">
+        <DialogClose className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
+          <X className="h-5 w-5 text-cyan-400" />
+          <span className="sr-only">Close</span>
+        </DialogClose>
+
+        <div className="space-y-4">
           {!quizMode ? (
             <>
-              {/* Planet Info */}
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div className="bg-slate-700/50 rounded p-3">
-                  <div className="text-slate-400 text-xs">Distance from Sun</div>
+              {/* Planet Info - Compact */}
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                <div className="bg-slate-700/30 rounded p-2">
+                  <div className="text-slate-400">Distance</div>
                   <div className="text-cyan-300 font-bold">{data.distanceFromSun}</div>
                 </div>
-                <div className="bg-slate-700/50 rounded p-3">
-                  <div className="text-slate-400 text-xs">Diameter</div>
+                <div className="bg-slate-700/30 rounded p-2">
+                  <div className="text-slate-400">Diameter</div>
                   <div className="text-cyan-300 font-bold">{data.diameter}</div>
                 </div>
               </div>
 
               {/* Key Fact */}
-              <div className="bg-gradient-to-r from-blue-500/10 to-cyan-500/10 border border-cyan-400/30 rounded-lg p-4">
-                <div className="text-cyan-300 font-bold mb-2">🔭 Key Feature</div>
-                <div className="text-slate-300">{data.interesting}</div>
+              <div className="bg-gradient-to-r from-blue-500/10 to-cyan-500/10 border border-cyan-400/30 rounded-lg p-3">
+                <div className="text-cyan-300 font-bold text-sm mb-1">🔭 Key Feature</div>
+                <div className="text-slate-300 text-sm">{data.interesting}</div>
               </div>
 
-              {/* Facts List */}
+              {/* Facts List - Compact */}
               <div>
-                <div className="text-slate-400 text-sm mb-3">📚 Did You Know?</div>
-                <ul className="space-y-2">
+                <div className="text-slate-400 text-xs font-bold mb-2">📚 Did You Know?</div>
+                <ul className="space-y-1">
                   {data.facts.map((fact, i) => (
-                    <li key={i} className="flex gap-2 text-sm text-slate-300">
-                      <span className="text-cyan-400">•</span>
+                    <li key={i} className="flex gap-2 text-xs text-slate-300">
+                      <span className="text-cyan-400 flex-shrink-0">•</span>
                       <span>{fact}</span>
                     </li>
                   ))}
@@ -144,30 +150,27 @@ export function EducationalCard({ planet, onClose }: EducationalCardsProps) {
               </div>
 
               {/* Action Buttons */}
-              <div className="flex gap-2 pt-4">
+              <div className="flex gap-2 pt-3">
                 <Button
                   onClick={() => setQuizMode(true)}
-                  className="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+                  className="flex-1 text-sm bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
                 >
-                  🎯 Take Quiz (+2 STAR)
-                </Button>
-                <Button onClick={onClose} variant="outline" className="flex-1">
-                  Close
+                  🎯 Quiz (+2 STAR)
                 </Button>
               </div>
             </>
           ) : (
             <>
               {/* Quiz Mode */}
-              <div className="bg-purple-500/10 border border-purple-500/30 rounded-lg p-4">
-                <div className="text-purple-300 font-bold mb-3">Question: Which fact about {data.name} is true?</div>
+              <div className="bg-purple-500/10 border border-purple-500/30 rounded-lg p-3">
+                <div className="text-purple-300 font-bold text-sm mb-3">Which fact about {data.name} is true?</div>
                 <div className="space-y-2">
                   {quizOptions.map((option, i) => (
                     <button
                       key={i}
                       onClick={() => !answered && handleQuizAnswer(i)}
                       disabled={answered}
-                      className={`w-full p-3 rounded text-left text-sm transition ${
+                      className={`w-full p-2 rounded text-left text-xs transition ${
                         answered
                           ? i === quizOptions.indexOf(data.facts[correctFactIndex])
                             ? "bg-green-500/30 border border-green-500/50"
@@ -183,7 +186,7 @@ export function EducationalCard({ planet, onClose }: EducationalCardsProps) {
                 </div>
               </div>
 
-              <div className="flex gap-2">
+              <div className="flex gap-2 pt-3">
                 <Button
                   onClick={() => {
                     setQuizMode(false);
@@ -191,11 +194,11 @@ export function EducationalCard({ planet, onClose }: EducationalCardsProps) {
                     setSelectedAnswer(null);
                   }}
                   variant="outline"
-                  className="flex-1"
+                  className="flex-1 text-sm"
                 >
                   Back
                 </Button>
-                <Button onClick={onClose} className="flex-1 bg-gradient-to-r from-green-500 to-emerald-500">
+                <Button onClick={onClose} className="flex-1 text-sm bg-gradient-to-r from-green-500 to-emerald-500">
                   Done
                 </Button>
               </div>
