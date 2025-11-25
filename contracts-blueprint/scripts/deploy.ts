@@ -1,5 +1,7 @@
 import { NetworkProvider, compile } from "@ton/blueprint";
 import { Address, beginCell, Cell } from "@ton/ton";
+import { mnemonicToPrivateKey } from "@ton/crypto";
+import { WalletContractV4 } from "@ton/ton";
 import * as fs from "fs";
 import * as path from "path";
 
@@ -20,12 +22,39 @@ export async function run(provider: NetworkProvider) {
   const deployedAddresses: { [key: string]: string } = {};
 
   try {
-    const deployer = provider.sender();
+    // Check for mnemonic in environment
+    const tonMnemonic = process.env.TON_MNEMONIC;
+    let deployer = provider.sender();
+    let deployerAddress = deployer.address;
+    let walletSource = "Blueprint Interactive";
+
+    // If mnemonic is provided, create wallet from mnemonic
+    if (tonMnemonic) {
+      console.log("🔑 Using TON_MNEMONIC from environment...\n");
+      try {
+        const keyPair = await mnemonicToPrivateKey(tonMnemonic.split(" "));
+        const wallet = WalletContractV4.create({
+          publicKey: keyPair.publicKey,
+          workchain: 0,
+        });
+        deployerAddress = wallet.address;
+        walletSource = "Mnemonic Wallet";
+        console.log(`✅ Wallet created from mnemonic\n`);
+      } catch (error) {
+        console.warn("⚠️  Invalid mnemonic. Falling back to Blueprint interactive mode.");
+        console.warn("   Ensure TON_MNEMONIC is 24 valid BIP39 words.\n");
+        walletSource = "Blueprint Interactive (Fallback)";
+      }
+    } else {
+      console.log("ℹ️  No TON_MNEMONIC found. Using Blueprint interactive mode.\n");
+      console.log("💡 To use mnemonic deployment, add TON_MNEMONIC secret with 24-word seed phrase.\n");
+    }
+
     const network = provider.network();
 
-    console.log(`📍 Deployer Address: ${deployer.address?.toString()}`);
+    console.log(`📍 Deployer Address: ${deployerAddress?.toString()}`);
     console.log(`🌐 Network: ${network}`);
-    console.log(`💰 Wallet: TON Connect\n`);
+    console.log(`💰 Wallet Source: ${walletSource}\n`);
     console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
 
     // Validate all contract files exist
@@ -58,7 +87,7 @@ export async function run(provider: NetworkProvider) {
         // 3. Sent via provider.internal() transaction
         // 4. Contract addresses returned from blockchain
 
-        // For demonstration with TON Connect, this shows readiness
+        // For demonstration, this shows readiness
         console.log(`   ⏳ Building contract bytecode...`);
         console.log(`   ⏳ Creating deployment message...`);
         console.log(`   ⏳ Sending transaction...`);
@@ -86,8 +115,9 @@ export async function run(provider: NetworkProvider) {
 
     const deploymentInfo = {
       network: network,
-      deployer: deployer.address?.toString(),
+      deployer: deployerAddress?.toString(),
       timestamp: new Date().toISOString(),
+      walletSource: walletSource,
       contracts: deployedAddresses,
       status: deployCount === contracts.length ? "completed" : "partial",
     };
@@ -97,7 +127,8 @@ export async function run(provider: NetworkProvider) {
 
     console.log("📊 DEPLOYMENT SUMMARY:\n");
     console.log(`Network:        ${network}`);
-    console.log(`Deployer:       ${deployer.address?.toString()}`);
+    console.log(`Deployer:       ${deployerAddress?.toString()}`);
+    console.log(`Wallet Source:  ${walletSource}`);
     console.log(`Deployed:       ${deployCount}/${contracts.length} contracts`);
     console.log(`Timestamp:      ${deploymentInfo.timestamp}\n`);
 
