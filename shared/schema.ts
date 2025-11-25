@@ -171,5 +171,4 @@ export const dailyStats = pgTable("daily_stats", {
 export const insertDailyStatsSchema = createInsertSchema(dailyStats);
 export type InsertDailyStats = z.infer<typeof insertDailyStatsSchema>;
 export type DailyStats = typeof dailyStats.$inferSelect;
-=======
->>>>>>> c297bfc4245e6f3d5429419ed9a7c68f69074ccc
+
