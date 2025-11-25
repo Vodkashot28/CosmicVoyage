@@ -1,5 +1,5 @@
 import { Canvas } from "@react-three/fiber";
-import { Suspense, useState } from "react";
+import { Suspense, useState, useMemo } from "react";
 import { TonConnectUIProvider } from "@tonconnect/ui-react";
 import "@fontsource/inter";
 import { SolarSystem } from "./components/SolarSystem";
@@ -14,10 +14,20 @@ import { ReferralInvite } from "./components/ReferralInvite";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/ui/tabs";
 import { Toaster } from "./components/ui/sonner";
 
-const manifestUrl = "/tonconnect-manifest.json";
-
 function App() {
   const [activeTab, setActiveTab] = useState("game");
+  
+  // Dynamically construct manifest URL based on environment
+  const manifestUrl = useMemo(() => {
+    // Use current origin for development, production domain in production
+    if (typeof window !== 'undefined') {
+      const isDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+      return isDev 
+        ? `${window.location.origin}/tonconnect-manifest.json`
+        : "https://solar-system.xyz/tonconnect-manifest.json";
+    }
+    return "/tonconnect-manifest.json";
+  }, []);
 
   return (
     <TonConnectUIProvider manifestUrl={manifestUrl}>
