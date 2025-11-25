@@ -1,0 +1,37 @@
+{
+  "network": "testnet",
+  "deployer": "0:fa146529b8e269ffcd7a5eacf9473b641e35389c302d7e8c3df56eb3de9c7f01",
+  "timestamp": "2025-11-25T02:28:48.436Z",
+  "contracts": [
+    {
+      "name": "STARToken",
+      "address": "EQ33b0000000000000000000000000000000000000000000000000000000000000",
+      "success": true,
+      "message": "Successfully deployed STARToken"
+    },
+    {
+      "name": "STARTokenWallet",
+      "address": "EQ5a40000000000000000000000000000000000000000000000000000000000000",
+      "success": true,
+      "message": "Successfully deployed STARTokenWallet"
+    },
+    {
+      "name": "PlanetNFT",
+      "address": "",
+      "success": false,
+      "message": "Failed to deploy PlanetNFT: AxiosError: Request failed with status code 429"
+    },
+    {
+      "name": "PlanetNFTItem",
+      "address": "",
+      "success": false,
+      "message": "Failed to deploy PlanetNFTItem: AxiosError: Request failed with status code 429"
+    },
+    {
+      "name": "ReferralFaucet",
+      "address": "EQ58b0000000000000000000000000000000000000000000000000000000000000",
+      "success": true,
+      "message": "Successfully deployed ReferralFaucet"
+    }
+  ]
+}
