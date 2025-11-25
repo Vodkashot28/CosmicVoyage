@@ -1,77 +1,71 @@
-import { NetworkProvider } from "@ton/blueprint";
-import { Address } from "@ton/ton";
+import { TonClient, WalletContractV4 } from "@ton/ton";
+import { mnemonicToPrivateKey } from "@ton/crypto";
 import fs from "fs";
 import path from "path";
 
-export async function run(provider: NetworkProvider) {
+async function deployAll() {
   console.log("🚀 Deploying Cosmic Voyage Contracts to TON Testnet\n");
-  console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
 
   const contracts = [
-    { name: "STARToken", file: "STARToken.tact" },
-    { name: "STARTokenWallet", file: "STARTokenWallet.tact" },
-    { name: "PlanetNFT", file: "PlanetNFT.tact" },
-    { name: "PlanetNFTItem", file: "PlanetNFTItem.tact" },
-    { name: "ReferralFaucet", file: "ReferralFaucet.tact" },
+    "STARToken",
+    "STARTokenWallet",
+    "PlanetNFT",
+    "PlanetNFTItem",
+    "ReferralFaucet",
   ];
 
-  const deployedAddresses: { [key: string]: string } = {};
+  const network = process.env.NETWORK || "testnet";
+  const mnemonic = process.env.WALLET_MNEMONIC;
+  const walletVersion = process.env.WALLET_VERSION || "v4R2";
+
+  let walletAddress: string | undefined;
 
   try {
-    const deployer = provider.sender();
-    const network = provider.network();
+    const client = new TonClient({
+      endpoint: "https://testnet.toncenter.com/api/v2/jsonRPC",
+    });
 
-    console.log(`📍 Deployer Address: ${deployer.address}`);
-    console.log(`🌐 Network: ${network}`);
-    console.log(`💰 Checking balance...\n`);
+    if (mnemonic) {
+      console.log("🔑 Using mnemonic deployer...\n");
+      const keyPair = await mnemonicToPrivateKey(mnemonic.split(" "));
+      const wallet = WalletContractV4.create({
+        publicKey: keyPair.publicKey,
+        workchain: 0,
+      });
+      walletAddress = wallet.address.toString();
+      console.log(`📍 Wallet (mnemonic): ${walletAddress}`);
+    } else {
+      console.log("🔗 Falling back to TonConnect mode...\n");
+      console.log("👉 Please connect via Tonkeeper when prompted.");
+    }
 
-    // Deploy each contract
-    for (const contract of contracts) {
-      console.log(`📦 Processing ${contract.name}...`);
+    console.log(`🌐 Network: ${network}\n`);
 
-      try {
-        const contractPath = path.join("contracts", contract.file);
-        if (!fs.existsSync(contractPath)) {
-          console.log(`   ❌ File not found: ${contractPath}`);
-          continue;
-        }
-
-        const fileSize = fs.statSync(contractPath).size;
-        console.log(`   ✓ Contract file: ${contract.file} (${fileSize} bytes)`);
-        console.log(`   ✓ Ready for deployment on ${network}\n`);
-
-        // Generate example address format
-        const mockAddress = Address.parseRaw(
-          `0:${Math.random().toString(16).substring(2).padEnd(64, "0")}`
-        );
-        deployedAddresses[contract.name] = mockAddress.toString();
-      } catch (error) {
-        console.error(`   ❌ Error: ${error}`);
+    for (const name of contracts) {
+      const contractPath = path.join("./contracts", `${name}.tact`);
+      if (fs.existsSync(contractPath)) {
+        const size = fs.statSync(contractPath).size;
+        console.log(`📦 ${name} - Ready for deployment (${size} bytes)`);
+      } else {
+        console.log(`❌ ${name} - Contract file not found`);
       }
     }
 
-    // Save deployment info
-    const deploymentInfo = {
-      timestamp: new Date().toISOString(),
-      network: network,
-      deployer: deployer.address?.toString(),
-      contracts: deployedAddresses,
-    };
-
-    fs.mkdirSync("deployments", { recursive: true });
-    const deploymentPath = path.join("deployments", `${network}.json`);
-    fs.writeFileSync(deploymentPath, JSON.stringify(deploymentInfo, null, 2));
-
-    console.log("\n✅ Deployment Summary:");
+    console.log("\n✅ Deployment preparation complete!");
     console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-    Object.entries(deployedAddresses).forEach(([name, address]) => {
-      console.log(`${name.padEnd(20)}: ${address}`);
-    });
-    console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-    console.log(`\n📄 Deployment info saved to: ${deploymentPath}`);
-    console.log("\n🎉 All contracts ready for testnet deployment!");
+    console.log("Next steps:");
+    console.log("1. Ensure your wallet has testnet TON.");
+    if (mnemonic) {
+      console.log("2. Run: npx ts-node scripts/deployAll.ts");
+    } else {
+      console.log("2. Run: npx blueprint run deployAll");
+      console.log("   → Select TonConnect wallet and approve transactions.");
+    }
+    console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
   } catch (error) {
-    console.error("\n❌ Deployment error:", error);
-    throw error;
+    console.error("❌ Deployment error:", error);
+    process.exit(1);
   }
 }
+
+deployAll();

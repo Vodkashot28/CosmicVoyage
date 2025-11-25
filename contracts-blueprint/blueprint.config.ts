@@ -1,4 +1,6 @@
-export const config = {
+import { BlueprintConfig } from "@ton/blueprint";
+
+const config: BlueprintConfig = {
   contracts: [
     {
       name: "STARToken",
@@ -21,4 +23,7 @@ export const config = {
       path: "./contracts/ReferralFaucet.tact",
     },
   ],
+  plugins: [], // ✅ must be an array, even if empty
 };
+
+export default config; // ✅ default export required
