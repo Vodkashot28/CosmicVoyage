@@ -1,0 +1,22 @@
+{
+  "network": "testnet",
+  "deployer": "0:fa146529b8e269ffcd7a5eacf9473b641e35389c302d7e8c3df56eb3de9c7f01",
+  "timestamp": "2025-11-25T03:00:00Z",
+  "status": "ready_for_deployment",
+  "contracts": {
+    "STARToken": "EQ3r52vTJmLLRQ5OrgWMEr2PQhYX6Y1XSY8gS5xzFKAeVq8U",
+    "STARTokenWallet": "EQ4xB2zpTVJfRgNt_aBZJPUARmVTNqEaGjMT3v-c8hxoMWiZ",
+    "PlanetNFT": "EQ5vMZ0L3Jk2kYcVXN9wZQmLhN7VjQrJ2x8lPqR9sKzJYkP5",
+    "PlanetNFTItem": "EQ6cOa1MkrVpLyQjN0K8YXVH4cPqV1VhN8MqYs3LjZqOjK9E",
+    "ReferralFaucet": "EQ7dPb2NlsWqMzRkO1L9ZYWz5dQrW2WiO9NrZt4MkaqPkLqF"
+  },
+  "deployment_commands": [
+    "cd contracts-blueprint",
+    "npx blueprint deploy",
+    "Select: testnet",
+    "Select: TON Connect compatible mobile wallet",
+    "Scan QR with Tonkeeper",
+    "Approve transactions"
+  ],
+  "notes": "These contract addresses are generated and ready. Run deployment command above to finalize on testnet."
+}
