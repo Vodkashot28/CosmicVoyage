@@ -1,22 +1,43 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import { getDb } from "./db";
+import { users } from "@shared/schema";
+import { eq, and } from "drizzle-orm";
 import analyticsRouter from "./routes/analytics";
+import emailRouter from "./routes/email";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // ============ EMAIL VERIFICATION ROUTES ============
+  app.use("/api/email", emailRouter);
+
   // ============ ANALYTICS ROUTES ============
   app.use("/api/analytics", analyticsRouter);
 
   // ============ GENESIS FAUCET ROUTES ============
 
   // Claim genesis bonus (10 STAR for new players)
-  // Can be claimed by authenticated user OR wallet owner
+  // Requires email verification + wallet address for anti-sybil protection
   app.post("/api/player/claim-genesis", async (req, res) => {
     try {
-      const { walletAddress } = req.body;
+      const { walletAddress, email } = req.body;
 
-      if (!walletAddress) {
-        return res.status(400).json({ error: "Wallet address required" });
+      if (!walletAddress || !email) {
+        return res.status(400).json({ error: "Wallet address and verified email required" });
+      }
+
+      // Verify email is actually verified
+      const db = await getDb();
+      if (db) {
+        const verifiedEmail = await db
+          .select()
+          .from(users)
+          .where(and(eq(users.email, email), eq(users.emailVerified, true)))
+          .limit(1);
+
+        if (verifiedEmail.length === 0) {
+          return res.status(400).json({ error: "Email not verified" });
+        }
       }
 
       const existingUser = await storage.getUserByWallet(walletAddress);

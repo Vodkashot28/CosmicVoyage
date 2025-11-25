@@ -5,8 +5,8 @@ import { z } from "zod";
 
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
-  username: text("username").notNull().unique(),
-  password: text("password").notNull(),
+  email: text("email").notNull().unique(),
+  emailVerified: boolean("email_verified").default(false),
   walletAddress: text("wallet_address").unique(),
   starBalance: integer("star_balance").default(0),
   genesisClaimedAt: timestamp("genesis_claimed_at"),
@@ -22,12 +22,26 @@ export const users = pgTable("users", {
 });
 
 export const insertUserSchema = createInsertSchema(users).pick({
-  username: true,
-  password: true,
+  email: true,
 });
 
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
+
+// ============ EMAIL VERIFICATION TABLE ============
+// Track email verification tokens
+export const emailVerifications = pgTable("email_verifications", {
+  id: serial("id").primaryKey(),
+  email: text("email").notNull().unique(),
+  token: text("token").notNull().unique(),
+  expiresAt: timestamp("expires_at").notNull(),
+  verifiedAt: timestamp("verified_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const insertEmailVerificationSchema = createInsertSchema(emailVerifications);
+export type InsertEmailVerification = z.infer<typeof insertEmailVerificationSchema>;
+export type EmailVerification = typeof emailVerifications.$inferSelect;
 
 // ============ DISCOVERIES TABLE ============
 // Track which celestial objects each player has discovered
