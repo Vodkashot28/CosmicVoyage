@@ -171,6 +171,7 @@ export const dailyStats = pgTable("daily_stats", {
 export const insertDailyStatsSchema = createInsertSchema(dailyStats);
 export type InsertDailyStats = z.infer<typeof insertDailyStatsSchema>;
 export type DailyStats = typeof dailyStats.$inferSelect;
+<<<<<<< HEAD
 
 // ============ ANALYTICS EVENTS TABLE ============
 // Track all player actions for analytics (device ID + wallet support)
@@ -203,3 +204,5 @@ export const dailyAnalyticsStats = pgTable("daily_analytics_stats", {
 export const insertDailyAnalyticsStatsSchema = createInsertSchema(dailyAnalyticsStats);
 export type InsertDailyAnalyticsStats = z.infer<typeof insertDailyAnalyticsStatsSchema>;
 export type DailyAnalyticsStats = typeof dailyAnalyticsStats.$inferSelect;
+=======
+>>>>>>> 4b35f7465bf281cba59decdb1a37d4f322f4565a
