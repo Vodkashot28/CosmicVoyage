@@ -38,6 +38,11 @@ export function GameUI() {
   useEffect(() => {
     setWalletAddress(walletAddress || null);
   }, [walletAddress, setWalletAddress]);
+
+  // Close menu when clicking outside on mobile
+  const handleMenuBackdropClick = () => {
+    setShowMenu(false);
+  };
   
   const nextPlanet = getNextPlanetToDiscover();
   const allDiscovered = discoveredPlanets.length === planetsData.length;
@@ -241,16 +246,35 @@ export function GameUI() {
           </div>
         </div>
 
+        {/* Mobile Menu Backdrop */}
+        {showMenu && (
+          <div 
+            className="fixed inset-0 bg-black/30 md:hidden pointer-events-auto z-30"
+            onClick={handleMenuBackdropClick}
+            style={{ top: 0, left: 0, right: 0, bottom: 0 }}
+          />
+        )}
+
         {/* Mobile Bottom Panels */}
         {showMenu && (
-          <div className="absolute top-32 left-4 right-4 bottom-4 md:hidden overflow-y-auto pointer-events-auto">
+          <div className="fixed top-16 left-4 right-4 bottom-4 md:hidden overflow-y-auto pointer-events-auto z-40">
             {/* Game Status Panel */}
             {activeTab === "game" && (
               <Card className="bg-gradient-to-br from-slate-900/95 to-slate-900/80 backdrop-blur-md border-purple-500/40 p-4 space-y-3">
-                <h2 className="text-white font-bold text-lg flex items-center gap-2">
-                  <Sparkles className="w-5 h-5 text-yellow-400" />
-                  Game Status
-                </h2>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-white font-bold text-lg flex items-center gap-2">
+                    <Sparkles className="w-5 h-5 text-yellow-400" />
+                    Game Status
+                  </h2>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setShowMenu(false)}
+                    className="text-white hover:bg-white/10"
+                  >
+                    <X className="w-5 h-5" />
+                  </Button>
+                </div>
                 
                 <div className="space-y-2">
                   <div className="bg-white/5 rounded-lg p-3">
@@ -299,10 +323,20 @@ export function GameUI() {
             {/* Collection Panel */}
             {activeTab === "collection" && ownedNFTs.length > 0 && (
               <Card className="bg-gradient-to-br from-slate-900/95 to-slate-900/80 backdrop-blur-md border-purple-500/40 p-4">
-                <h2 className="text-white font-bold text-lg flex items-center gap-2 mb-4">
-                  <Gem className="w-5 h-5 text-purple-400" />
-                  Your Collection
-                </h2>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-white font-bold text-lg flex items-center gap-2">
+                    <Gem className="w-5 h-5 text-purple-400" />
+                    Your Collection
+                  </h2>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setShowMenu(false)}
+                    className="text-white hover:bg-white/10"
+                  >
+                    <X className="w-5 h-5" />
+                  </Button>
+                </div>
                 
                 <Button
                   onClick={() => { setShowNFTCollection(true); setShowMenu(false); }}
@@ -329,10 +363,20 @@ export function GameUI() {
             {/* Challenges Panel */}
             {activeTab === "challenges" && (
               <Card className="bg-gradient-to-br from-slate-900/95 to-slate-900/80 backdrop-blur-md border-purple-500/40 p-4">
-                <h2 className="text-white font-bold text-lg flex items-center gap-2 mb-4">
-                  <Zap className="w-5 h-5 text-orange-400" />
-                  Challenges
-                </h2>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-white font-bold text-lg flex items-center gap-2">
+                    <Zap className="w-5 h-5 text-orange-400" />
+                    Challenges
+                  </h2>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setShowMenu(false)}
+                    className="text-white hover:bg-white/10"
+                  >
+                    <X className="w-5 h-5" />
+                  </Button>
+                </div>
                 <Challenges />
               </Card>
             )}
@@ -340,10 +384,20 @@ export function GameUI() {
             {/* Economy Panel */}
             {activeTab === "economy" && (
               <Card className="bg-gradient-to-br from-slate-900/95 to-slate-900/80 backdrop-blur-md border-purple-500/40 p-4">
-                <h2 className="text-white font-bold text-lg flex items-center gap-2 mb-4">
-                  <Flame className="w-5 h-5 text-yellow-400" />
-                  Token Economy
-                </h2>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-white font-bold text-lg flex items-center gap-2">
+                    <Flame className="w-5 h-5 text-yellow-400" />
+                    Token Economy
+                  </h2>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setShowMenu(false)}
+                    className="text-white hover:bg-white/10"
+                  >
+                    <X className="w-5 h-5" />
+                  </Button>
+                </div>
                 <TokenEconomyInfo />
               </Card>
             )}
@@ -351,10 +405,20 @@ export function GameUI() {
             {/* Earning Guide Panel */}
             {activeTab === "earn" && (
               <Card className="bg-gradient-to-br from-slate-900/95 to-slate-900/80 backdrop-blur-md border-purple-500/40 p-4 max-h-96 overflow-y-auto">
-                <h2 className="text-white font-bold text-lg flex items-center gap-2 mb-4">
-                  <Sparkles className="w-5 h-5 text-green-400" />
-                  Earn Guide
-                </h2>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-white font-bold text-lg flex items-center gap-2">
+                    <Sparkles className="w-5 h-5 text-green-400" />
+                    Earn Guide
+                  </h2>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setShowMenu(false)}
+                    className="text-white hover:bg-white/10"
+                  >
+                    <X className="w-5 h-5" />
+                  </Button>
+                </div>
                 <EarningGuide />
               </Card>
             )}
@@ -362,10 +426,20 @@ export function GameUI() {
             {/* Burn Dashboard Panel */}
             {activeTab === "burn" && (
               <Card className="bg-gradient-to-br from-slate-900/95 to-slate-900/80 backdrop-blur-md border-purple-500/40 p-4 max-h-96 overflow-y-auto">
-                <h2 className="text-white font-bold text-lg flex items-center gap-2 mb-4">
-                  <Flame className="w-5 h-5 text-red-400" />
-                  Cosmic Utilities
-                </h2>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-white font-bold text-lg flex items-center gap-2">
+                    <Flame className="w-5 h-5 text-red-400" />
+                    Cosmic Utilities
+                  </h2>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setShowMenu(false)}
+                    className="text-white hover:bg-white/10"
+                  >
+                    <X className="w-5 h-5" />
+                  </Button>
+                </div>
                 <CosmicBurnDashboard />
               </Card>
             )}
@@ -373,10 +447,20 @@ export function GameUI() {
             {/* Token Transfer Panel */}
             {activeTab === "transfer" && (
               <Card className="bg-gradient-to-br from-slate-900/95 to-slate-900/80 backdrop-blur-md border-purple-500/40 p-4 max-h-96 overflow-y-auto">
-                <h2 className="text-white font-bold text-lg flex items-center gap-2 mb-4">
-                  <Send className="w-5 h-5 text-emerald-400" />
-                  Transfer STAR Tokens
-                </h2>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-white font-bold text-lg flex items-center gap-2">
+                    <Send className="w-5 h-5 text-emerald-400" />
+                    Transfer STAR Tokens
+                  </h2>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setShowMenu(false)}
+                    className="text-white hover:bg-white/10"
+                  >
+                    <X className="w-5 h-5" />
+                  </Button>
+                </div>
                 <TokenTransfer />
               </Card>
             )}
