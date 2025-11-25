@@ -171,7 +171,3 @@ export const dailyStats = pgTable("daily_stats", {
 export const insertDailyStatsSchema = createInsertSchema(dailyStats);
 export type InsertDailyStats = z.infer<typeof insertDailyStatsSchema>;
 export type DailyStats = typeof dailyStats.$inferSelect;
-<<<<<<< HEAD
-
-=======
->>>>>>> 307bd37 (Remove leftover code from a previous merge conflict)
