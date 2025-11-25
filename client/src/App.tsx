@@ -11,17 +11,25 @@ import { TokenTutorial } from "./components/TokenTutorial";
 import { GameOnboarding } from "./components/GameOnboarding";
 import { StarBalanceDisplay } from "./components/StarBalanceDisplay";
 import { ReferralInvite } from "./components/ReferralInvite";
+<<<<<<< HEAD
 import { Tabs, TabsList, TabsTrigger } from "./components/ui/tabs";
 import { Toaster } from "./components/ui/sonner";
 
 const manifestUrl =
   "https://ton-connect.github.io/demo-dapp-with-wallet/tonconnect-manifest.json";
+=======
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/ui/tabs";
+import { Toaster } from "./components/ui/sonner";
+
+const manifestUrl = "https://ton-connect.github.io/demo-dapp-with-wallet/tonconnect-manifest.json";
+>>>>>>> c297bfc4245e6f3d5429419ed9a7c68f69074ccc
 
 function App() {
   const [activeTab, setActiveTab] = useState("game");
 
   return (
     <TonConnectUIProvider manifestUrl={manifestUrl}>
+<<<<<<< HEAD
       <div
         style={{
           width: "100vw",
@@ -30,6 +38,9 @@ function App() {
           overflow: "hidden",
         }}
       >
+=======
+      <div style={{ width: '100vw', height: '100vh', position: 'relative', overflow: 'hidden' }}>
+>>>>>>> c297bfc4245e6f3d5429419ed9a7c68f69074ccc
         {activeTab === "game" ? (
           <>
             <Canvas
@@ -37,18 +48,30 @@ function App() {
                 position: [0, 30, 60],
                 fov: 60,
                 near: 0.1,
+<<<<<<< HEAD
                 far: 1000,
               }}
               gl={{
                 antialias: true,
                 powerPreference: "high-performance",
+=======
+                far: 1000
+              }}
+              gl={{
+                antialias: true,
+                powerPreference: "high-performance"
+>>>>>>> c297bfc4245e6f3d5429419ed9a7c68f69074ccc
               }}
             >
               <Suspense fallback={null}>
                 <SolarSystem />
               </Suspense>
             </Canvas>
+<<<<<<< HEAD
 
+=======
+            
+>>>>>>> c297bfc4245e6f3d5429419ed9a7c68f69074ccc
             <StarBalanceDisplay />
             <GameUI />
             <PlanetCard />
@@ -62,6 +85,7 @@ function App() {
         )}
 
         <div className="fixed bottom-4 left-4 z-50">
+<<<<<<< HEAD
           <Tabs
             value={activeTab}
             onValueChange={setActiveTab}
@@ -80,6 +104,12 @@ function App() {
               >
                 🎯 Referral
               </TabsTrigger>
+=======
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="bg-slate-900/80 border border-cyan-500/30 rounded-lg">
+            <TabsList className="bg-slate-800 p-1">
+              <TabsTrigger value="game" className="data-[state=active]:bg-cyan-600">🎮 Game</TabsTrigger>
+              <TabsTrigger value="referral" className="data-[state=active]:bg-purple-600">🎯 Referral</TabsTrigger>
+>>>>>>> c297bfc4245e6f3d5429419ed9a7c68f69074ccc
             </TabsList>
           </Tabs>
         </div>

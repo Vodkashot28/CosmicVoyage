@@ -25,7 +25,11 @@ async function compileContract(
 
   try {
     const contractCode = fs.readFileSync(contractPath, "utf-8");
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> c297bfc4245e6f3d5429419ed9a7c68f69074ccc
     // For development/testing - in production use actual Blueprint compiler
     console.log(`✅ ${contractName} compiled successfully`);
     return `compiled_${contractName}_${Date.now()}`;

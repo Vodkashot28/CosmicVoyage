@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 
+=======
+>>>>>>> c297bfc4245e6f3d5429419ed9a7c68f69074ccc
 export interface PlanetFacts {
   description: string;
   diameter: string;

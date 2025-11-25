@@ -2,3 +2,8 @@ node_modules
 dist
 .DS_Store
 server/public
+<<<<<<< HEAD
+=======
+vite.config.ts.*
+*.tar.gz
+>>>>>>> c297bfc4245e6f3d5429419ed9a7c68f69074ccc

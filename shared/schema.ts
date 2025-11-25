@@ -1,24 +1,41 @@
+<<<<<<< HEAD
 import { pgTable, text, serial, integer, boolean, timestamp, varchar, doublePrecision } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
 // ============ USERS TABLE ============
+=======
+import { pgTable, text, serial, integer, boolean, timestamp } from "drizzle-orm/pg-core";
+import { createInsertSchema } from "drizzle-zod";
+import { z } from "zod";
+
+>>>>>>> c297bfc4245e6f3d5429419ed9a7c68f69074ccc
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   username: text("username").notNull().unique(),
   password: text("password").notNull(),
+<<<<<<< HEAD
   walletAddress: text("wallet_address").unique(),
   starBalance: integer("star_balance").default(0),
   genesisClaimedAt: timestamp("genesis_claimed_at"),
   referralCode: text("referral_code").unique(),
+=======
+  walletAddress: text("wallet_address"),
+  starBalance: integer("star_balance").default(0),
+  genesisClaimedAt: timestamp("genesis_claimed_at"),
+  referralCode: text("referral_code"),
+>>>>>>> c297bfc4245e6f3d5429419ed9a7c68f69074ccc
   referredByWallet: text("referred_by_wallet"),
   referralCount: integer("referral_count").default(0),
   referralBonusEarned: integer("referral_bonus_earned").default(0),
   lastReferralBonus: timestamp("last_referral_bonus"),
+<<<<<<< HEAD
   totalPassiveIncomeClaimed: integer("total_passive_income_claimed").default(0),
   lastPassiveIncomeClaim: timestamp("last_passive_income_claim"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
+=======
+>>>>>>> c297bfc4245e6f3d5429419ed9a7c68f69074ccc
 });
 
 export const insertUserSchema = createInsertSchema(users).pick({
@@ -28,6 +45,7 @@ export const insertUserSchema = createInsertSchema(users).pick({
 
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
+<<<<<<< HEAD
 
 // ============ DISCOVERIES TABLE ============
 // Track which celestial objects each player has discovered
@@ -171,3 +189,5 @@ export const dailyStats = pgTable("daily_stats", {
 export const insertDailyStatsSchema = createInsertSchema(dailyStats);
 export type InsertDailyStats = z.infer<typeof insertDailyStatsSchema>;
 export type DailyStats = typeof dailyStats.$inferSelect;
+=======
+>>>>>>> c297bfc4245e6f3d5429419ed9a7c68f69074ccc

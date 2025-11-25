@@ -4,7 +4,11 @@ import { storage } from "./storage";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // ============ GENESIS FAUCET ROUTES ============
+<<<<<<< HEAD
 
+=======
+  
+>>>>>>> c297bfc4245e6f3d5429419ed9a7c68f69074ccc
   // Claim genesis bonus (10 STAR for new players)
   app.post("/api/player/claim-genesis", async (req, res) => {
     try {

@@ -1,0 +1,15 @@
+{
+  "name": "ton-contracts",
+  "version": "0.1.0",
+  "scripts": {
+    "build": "blueprint build",
+    "deploy": "blueprint run deployAll",
+    "test": "blueprint test"
+  },
+  "devDependencies": {
+    "@ton/blueprint": "^0.15.0",
+    "@ton/ton": "^16.0.0",
+    "ts-node": "^10.0.0",
+    "typescript": "^5.0.0"
+  }
+}

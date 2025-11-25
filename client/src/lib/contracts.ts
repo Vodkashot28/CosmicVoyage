@@ -1,5 +1,8 @@
+<<<<<<< HEAD
 import { Address } from "@ton/core";
 
+=======
+>>>>>>> c297bfc4245e6f3d5429419ed9a7c68f69074ccc
 /**
  * Smart Contract Addresses for Solar System Explorer
  * Network: TON Testnet
@@ -16,6 +19,7 @@ export const CONTRACT_ADDRESSES = {
 } as const;
 
 /**
+<<<<<<< HEAD
  * Get contract address by name
  */
 export function getContractAddress(
@@ -23,6 +27,23 @@ export function getContractAddress(
 ): Address {
   const address = CONTRACT_ADDRESSES[name];
   return Address.parse(address);
+=======
+ * Get contract address by name (returns string address)
+ */
+export function getContractAddress(
+  name: keyof typeof CONTRACT_ADDRESSES
+): string {
+  return CONTRACT_ADDRESSES[name];
+}
+
+/**
+ * Parse address with lazy loading of @ton/core
+ * (only loads when TON Connect is actually used)
+ */
+export async function parseAddress(addressString: string) {
+  const { Address } = await import("@ton/core");
+  return Address.parse(addressString);
+>>>>>>> c297bfc4245e6f3d5429419ed9a7c68f69074ccc
 }
 
 /**
