@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { planetsData } from "@/data/planets";
+import { analytics, trackDiscovery, trackMint, trackPassiveIncome, trackDailyLogin, trackImmortalityTier } from "@/lib/analytics";
 
 export interface Discovery {
   planetName: string;

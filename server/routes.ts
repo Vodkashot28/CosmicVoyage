@@ -1,6 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import analyticsRouter from "./routes/analytics";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // ============ GENESIS FAUCET ROUTES ============
@@ -479,6 +480,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.setHeader("Content-Type", "application/json");
     res.json(manifest);
   });
+
+  // ============ ANALYTICS ROUTES ============
+  
+  app.use("/api/analytics", analyticsRouter);
 
   // ============ HEALTH CHECK ============
 

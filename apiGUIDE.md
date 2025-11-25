@@ -261,6 +261,94 @@ export function ReferralLeaderboard() {
 
 ---
 
+### 7. **Analytics & User Tracking** - Event Tracking & Stats (NEW!)
+**Location:** All game stores + `AnalyticsDashboard.tsx`
+
+**APIs to integrate:**
+```typescript
+// Track player events (automatic batching)
+POST /api/analytics/events
+// Payload: { events: AnalyticsEvent[] }
+// Tracks: discoveries, mints, burns, passive income, achievements
+
+// Get user profile stats (device ID or wallet)
+GET /api/analytics/profile/:identifier?type=device|wallet
+
+// Get global game statistics
+GET /api/analytics/stats/global
+// Returns: today's activity + all-time stats
+
+// Get leaderboards
+GET /api/analytics/leaderboard/:metric
+// Metrics: star_earned | star_burned | discoveries | nfts
+```
+
+**Key Features:**
+- **Device ID Tracking**: Automatically identifies users without wallet requirement
+- **Event Queue**: Events batch automatically every 30 seconds or when queue reaches 10
+- **Offline Support**: Events re-queue if network fails
+- **No Wallet Dependency**: Works alongside wallet login for guest tracking
+
+**Example usage in stores:**
+```typescript
+import { trackDiscovery, trackMint, trackPassiveIncome, trackDailyLogin, trackImmortalityTier } from "@/lib/analytics";
+
+// When player discovers planet
+discoverPlanet: (planetName: string) => {
+  const state = get();
+  trackDiscovery(planetName, reward, state.walletAddress);
+  set(state => ({
+    discoveredPlanets: [...state.discoveredPlanets, {...}]
+  }));
+},
+
+// When player mints NFT
+mintNFT: (planetName: string) => {
+  trackMint(planetName, nftId, state.walletAddress);
+},
+
+// When player claims passive income
+collectPassiveTokens: () => {
+  trackPassiveIncome(amount, nftCount, state.walletAddress);
+},
+
+// When player logs in daily
+claimDailyLogin: () => {
+  trackDailyLogin(streak, state.walletAddress);
+},
+
+// When player achieves new tier
+addImmortalityScore: (amount, burnType) => {
+  trackImmortalityTier(tier, score, state.walletAddress);
+},
+```
+
+**Example usage in components:**
+```typescript
+import { AnalyticsDashboard } from "@/components/AnalyticsDashboard";
+
+// Display analytics dashboard
+export function AdminPanel() {
+  return <AnalyticsDashboard />;
+}
+```
+
+**Achievement System** (`shared/achievements.ts`):
+```typescript
+import { getUnlockedAchievements, getNextAchievements, getAchievementProgress } from "@/shared/achievements";
+
+// Get all unlocked achievements for player
+const unlockedAchievements = getUnlockedAchievements(playerStats);
+
+// Get next 5 achievable milestones
+const nextMilestones = getNextAchievements(playerStats).slice(0, 5);
+
+// Show progress bar
+const progress = getAchievementProgress(playerStats); // 0-100%
+```
+
+---
+
 ## Integration Checklist
 
 - [ ] Import API functions in stores
