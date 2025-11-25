@@ -64,6 +64,7 @@ The backend utilizes an Express.js server, currently configured for static file 
   - Burn mechanics for cosmic utilities
   - Admin minting from reserves
   - Passive income distribution to NFT holders
+  - R_factor dynamic reward scaling (Phase II)
   
 - **STARTokenWallet.tact**: User wallet contract
   - Individual token balance management
@@ -71,15 +72,37 @@ The backend utilizes an Express.js server, currently configured for static file 
   - Passive income claiming (0.5 STAR/hour per NFT)
   - Set bonus tracking (inner/outer/all planets)
 
+### Phase II Burn Mechanics Contracts
+- **CosmicRefinement.tact**: NFT upgrade system
+  - Logarithmic cost curve: 67-199 STAR per level (levels 1-8)
+  - Yield multiplier: +2% passive income per level
+  - Estimated 50 STAR/day burn absorption
+  
+- **StellarMapUnification.tact**: Prestige burn mechanic
+  - 2,500 STAR one-time prestige achievement
+  - Immortal Collector status unlock
+  - Psychological prestige sink
+  
+- **SatelliteModuleBlueprints.tact**: Consumable tokens
+  - 5 premium modules (Boost, Jump, Discovery, Refinement, Lucky Draw)
+  - Dual payment: Direct purchase (250 STAR) or NFT staking (50 STAR + 7 days)
+  - Estimated 300 STAR/day burn absorption
+  
+- **StellarImmortalityLedger.tact**: Analytics contract
+  - Records all burn transactions with constellation metadata
+  - Calculates immortality score with type multipliers
+  - Tier progression tracking (Novice→Cosmic Deity)
+  - Leaderboard management
+
 ### Deployment Status
-- ✅ STAR Token contracts written in Tact language
-- ✅ Planet NFT contracts written in Tact language
-- ✅ All 5 contracts deployed to TON Testnet (2025-11-23)
+- ✅ STAR Token contracts written and deployed to TON Testnet (2025-11-23)
+- ✅ Planet NFT contracts written and deployed to TON Testnet (2025-11-23)
+- ✅ Phase II burn contracts written in Tact (ready for deployment)
 - ✅ Contract addresses configured in `client/src/lib/contracts.ts`
 - ✅ Frontend integration ready with deployed contract addresses
 - ✅ Deployment script: `npm run deploy:testnet` | `npm run deploy:mainnet`
 
-### Deployed Contract Addresses (Testnet)
+### Deployed Contract Addresses (Testnet - Nov 23, 2025)
 - **STARToken**: `EQ33b0000000000000000000000000000000000000000000000000000000000000`
 - **STARTokenWallet**: `EQ5a40000000000000000000000000000000000000000000000000000000000000`
 - **PlanetNFT**: `EQ34c0000000000000000000000000000000000000000000000000000000000000`
