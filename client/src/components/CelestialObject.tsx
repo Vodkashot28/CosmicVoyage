@@ -8,6 +8,7 @@ import { useAudio } from "@/lib/stores/useAudio";
 import type { PlanetData } from "@/data/planets";
 import { planetsData } from "@/data/planets";
 import { PlanetMintModal } from "./PlanetMintModal";
+import { OrbitalInfo } from "./OrbitalInfo";
 
 interface CelestialObjectProps {
   data: PlanetData;
@@ -18,6 +19,7 @@ export function CelestialObject({ data }: CelestialObjectProps) {
   const glowRef = useRef<THREE.Mesh>(null);
   const orbitGroupRef = useRef<THREE.Group>(null);
   const inclinationGroupRef = useRef<THREE.Group>(null);
+  const axialTiltGroupRef = useRef<THREE.Group>(null);
   const [hovered, setHovered] = useState(false);
   const [showMintModal, setShowMintModal] = useState(false);
   
@@ -40,6 +42,7 @@ export function CelestialObject({ data }: CelestialObjectProps) {
   }, [initializeOrbitalOffsets]);
   
   const orbitalTilt = data.orbitalInclination || 0;
+  const axialTilt = data.axialTilt || 0;
   const isAsteroid = data.type === "asteroid";
   const orbitalOffset = getOrbitalOffset(data.name);
   
@@ -51,6 +54,11 @@ export function CelestialObject({ data }: CelestialObjectProps) {
     // Orbit group: handles the orbital motion around the sun (with random starting offset)
     if (orbitGroupRef.current) {
       orbitGroupRef.current.rotation.y = orbitalOffset + data.orbitSpeed * 0.001 * state.clock.elapsedTime;
+    }
+    
+    // Axial tilt group: applies the planet's rotation axis tilt
+    if (axialTiltGroupRef.current) {
+      axialTiltGroupRef.current.rotation.z = axialTilt;
     }
     
     if (meshRef.current) {
@@ -150,13 +158,13 @@ export function CelestialObject({ data }: CelestialObjectProps) {
         />
         
         <group ref={orbitGroupRef}>
-          <mesh
-            ref={meshRef}
-            position={[data.orbitRadius, 0, 0]}
-            onClick={handleClick}
-            onPointerOver={() => canDiscover && setHovered(true)}
-            onPointerOut={() => setHovered(false)}
-          >
+          <group ref={axialTiltGroupRef} position={[data.orbitRadius, 0, 0]}>
+            <mesh
+              ref={meshRef}
+              onClick={handleClick}
+              onPointerOver={() => canDiscover && setHovered(true)}
+              onPointerOut={() => setHovered(false)}
+            >
             {isAsteroid ? (
               // Asteroid: box geometry for irregular shape
               <boxGeometry args={[1, 0.8, 0.6]} />
@@ -172,48 +180,52 @@ export function CelestialObject({ data }: CelestialObjectProps) {
               roughness={isAsteroid ? 0.7 : 0.5}
               toneMapped={true}
             />
-          </mesh>
-          
-          {/* Glowing halo ring for planets/dwarfs */}
-          {!isAsteroid && (
-            <mesh position={[data.orbitRadius, 0, 0]}>
-              <torusGeometry args={[data.size * 1.4, data.size * 0.15, 16, 100]} />
-              <meshBasicMaterial
-                color={getRingColor()}
-                transparent
-                opacity={canDiscover ? 0.6 : 0.2}
-                wireframe={false}
-              />
             </mesh>
-          )}
-          
-          {/* Outer glow for discovered objects with pulsing animation */}
-          {discovered && !isAsteroid && (
-            <mesh ref={glowRef} position={[data.orbitRadius, 0, 0]}>
-              <sphereGeometry args={[data.size * 1.3, 32, 32]} />
-              <meshBasicMaterial
-                color={getRingColor()}
-                transparent
-                opacity={0.25}
-                side={THREE.BackSide}
-              />
-            </mesh>
-          )}
+            
+            {/* Glowing halo ring for planets/dwarfs */}
+            {!isAsteroid && (
+              <mesh>
+                <torusGeometry args={[data.size * 1.4, data.size * 0.15, 16, 100]} />
+                <meshBasicMaterial
+                  color={getRingColor()}
+                  transparent
+                  opacity={canDiscover ? 0.6 : 0.2}
+                  wireframe={false}
+                />
+              </mesh>
+            )}
+            
+            {/* Outer glow for discovered objects with pulsing animation */}
+            {discovered && !isAsteroid && (
+              <mesh ref={glowRef}>
+                <sphereGeometry args={[data.size * 1.3, 32, 32]} />
+                <meshBasicMaterial
+                  color={getRingColor()}
+                  transparent
+                  opacity={0.25}
+                  side={THREE.BackSide}
+                />
+              </mesh>
+            )}
 
-          {/* Asteroid discovered glow with pulsing */}
-          {discovered && isAsteroid && (
-            <mesh ref={glowRef} position={[data.orbitRadius, 0, 0]}>
-              <boxGeometry args={[1.2, 1.0, 0.8]} />
-              <meshBasicMaterial
-                color={getRingColor()}
-                transparent
-                opacity={0.3}
-                side={THREE.BackSide}
-              />
-            </mesh>
-          )}
+            {/* Asteroid discovered glow with pulsing */}
+            {discovered && isAsteroid && (
+              <mesh ref={glowRef}>
+                <boxGeometry args={[1.2, 1.0, 0.8]} />
+                <meshBasicMaterial
+                  color={getRingColor()}
+                  transparent
+                  opacity={0.3}
+                  side={THREE.BackSide}
+                />
+              </mesh>
+            )}
+          </group>
         </group>
       </group>
+      
+      {/* Orbital information on hover */}
+      <OrbitalInfo data={data} hovered={hovered} />
       
       {/* Minting Modal - shown after discovery */}
       <PlanetMintModal
