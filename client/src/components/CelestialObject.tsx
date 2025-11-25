@@ -7,6 +7,7 @@ import { useSolarSystem } from "@/lib/stores/useSolarSystem";
 import { useAudio } from "@/lib/stores/useAudio";
 import type { PlanetData } from "@/data/planets";
 import { planetsData } from "@/data/planets";
+import { PlanetMintModal } from "./PlanetMintModal";
 
 interface CelestialObjectProps {
   data: PlanetData;
@@ -17,6 +18,7 @@ export function CelestialObject({ data }: CelestialObjectProps) {
   const orbitGroupRef = useRef<THREE.Group>(null);
   const inclinationGroupRef = useRef<THREE.Group>(null);
   const [hovered, setHovered] = useState(false);
+  const [showMintModal, setShowMintModal] = useState(false);
   
   const { 
     discoverPlanet, 
@@ -53,11 +55,15 @@ export function CelestialObject({ data }: CelestialObjectProps) {
   
   const handleClick = () => {
     if (!discovered && canDiscover) {
+      // Mark planet as discovered (view it)
       discoverPlanet(data.name);
       playSuccess();
-      toast.success(`Discovered ${data.name}!`, {
-        description: `You earned ${data.tokenReward} STAR tokens`,
+      
+      // Open minting modal - user must confirm and mint to get rewards
+      toast.info(`${data.name} discovered!`, {
+        description: `Confirm minting to claim ${data.tokenReward} STAR tokens`,
       });
+      setShowMintModal(true);
     } else if (discovered) {
       setSelectedPlanet(data.name);
     } else if (!canDiscover) {
@@ -189,6 +195,16 @@ export function CelestialObject({ data }: CelestialObjectProps) {
           )}
         </group>
       </group>
+      
+      {/* Minting Modal - shown after discovery */}
+      <PlanetMintModal
+        planet={discovered ? data : null}
+        isOpen={showMintModal}
+        onClose={() => setShowMintModal(false)}
+        onMintConfirm={() => {
+          setShowMintModal(false);
+        }}
+      />
     </>
   );
 }

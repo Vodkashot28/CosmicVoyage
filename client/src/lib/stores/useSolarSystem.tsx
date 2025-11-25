@@ -27,6 +27,7 @@ interface SolarSystemState {
   totalDailyLoginsEarned: number; // total STAR earned from daily logins
   
   discoverPlanet: (planetName: string) => void;
+  claimDiscoveryReward: (planetName: string) => boolean; // Award tokens after minting
   setWalletAddress: (address: string | null) => void;
   setSelectedPlanet: (planetName: string | null) => void;
   isPlanetDiscovered: (planetName: string) => boolean;
@@ -131,11 +132,29 @@ export const useSolarSystem = create<SolarSystemState>()(
         };
         
         set(state => ({
-          discoveredPlanets: [...state.discoveredPlanets, discovery],
+          discoveredPlanets: [...state.discoveredPlanets, discovery]
+          // NOTE: Tokens NOT awarded on discovery - must mint NFT first!
+        }));
+        
+        console.log(`Discovered ${planetName}! Must mint NFT to claim ${planet.tokenReward} STAR tokens`);
+      },
+      
+      claimDiscoveryReward: (planetName: string) => {
+        const state = get();
+        const planet = planetsData.find(p => p.name === planetName);
+        
+        if (!planet || !state.isPlanetDiscovered(planetName)) {
+          console.warn(`Cannot claim reward for ${planetName}`);
+          return false;
+        }
+        
+        // Award tokens for discovery
+        set(state => ({
           totalTokens: state.totalTokens + planet.tokenReward
         }));
         
-        console.log(`Discovered ${planetName}! Earned ${planet.tokenReward} StarTokens`);
+        console.log(`Claimed reward for ${planetName}! Earned ${planet.tokenReward} STAR tokens`);
+        return true;
       },
       
       setWalletAddress: (address: string | null) => {
