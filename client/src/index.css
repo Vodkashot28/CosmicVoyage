@@ -28,3 +28,30 @@ canvas {
   height: 100% !important;
   touch-action: none;
 }
+
+/* TonConnect Button Styles - Ensure Visibility */
+.tc-root {
+  position: relative !important;
+  display: block !important;
+  z-index: 1000 !important;
+}
+
+button[class*="TonConnect"] {
+  position: relative !important;
+  display: inline-flex !important;
+  z-index: 1000 !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.tonconnect-button {
+  background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 8px !important;
+  padding: 8px 16px !important;
+  color: white !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  font-size: 14px !important;
+  transition: all 0.3s ease !important;
+}

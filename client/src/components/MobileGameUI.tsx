@@ -1,5 +1,6 @@
-import { TonConnectButton, useTonAddress } from "@tonconnect/ui-react";
+import { useTonAddress } from "@tonconnect/ui-react";
 import { useEffect, useState } from "react";
+import { WalletConnectButton } from "./WalletConnectButton";
 import { Coins, Sparkles, Volume2, VolumeX, Gift, Gem, Menu, X, Zap, Flame, Send } from "lucide-react";
 import { useSolarSystem } from "@/lib/stores/useSolarSystem";
 import { useAudio } from "@/lib/stores/useAudio";
@@ -86,7 +87,7 @@ export function GameUI() {
 
               {/* TON Wallet Button - Visible on all devices */}
               <div className="hidden sm:block">
-                <TonConnectButton />
+                <WalletConnectButton />
               </div>
 
               <Button
@@ -105,7 +106,7 @@ export function GameUI() {
             <div className="md:hidden border-t border-purple-500/30 p-3 space-y-2 bg-slate-900/80 backdrop-blur-sm">
               {/* Wallet Button - Mobile only */}
               <div className="bg-slate-800/50 border border-purple-500/40 rounded p-2 mb-2">
-                <TonConnectButton />
+                <WalletConnectButton />
               </div>
 
               {/* Music Toggle Button */}
@@ -235,7 +236,7 @@ export function GameUI() {
             )}
             
             <Card className="bg-black/80 backdrop-blur-sm border-white/20 p-2">
-              <TonConnectButton />
+              <WalletConnectButton />
             </Card>
           </div>
         </div>
@@ -290,7 +291,7 @@ export function GameUI() {
                 </div>
 
                 <Card className="bg-slate-900/80 border-purple-500/40 backdrop-blur-sm p-3">
-                  <TonConnectButton />
+                  <WalletConnectButton />
                 </Card>
               </Card>
             )}

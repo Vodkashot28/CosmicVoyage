@@ -458,6 +458,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ============ TONCONNECT MANIFEST ============
+  
+  // Dynamic TonConnect manifest that works on both localhost and production
+  app.get("/tonconnect-manifest.json", (req, res) => {
+    // Get the protocol and host from the request
+    const protocol = req.protocol || "https";
+    const host = req.get("host") || "solar-system.xyz";
+    const appUrl = `${protocol}://${host}`;
+    
+    const manifest = {
+      url: appUrl,
+      name: "Cosmic Voyage",
+      iconUrl: `${appUrl}/icons/sun.png`,
+      termsOfUseUrl: `${appUrl}/terms.html`,
+      privacyPolicyUrl: `${appUrl}/privacy.html`,
+      manifestVersion: 2,
+    };
+    
+    res.setHeader("Content-Type", "application/json");
+    res.json(manifest);
+  });
+
   // ============ HEALTH CHECK ============
 
   app.get("/api/health", (req, res) => {
