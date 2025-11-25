@@ -41,7 +41,15 @@ Burning STAR creates prestige loops:
 
 ### Frontend Architecture
 
-The frontend is built as a component-based application using React 18 with TypeScript. It leverages React Three Fiber and React Three Drei for declarative 3D rendering, creating a full-viewport 3D canvas with overlaid UI components. Radix UI provides accessible interface primitives, and Tailwind CSS is used for styling with custom space-themed design tokens. Vite serves as the build tool, ensuring a fast development experience. State management is handled by Zustand, with separate stores for game progression (`useSolarSystem`), audio controls (`useAudio`), game phases (`useGame`), game balance (`useGameBalance`), and referral tracking (`useReferral`), utilizing persistence for game progress. Data architecture relies on static TypeScript data structures (`planetsData`, `asteroidData`, `allCelestialObjects`) for celestial object properties and educational content, enforcing sequential discovery.
+The frontend is built as a component-based application using React 18 with TypeScript. It leverages React Three Fiber and React Three Drei for declarative 3D rendering, creating a full-viewport 3D canvas with overlaid UI components. Radix UI provides accessible interface primitives, and Tailwind CSS is used for styling with custom space-themed design tokens. Vite serves as the build tool, ensuring a fast development experience. 
+
+**Authentication**: Uses **TONCONNECT** for wallet-based authentication - simple, no username/password required. Players connect their TON wallet and start playing immediately.
+
+**State Management**: Zustand stores for game progression (`useSolarSystem`), audio controls (`useAudio`), game phases (`useGame`), game balance (`useGameBalance`), and referral tracking (`useReferral`), with persistence for game progress. 
+
+**Data Architecture**: Static TypeScript data structures (`planetsData`, `asteroidData`, `allCelestialObjects`) for celestial object properties and educational content, enforcing sequential discovery.
+
+**Analytics**: Device ID-based tracking system that works **without wallet requirement** - automatic analytics even for unconnected players, enabling comprehensive user behavior tracking.
 
 ### 3D Scene Architecture
 
@@ -54,7 +62,23 @@ Objects animate with individual rotation, orbital motion, and orbital inclinatio
 
 ### Backend Architecture
 
-The backend utilizes an Express.js server, currently configured for static file serving in production and integrated with Vite middleware for development. While currently using in-memory storage, the system is designed with a storage interface to easily transition to PostgreSQL using Drizzle ORM. The database schema, defined in `shared/schema.ts`, includes a basic user table. Future expansion points include user authentication, leaderboards, and TON blockchain transaction recording.
+The backend utilizes an **Express.js server** with **Drizzle ORM** and **PostgreSQL** database integration.
+
+**Database**: Fully integrated PostgreSQL with Drizzle ORM (using drizzle-kit for migrations). Schema includes:
+- `users` - Player profiles with wallet addresses
+- `discoveries` - Celestial object discoveries
+- `nfts` - Minted planet NFTs
+- `analyticsEvents` - Real-time player event tracking (device ID + wallet)
+- `dailyAnalyticsStats` - Aggregated daily statistics
+- Plus tables for passive income, burn history, referrals, set bonuses, refinements, and prestige system
+
+**API Routes**:
+- `/api/analytics/*` - Event tracking and user analytics (device ID based)
+- `/api/player/*` - Player profiles, STAR balance, genesis claims
+- `/api/discovery/*` - Planet discovery and NFT minting
+- `/api/tonconnect-manifest.json` - Dynamic manifest for wallet integration
+
+**File Serving**: Vite middleware for development, static serving for production
 
 ## STAR Token Smart Contracts
 
@@ -95,6 +119,9 @@ The backend utilizes an Express.js server, currently configured for static file 
   - Leaderboard management
 
 ### Deployment Status
+- ✅ Frontend deployed to **solar-system.xyz** (Nov 25, 2025)
+- ✅ Database: PostgreSQL Neon configured and synced with Drizzle
+- ✅ Analytics system: Fully functional with device ID tracking
 - ✅ STAR Token contracts written and deployed to TON Testnet (2025-11-23)
 - ✅ Planet NFT contracts written and deployed to TON Testnet (2025-11-23)
 - ✅ Phase II burn contracts written in Tact (ready for deployment)

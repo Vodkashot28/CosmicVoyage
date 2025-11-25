@@ -4,9 +4,13 @@ import { storage } from "./storage";
 import analyticsRouter from "./routes/analytics";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // ============ ANALYTICS ROUTES ============
+  app.use("/api/analytics", analyticsRouter);
+
   // ============ GENESIS FAUCET ROUTES ============
 
   // Claim genesis bonus (10 STAR for new players)
+  // Can be claimed by authenticated user OR wallet owner
   app.post("/api/player/claim-genesis", async (req, res) => {
     try {
       const { walletAddress } = req.body;
@@ -480,10 +484,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.setHeader("Content-Type", "application/json");
     res.json(manifest);
   });
-
-  // ============ ANALYTICS ROUTES ============
-  
-  app.use("/api/analytics", analyticsRouter);
 
   // ============ HEALTH CHECK ============
 
