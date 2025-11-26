@@ -1,6 +1,6 @@
 import { useRef, useState, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
-import { Line, Text } from "@react-three/drei";
+import { Text } from "@react-three/drei";
 import * as THREE from "three";
 import { toast } from "sonner";
 import { useSolarSystem } from "@/lib/stores/useSolarSystem";
@@ -9,6 +9,7 @@ import type { PlanetData } from "@/data/planets";
 import { planetsData } from "@/data/planets";
 import { PlanetMintModal } from "./PlanetMintModal";
 import { OrbitalInfo } from "./OrbitalInfo";
+import { OrbitLine } from "./OrbitLine";
 import PlanetModel from "./3d/PlanetModel";
 import { getPlanetModelConfig } from "@/lib/planetModels";
 
@@ -158,12 +159,12 @@ export function CelestialObject({ data }: CelestialObjectProps) {
   return (
     <>
       <group ref={inclinationGroupRef}>
-        <Line
-          points={orbitPoints}
-          color={canDiscover ? "#FFFFFF" : "#444444"}
-          lineWidth={0.5}
-          transparent
-          opacity={isAsteroidLike ? 0.1 : 0.3}
+        <OrbitLine
+          radius={data.orbitRadius}
+          discovered={discovered}
+          isOwned={discovered}
+          segments={128}
+          color={getRingColor()}
         />
         
         <group ref={orbitGroupRef}>

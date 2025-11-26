@@ -1,16 +1,15 @@
-import React, { useRef, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
 interface OrbitLineProps {
   radius: number;
   discovered: boolean;
-  isOwned: boolean; // NFT minted/owned
+  isOwned: boolean;
   segments?: number;
   color?: string;
 }
 
-// Shader for energy trail effect
 const energyTrailVertexShader = `
   uniform float time;
   varying float vDistance;
@@ -29,25 +28,18 @@ const energyTrailFragmentShader = `
   varying float vDistance;
   
   void main() {
-    // Pulsating glow effect
     float pulse = sin(time * 2.0) * 0.5 + 0.5;
-    
-    // Create gradient fade along orbit
     float intensity = 1.0;
+    
     if (!discovered) {
-      // Undiscovered: faint, broken appearance
       intensity = 0.2 + pulse * 0.1;
     } else if (isOwned) {
-      // Owned: vibrant, energized glow
       intensity = 0.8 + pulse * 0.3;
     } else {
-      // Discovered but not owned: moderate glow
       intensity = 0.5 + pulse * 0.2;
     }
     
-    // Add shimmer effect
     float shimmer = sin(time * 3.0 + vDistance * 5.0) * 0.3 + 0.7;
-    
     vec3 finalColor = baseColor * intensity * shimmer;
     float alpha = intensity;
     
@@ -62,10 +54,6 @@ export function OrbitLine({
   segments = 256,
   color = '#00D9FF',
 }: OrbitLineProps) {
-  const lineRef = useRef<THREE.Line>(null);
-  const materialRef = useRef<THREE.ShaderMaterial>(null);
-
-  // Generate orbit points
   const geometry = useMemo(() => {
     const orbitPoints: THREE.Vector3[] = [];
     for (let i = 0; i <= segments; i++) {
@@ -84,10 +72,8 @@ export function OrbitLine({
     return geo;
   }, [radius, segments]);
 
-  // Convert hex color to THREE.Color
   const baseColor = useMemo(() => new THREE.Color(color), [color]);
 
-  // Create shader material
   const material = useMemo(() => {
     return new THREE.ShaderMaterial({
       uniforms: {
@@ -102,16 +88,12 @@ export function OrbitLine({
     });
   }, [baseColor, discovered, isOwned]);
 
-  materialRef.current = material;
-
-  // Update shader uniforms each frame
+  // Update uniforms each frame
   useFrame((state) => {
-    if (materialRef.current) {
-      materialRef.current.uniforms.time.value = state.clock.elapsedTime;
-      materialRef.current.uniforms.discovered.value = discovered;
-      materialRef.current.uniforms.isOwned.value = isOwned;
-    }
+    material.uniforms.time.value = state.clock.elapsedTime;
+    material.uniforms.discovered.value = discovered;
+    material.uniforms.isOwned.value = isOwned;
   });
 
-  return <line ref={lineRef} geometry={geometry} material={material} />;
+  return <line geometry={geometry} material={material} />;
 }
