@@ -66,7 +66,7 @@ export function OrbitLine({
   const materialRef = useRef<THREE.ShaderMaterial>(null);
 
   // Generate orbit points
-  const points = useMemo(() => {
+  const geometry = useMemo(() => {
     const orbitPoints: THREE.Vector3[] = [];
     for (let i = 0; i <= segments; i++) {
       const angle = (i / segments) * Math.PI * 2;
@@ -78,15 +78,14 @@ export function OrbitLine({
         )
       );
     }
-    return orbitPoints;
+    
+    const geo = new THREE.BufferGeometry();
+    geo.setFromPoints(orbitPoints);
+    return geo;
   }, [radius, segments]);
 
   // Convert hex color to THREE.Color
-  const hexToRGB = (hex: string): THREE.Color => {
-    return new THREE.Color(hex);
-  };
-
-  const baseColor = hexToRGB(color);
+  const baseColor = useMemo(() => new THREE.Color(color), [color]);
 
   // Create shader material
   const material = useMemo(() => {
@@ -100,9 +99,10 @@ export function OrbitLine({
       vertexShader: energyTrailVertexShader,
       fragmentShader: energyTrailFragmentShader,
       transparent: true,
-      linewidth: 5,
     });
   }, [baseColor, discovered, isOwned]);
+
+  materialRef.current = material;
 
   // Update shader uniforms each frame
   useFrame((state) => {
@@ -113,16 +113,5 @@ export function OrbitLine({
     }
   });
 
-  // Create geometry from points
-  const geometry = useMemo(() => {
-    const geo = new THREE.BufferGeometry();
-    geo.setFromPoints(points);
-    return geo;
-  }, [points]);
-
-  return (
-    <line ref={lineRef} material={material}>
-      <bufferGeometry attach="geometry" args={[]} onUpdate={(self) => self.setFromPoints(points)} />
-    </line>
-  );
+  return <line ref={lineRef} geometry={geometry} material={material} />;
 }
