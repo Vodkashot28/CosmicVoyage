@@ -45,19 +45,26 @@ export function AudioManager() {
           size="sm"
           className="text-cyan-400 hover:text-cyan-300 p-2"
           title={isMuted ? "Unmute" : "Mute"}
+          aria-label={isMuted ? "Unmute audio" : "Mute audio"}
+          aria-pressed={isMuted}
         >
           {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
         </Button>
 
         {!isMuted && (
-          <input
-            type="range"
-            min="0"
-            max="100"
-            value={volume * 100}
-            onChange={(e) => setVolume(parseFloat(e.target.value) / 100)}
-            className="w-24 h-1 accent-cyan-500"
-          />
+          <>
+            <label htmlFor="volume-slider" className="sr-only">Volume control</label>
+            <input
+              id="volume-slider"
+              type="range"
+              min="0"
+              max="100"
+              value={volume * 100}
+              onChange={(e) => setVolume(parseFloat(e.target.value) / 100)}
+              className="w-24 h-1 accent-cyan-500"
+              aria-label="Volume level"
+            />
+          </>
         )}
       </div>
     </>

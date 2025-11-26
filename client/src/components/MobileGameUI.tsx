@@ -86,6 +86,8 @@ export function GameUI() {
                 size="icon"
                 onClick={toggleMute}
                 className="text-white hover:bg-white/10"
+                aria-label={isMuted ? "Unmute audio" : "Mute audio"}
+                aria-pressed={isMuted}
               >
                 {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
               </Button>
@@ -100,6 +102,8 @@ export function GameUI() {
                 size="icon"
                 onClick={() => setShowMenu(!showMenu)}
                 className="text-white hover:bg-white/10 md:hidden"
+                aria-label="Toggle menu"
+                aria-expanded={showMenu}
               >
                 {showMenu ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
               </Button>
