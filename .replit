@@ -4,7 +4,7 @@ hidden = [".config", ".git", "generated-icon.png", "node_modules", "dist"]
 
 [nix]
 channel = "stable-24_05"
-packages = ["openssh", "yakut"]
+packages = ["yakut", "zip", "nano", "python312Packages.pygltflib", "openssh"]
 
 [deployment]
 deploymentTarget = "autoscale"
