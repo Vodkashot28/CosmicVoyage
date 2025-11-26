@@ -1,27 +1,28 @@
-import { useRef, useEffect } from 'react';
-import { useFrame, useThree } from '@react-three/fiber';
+import { useRef, useEffect, Suspense } from 'react';
+import { useFrame } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 
 interface PlanetModelProps {
+  name: string;
   modelPath: string;
-  scale?: number;
-  rotationSpeed?: number;
-  position?: [number, number, number];
+  scale: number;
+  rotationSpeed: number;
+  position: [number, number, number];
   onLoaded?: () => void;
   onError?: (error: Error) => void;
 }
 
-export function PlanetModel({
+function PlanetModelContent({
+  name,
   modelPath,
-  scale = 1,
-  rotationSpeed = 0,
-  position = [0, 0, 0],
+  scale,
+  rotationSpeed,
+  position,
   onLoaded,
   onError,
 }: PlanetModelProps) {
   const meshRef = useRef<THREE.Group>(null);
-  const { scene } = useThree();
 
   try {
     const { scene: modelScene } = useGLTF(modelPath);
@@ -43,9 +44,10 @@ export function PlanetModel({
         meshRef.current.clear();
         meshRef.current.add(clonedScene);
 
+        console.log(`[Model] Loaded ${name} from ${modelPath}`);
         onLoaded?.();
       }
-    }, [modelScene]);
+    }, [modelScene, name, modelPath, onLoaded]);
 
     useFrame(() => {
       if (meshRef.current && rotationSpeed !== 0) {
@@ -58,7 +60,7 @@ export function PlanetModel({
     );
   } catch (error) {
     const err = error instanceof Error ? error : new Error(String(error));
-    console.error(`Failed to load planet model from ${modelPath}:`, err);
+    console.error(`[Model] Failed to load ${name} from ${modelPath}:`, err);
     onError?.(err);
 
     // Fallback: render a simple sphere
@@ -76,11 +78,20 @@ export function PlanetModel({
   }
 }
 
+export default function PlanetModel(props: PlanetModelProps) {
+  return (
+    <Suspense fallback={null}>
+      <PlanetModelContent {...props} />
+    </Suspense>
+  );
+}
+
 // Preload a model for better performance
 export function preloadModel(modelPath: string) {
   try {
     useGLTF.preload(modelPath);
+    console.log(`[Preload] Queued ${modelPath}`);
   } catch (error) {
-    console.warn(`Failed to preload model ${modelPath}:`, error);
+    console.warn(`[Preload] Failed for ${modelPath}:`, error);
   }
 }

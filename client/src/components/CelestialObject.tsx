@@ -9,6 +9,8 @@ import type { PlanetData } from "@/data/planets";
 import { planetsData } from "@/data/planets";
 import { PlanetMintModal } from "./PlanetMintModal";
 import { OrbitalInfo } from "./OrbitalInfo";
+import PlanetModel from "./3d/PlanetModel";
+import { getPlanetModelConfig } from "@/lib/planetModels";
 
 interface CelestialObjectProps {
   data: PlanetData;
