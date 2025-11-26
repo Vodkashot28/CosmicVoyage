@@ -1,0 +1,257 @@
+Documentation
+
+@tonconnect/sdk
+Module @tonconnect/sdk
+TON Connect SDK
+Use it to connect your app to TON wallets via TonConnect protocol. You can find more details and the protocol specification in the docs. See the example of sdk usage here.
+
+Latest API documentation
+
+Getting started
+Installation with cdn
+Add the script to your HTML file:
+
+<script src="https://unpkg.com/@tonconnect/sdk@latest/dist/tonconnect-sdk.min.js"></script>
+Copy
+ℹ️ If you don't want auto-update the library, pass concrete version instead of latest, e.g.
+
+<script src="https://unpkg.com/@tonconnect/sdk@0.0.34/dist/tonconnect-sdk.min.js"></script>
+Copy
+You can find TonConnect in global variable TonConnectSDK, e.g.
+
+<script>
+    const connector = new TonConnectSDK.TonConnect();
+</script>
+Copy
+Installation with npm
+npm i @tonconnect/sdk
+
+Usage
+Init connector and call restoreConnection. If user connected his wallet before, connector will restore the connection
+import TonConnect from '@tonconnect/sdk';
+
+const connector = new TonConnect();
+
+connector.restoreConnection();
+Copy
+Add the tonconnect-manifest
+App needs to have its manifest to pass meta information to the wallet. Manifest is a JSON file named as tonconnect-manifest.json following format:
+
+{
+  "url": "<app-url>",                        // required
+  "name": "<app-name>",                      // required
+  "iconUrl": "<app-icon-url>",               // required
+  "termsOfUseUrl": "<terms-of-use-url>",     // optional
+  "privacyPolicyUrl": "<privacy-policy-url>" // optional
+}
+Copy
+Best practice is to place the manifest in the root of your app, e.g. https://myapp.com/tonconnect-manifest.json. It allows the wallet to handle your app better and improve the UX connected to your app. Make sure that manifest is available to GET by its URL.
+
+See details
+
+If your manifest placed not in the root of your app, you can specify its path:
+
+const connector = new TonConnect({
+    manifestUrl: 'https://myApp.com/assets/tonconnect-manifest.json'
+});
+Copy
+Subscribe to the connection status changes
+const unsubscribe = connector.onStatusChange(
+    walletInfo => {
+        // update state/reactive variables to show updates in the ui
+    } 
+);
+
+// call `unsubscribe()` later to save resources when you don't need to listen for updates anymore.
+Copy
+Fetch wallets list
+TonConnect is build to support different wallets. You can fetch all supported wallets list and show a custom wallet selection dialog for user.
+
+const walletsList = await connector.getWallets();
+
+/* walletsList is 
+{
+    name: string;
+    imageUrl: string;
+    tondns?: string;
+    aboutUrl: string;
+    universalLink?: string;
+    deepLink?: string;
+    bridgeUrl?: string;
+    jsBridgeKey?: string;
+    injected?: boolean; // true if this wallet is injected to the webpage
+    embedded?: boolean; // true if the dapp is opened inside this wallet's browser
+}[] 
+ */
+Copy
+You also can get wallets list using getWallets static method:
+
+const walletsList = await TonConnect.getWallets();
+Copy
+WalletInfo utils and type guards
+Following type guards might be helpful for WalletInfos manipulations:
+
+import {
+    isWalletInfoCurrentlyEmbedded,
+    isWalletInfoInjectable,
+    isWalletInfoCurrentlyInjected,
+    isWalletInfoRemote,
+    WalletInfo
+} from '@tonconnect/sdk';
+
+/* Use for filtration */
+const remoteConnectionWalletInfos = walletInfoList.filter(isWalletInfoRemote);
+
+// all wallets that supports injecteble connection (EVEN THOSE THAT ARE NOT INJECTED TO THE CURRENT PAGE) 
+const injectableConnectionWalletInfos = walletInfoList.filter(isWalletInfoInjectable);
+
+// wallets that are injected to the current webpage 
+const currentlyInjectedWalletInfos = walletInfoList.filter(isWalletInfoCurrentlyInjected);
+const embeddedWalletInfo = walletInfoList.find(isWalletInfoCurrentlyEmbedded);
+
+    
+/* or use as type guard */
+if (isWalletInfoRemote(walletInfo)) {
+    connector.connect({
+        universalLink: walletInfo.universalLink,
+        bridgeUrl: walletInfo.bridgeUrl
+    });
+    return;
+}
+
+if (isWalletInfoCurrentlyInjected(walletInfo)) {
+    connector.connect({
+        jsBridgeKey: walletInfo.jsBridgeKey
+    });
+    return;
+}
+Copy
+Initialize a wallet connection when user clicks to 'connect' button in your app
+Initialize a remote wallet connection via universal link
+// Should correspond to the wallet that user selects
+const walletConnectionSource = {
+    universalLink: 'https://app.tonkeeper.com/ton-connect',
+    bridgeUrl: 'https://bridge.tonapi.io/bridge'
+}
+
+const universalLink = connector.connect(walletConnectionSource);
+Copy
+Then you have to show this link to user as QR code, or use it as a deeplink. You will receive an update in connector.onStatusChange when user approves connection in the wallet.
+
+Initialize injected wallet connection
+// Should correspond to the wallet that user selects
+const walletConnectionSource = {
+    jsBridgeKey: 'tonkeeper'
+}
+
+connector.connect(walletConnectionSource);
+Copy
+You will receive an update in connector.onStatusChange when user approves connection in the wallet.
+
+Create unified link
+You can create the unified link that could be accepted by any wallet. To do that you should pass an array of http-wallet-connection-sources:
+
+If several wallets have same bridge url, you can pass this url only once.
+
+const sources = [
+    {
+        bridgeUrl: 'https://bridge.tonapi.io/bridge' // Tonkeeper
+    },
+    {
+        bridgeUrl: 'https://<OTHER_WALLET_BRIDGE>' // Tonkeeper
+    }
+];
+
+connector.connect(sources);
+Copy
+Detect embedded wallet
+It is recommended not to show a QR code modal if the app is opened inside a wallet's browser. You should detect working environment of the app and show appropriate UI. Check embedded property in elements of the wallets list to detect if the app is opened inside a wallet.
+
+import { isWalletInfoCurrentlyEmbedded, WalletInfoCurrentlyEmbedded } from '@tonconnect/sdk';
+
+// "connect button" click handler.
+// Execute this before show wallet selection modal.
+
+const walletsList = await connector.getWallets(); // or use `walletsList` fetched before  
+
+const embeddedWallet = walletsList.find(isWalletInfoCurrentlyEmbedded) as WalletInfoCurrentlyEmbedded;
+
+if (embeddedWallet) {
+    connector.connect({ jsBridgeKey: embeddedWallet.jsBridgeKey });
+    return;
+}
+
+// else show modal and ask user to select a wallet
+Copy
+Send transaction
+if (!connector.connected) {
+    alert('Please connect wallet to send the transaction!');
+}
+
+const transaction = {
+    validUntil: Math.floor(Date.now() / 1000) + 60, // 60 sec
+    messages: [
+        {
+            address: "EQBBJBB3HagsujBqVfqeDUPJ0kXjgTPLWPFFffuNXNiJL0aA",
+            amount: "20000000",
+         // stateInit: "base64bocblahblahblah==" // just for instance. Replace with your transaction initState or remove
+        },
+        {
+            address: "EQDmnxDMhId6v1Ofg_h5KR5coWlFG6e86Ro3pc7Tq4CA0-Jn",
+            amount: "60000000",
+         // payload: "base64bocblahblahblah==" // just for instance. Replace with your transaction payload or remove
+        }
+    ]
+}
+
+try {
+    const result = await connector.sendTransaction(transaction);
+    
+    // you can use signed boc to find the transaction 
+    const someTxData = await myAppExplorerService.getTransaction(result.boc);
+    alert('Transaction was sent successfully', someTxData);
+} catch (e) {
+    if (e instanceof UserRejectedError) {
+        alert('You rejected the transaction. Please confirm it to send to the blockchain');
+    } else {
+        alert('Unknown error happened', e);
+    }
+}
+Copy
+Sign data
+Sign arbitrary data with the user's wallet. The wallet will display the data to the user for confirmation before signing.
+
+Data Types
+You can sign three types of data. Choose the right format based on your use case:
+
+Text - Use for human-readable text that users should see and understand
+Cell - Use for TON Blockchain data that should be used in smart contracts (wallet may show unknown content warning)
+Binary - For other arbitrary data (least preferred due to security warnings)
+Text Format
+Use when you need to sign human-readable text. The wallet displays the text to the user.
+
+Parameters:
+
+type (string, required): Must be "text"
+text (string, required): UTF-8 text to sign
+network (string, optional): "-239" for mainnet, "-3" for testnet
+from (string, optional): Signer address in raw format "0:<hex>"
+const textData = {
+    type: "text",
+    text: "Confirm new 2fa number:\n+1 234 567 8901",
+    network: "-239", // MAINNET = '-239', TESTNET = '-3'
+    from: "0:348bcf827469c5fc38541c77fdd91d4e347eac200f6f2d9fd62dc08885f0415f"
+};
+
+try {
+    const result = await connector.signData(textData);
+    console.log('Signed:', result);
+} catch (e) {
+    if (e instanceof UserRejectedError) {
+        console.log('User rejected signing');
+    } else {
+        console.error('Error:', e);
+    }
+}
+Copy
+Binary Format
