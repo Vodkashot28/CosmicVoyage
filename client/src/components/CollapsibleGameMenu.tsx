@@ -39,35 +39,21 @@ export function CollapsibleGameMenu({ position = "right" }: { position?: "left" 
       {/* Sliding Menu */}
       {isOpen && (
         <div
-          className={`w-64 h-full bg-gradient-to-br from-slate-900/95 via-slate-800/95 to-slate-900/95 border-l border-cyan-500/20 overflow-y-auto backdrop-blur-sm animate-in slide-in-from-right`}
+          className={`w-72 h-full bg-gradient-to-br from-slate-900/95 via-slate-800/95 to-slate-900/95 border-l border-cyan-500/20 overflow-y-auto backdrop-blur-sm animate-in slide-in-from-right`}
         >
           <div className="p-2 space-y-2 pt-3">
             {/* STAR Balance Section */}
-            <div className="bg-slate-800/50 border border-cyan-500/30 rounded p-2">
-              <div className="text-xs text-cyan-400 uppercase mb-1 font-semibold leading-tight">
-                Balance
-              </div>
-              <div className="scale-75 origin-top-left">
-                <StarBalanceDisplay />
-              </div>
-            </div>
+            <StarBalanceDisplay />
 
             {/* Player Stats Section */}
-            <div className="bg-slate-800/50 border border-purple-500/30 rounded p-2">
-              <div className="text-xs text-purple-400 uppercase mb-1 font-semibold leading-tight">
-                Stats
-              </div>
-              <div className="scale-75 origin-top-left">
-                <PlayerStatsPanel />
-              </div>
-            </div>
+            <PlayerStatsPanel />
 
             {/* Game Controls Section */}
             <div className="bg-slate-800/50 border border-cyan-500/20 rounded p-2">
               <div className="text-xs text-cyan-400 uppercase mb-1 font-semibold leading-tight">
                 Game
               </div>
-              <div className="scale-75 origin-top-left">
+              <div className="scale-75 origin-top-left -ml-1 -mt-1">
                 <GameUI />
               </div>
             </div>
