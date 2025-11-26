@@ -70,7 +70,7 @@ export function PlanetMintModal({
   const hasEnoughResources = () => {
     if (useCelestialShield && shield.available) {
       // Using Celestial Shield: check STAR balance
-      return totalTokens >= shield.cost;
+      return totalTokens >= (shield.cost ?? 0);
     } else {
       // Using TON: assume we check this at wallet level, but also validate STAR for dwarf planets
       if (cost.star > 0) {
