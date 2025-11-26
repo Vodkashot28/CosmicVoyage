@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, forwardRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
@@ -47,53 +47,52 @@ const energyTrailFragmentShader = `
   }
 `;
 
-export function OrbitLine({
-  radius,
-  discovered,
-  isOwned,
-  segments = 256,
-  color = '#00D9FF',
-}: OrbitLineProps) {
-  const geometry = useMemo(() => {
-    const orbitPoints: THREE.Vector3[] = [];
-    for (let i = 0; i <= segments; i++) {
-      const angle = (i / segments) * Math.PI * 2;
-      orbitPoints.push(
-        new THREE.Vector3(
-          Math.cos(angle) * radius,
-          0,
-          Math.sin(angle) * radius
-        )
-      );
-    }
-    
-    const geo = new THREE.BufferGeometry();
-    geo.setFromPoints(orbitPoints);
-    return geo;
-  }, [radius, segments]);
+export const OrbitLine = forwardRef<THREE.Line, OrbitLineProps>(
+  ({ radius, discovered, isOwned, segments = 256, color = '#00D9FF' }, ref) => {
+    const geometry = useMemo(() => {
+      const orbitPoints: THREE.Vector3[] = [];
+      for (let i = 0; i <= segments; i++) {
+        const angle = (i / segments) * Math.PI * 2;
+        orbitPoints.push(
+          new THREE.Vector3(
+            Math.cos(angle) * radius,
+            0,
+            Math.sin(angle) * radius
+          )
+        );
+      }
+      
+      const geo = new THREE.BufferGeometry();
+      geo.setFromPoints(orbitPoints);
+      return geo;
+    }, [radius, segments]);
 
-  const baseColor = useMemo(() => new THREE.Color(color), [color]);
+    const baseColor = useMemo(() => new THREE.Color(color), [color]);
 
-  const material = useMemo(() => {
-    return new THREE.ShaderMaterial({
-      uniforms: {
-        time: { value: 0 },
-        baseColor: { value: baseColor },
-        discovered: { value: discovered },
-        isOwned: { value: isOwned },
-      },
-      vertexShader: energyTrailVertexShader,
-      fragmentShader: energyTrailFragmentShader,
-      transparent: true,
+    const material = useMemo(() => {
+      return new THREE.ShaderMaterial({
+        uniforms: {
+          time: { value: 0 },
+          baseColor: { value: baseColor },
+          discovered: { value: discovered },
+          isOwned: { value: isOwned },
+        },
+        vertexShader: energyTrailVertexShader,
+        fragmentShader: energyTrailFragmentShader,
+        transparent: true,
+      });
+    }, [baseColor, discovered, isOwned]);
+
+    useFrame((state) => {
+      material.uniforms.time.value = state.clock.elapsedTime;
+      material.uniforms.discovered.value = discovered;
+      material.uniforms.isOwned.value = isOwned;
     });
-  }, [baseColor, discovered, isOwned]);
 
-  // Update uniforms each frame
-  useFrame((state) => {
-    material.uniforms.time.value = state.clock.elapsedTime;
-    material.uniforms.discovered.value = discovered;
-    material.uniforms.isOwned.value = isOwned;
-  });
+    return (
+      <line ref={ref} geometry={geometry} material={material} />
+    );
+  }
+);
 
-  return <line geometry={geometry} material={material} />;
-}
+OrbitLine.displayName = 'OrbitLine';
