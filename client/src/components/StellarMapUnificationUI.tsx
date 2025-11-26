@@ -20,7 +20,7 @@ export function StellarMapUnificationUI({ isOpen, onClose }: StellarMapUnificati
   const UNIFICATION_COST = 2500;
   const PRESTIGE_BONUS = 0.001; // +0.1%
 
-  const mainPlanets = planetsData.filter((p) => p.type === "terrestrial" || p.type === "gasGiant");
+  const mainPlanets = planetsData.filter((p) => p.type === "planet");
   const dwarfPlanets = planetsData.filter((p) => p.type === "dwarfPlanet");
 
   const mainPlanetsOwned = mainPlanets.filter((p) => ownedNFTs.includes(p.name)).length;

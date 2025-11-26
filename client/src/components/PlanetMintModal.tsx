@@ -82,9 +82,9 @@ export function PlanetMintModal({
 
   const getMissingResources = () => {
     if (useCelestialShield && shield.available) {
-      const missing = Math.max(0, shield.cost - totalTokens);
+      const missing = Math.max(0, (shield.cost ?? 0) - totalTokens);
       if (missing > 0) {
-        return `Missing ${missing} STAR (need ${shield.cost}, have ${totalTokens})`;
+        return `Missing ${missing} STAR (need ${shield.cost ?? 0}, have ${totalTokens})`;
       }
     } else {
       if (cost.star > 0) {
@@ -116,19 +116,12 @@ export function PlanetMintModal({
       // Mark NFT as minted
       markNFTMinted(planet.name, `tx_${Date.now()}`);
 
-      // Claim the discovery reward (award tokens)
-      const rewarded = claimDiscoveryReward(planet.name);
-
-      if (rewarded) {
-        playSuccess();
-        toast.success(`${planet.name} NFT Minted! 🎉`, {
-          description: `You earned ${planet.tokenReward} STAR tokens`,
-        });
-        onMintConfirm(planet.name);
-        onClose();
-      } else {
-        toast.error("Failed to claim reward");
-      }
+      playSuccess();
+      toast.success(`${planet.name} NFT Minted! 🎉`, {
+        description: "NFT successfully minted and added to your collection",
+      });
+      onMintConfirm(planet.name);
+      onClose();
     } catch (error) {
       toast.error("Minting failed", {
         description: "Please try again",
@@ -165,17 +158,17 @@ export function PlanetMintModal({
             </div>
           </div>
 
-          {/* Reward Info */}
+          {/* NFT Benefits */}
           <div className="bg-green-900/30 rounded-lg p-4 border border-green-500/30">
             <div className="flex items-center gap-2 mb-2">
               <Coins className="w-5 h-5 text-green-400" />
-              <span className="font-bold text-green-400">Your Reward</span>
+              <span className="font-bold text-green-400">NFT Benefits</span>
             </div>
-            <p className="text-xl font-bold text-green-300">
-              +{planet.tokenReward} STAR tokens
-            </p>
-            <p className="text-sm text-green-300/70 mt-1">
+            <p className="text-sm text-green-300">
               Once minted, this NFT will earn {planet.passiveIncomeRate}/hour passive income
+            </p>
+            <p className="text-xs text-green-300/70 mt-1">
+              Passive income can be claimed daily from your collection
             </p>
           </div>
 

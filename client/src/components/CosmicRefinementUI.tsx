@@ -109,7 +109,7 @@ export function CosmicRefinementUI({ planet, isOpen, onClose }: CosmicRefinement
             <Card className="bg-green-900/30 border-green-500/30 p-4">
               <div className="text-sm text-green-300/70 mb-1">Next Yield</div>
               <div className="text-xl font-bold text-green-300">
-                {(planet.passiveIncomeRate * nextMultiplier).toFixed(2)} STAR/hour
+                {((planet.passiveIncomeRate ?? 0) * nextMultiplier).toFixed(2)} STAR/hour
               </div>
               <div className="text-xs text-green-300/50 mt-1">
                 ×{nextMultiplier.toFixed(2)} multiplier
@@ -171,8 +171,8 @@ export function CosmicRefinementUI({ planet, isOpen, onClose }: CosmicRefinement
           <div className="bg-amber-900/20 rounded-lg p-3 border border-amber-600/30">
             <p className="text-xs text-amber-200">
               💫 <span className="font-semibold">Benefits:</span> Each refinement increases passive
-              income by 2% cumulatively. At max level 8, earn {(planet.passiveIncomeRate * 1.16).toFixed(2)} STAR/hour
-              ({(planet.passiveIncomeRate * 1.16 * 24).toFixed(1)} daily)
+              income by 2% cumulatively. At max level 8, earn {(((planet.passiveIncomeRate ?? 0) * 1.16)).toFixed(2)} STAR/hour
+              ({(((planet.passiveIncomeRate ?? 0) * 1.16 * 24)).toFixed(1)} daily)
             </p>
           </div>
         </div>
