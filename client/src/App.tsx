@@ -1,5 +1,5 @@
 import { Canvas } from "@react-three/fiber";
-import { Suspense, useState, useMemo } from "react";
+import { Suspense, useState, useMemo, useEffect } from "react";
 import { TonConnectUIProvider } from "@tonconnect/ui-react";
 import { Analytics } from "@vercel/analytics/react";
 import "@fontsource/inter";
@@ -17,9 +17,15 @@ import { AudioManager } from "./components/AudioManager";
 import { PlayerStatsPanel } from "./components/PlayerStatsPanel";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/ui/tabs";
 import { Toaster } from "./components/ui/sonner";
+import { initDracoDecoder } from "./lib/draco-setup";
 
 function App() {
   const [activeTab, setActiveTab] = useState("game");
+
+  // Initialize Draco decoder for compressed .glb models
+  useEffect(() => {
+    initDracoDecoder();
+  }, []);
   
   // Dynamically construct manifest URL based on environment
   const manifestUrl = useMemo(() => {

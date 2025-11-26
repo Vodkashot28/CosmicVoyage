@@ -39,10 +39,18 @@ The game features 28 celestial objects across three phases:
 **Status**: ✅ Infrastructure complete, awaiting .glb model files
 - **PlanetModel.tsx**: Reusable component for loading and rendering .glb models with auto-fallback to geometric shapes
 - **planetModels.ts**: Asset manager with configuration for all 28 objects (scale, rotation speed, model paths)
+- **draco-setup.ts**: Initializes Draco decoder for compressed .glb decompression on client devices
 - **Models Directory**: `client/public/models/` ready for .glb files
 - **Model Sourcing**: NASA 3D Resources, Solar System Scope, or Sketchfab (CC0/CC-BY licensed)
+- **Compression Strategy**: Draco Level 10 recommended for mobile performance (minimum bandwidth); fallback to Level 7 if loading pause observed
+- **PBR Material Setup**: Use Blender Node Wrangler (Ctrl+Shift+T) to auto-connect textures; verify color space (sRGB for diffuse, Non-Color for normal/roughness/metallic)
 - **File Size Target**: Draco-compressed .glb, 500KB-4MB per model depending on complexity
-- **Next Steps**: Place .glb files in `client/public/models/` with names matching configuration (e.g., `mercury.glb`)
+- **Next Steps**: 
+  1. Create/source 28 .glb models using NASA textures or Solar System Scope
+  2. Export with Draco Level 10 compression from Blender
+  3. Place in `client/public/models/` with matching names (e.g., `mercury.glb`)
+  4. Test PBR materials by moving light and checking reflections
+  5. Verify no loading pauses; adjust compression if needed
 
 ## External Dependencies
 
