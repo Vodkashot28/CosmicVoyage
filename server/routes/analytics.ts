@@ -168,10 +168,10 @@ router.get("/stats/global", async (req: Request, res: Response) => {
           const row = result.rows[0];
           todayStats = {
             totalNewPlayers: 0, // Would need user registration tracking
-            totalDiscoveries: row.total_discoveries || 0,
-            totalNFTsMinted: row.total_nfts_minted || 0,
+            totalDiscoveries: Number(row.total_discoveries) || 0,
+            totalNFTsMinted: Number(row.total_nfts_minted) || 0,
             totalStarDistributed: 0, // Would sum from passive_income_claimed events
-            totalStarBurned: row.total_star_burned || 0,
+            totalStarBurned: Number(row.total_star_burned) || 0,
           };
         }
       } catch (dbError) {

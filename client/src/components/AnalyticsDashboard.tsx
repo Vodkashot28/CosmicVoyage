@@ -67,8 +67,20 @@ export function AnalyticsDashboard() {
     return <div className="p-4 text-center text-slate-300">Loading analytics...</div>;
   }
 
-  const allTime = globalStats?.allTime || {};
-  const today = globalStats?.today || {};
+  const allTime = globalStats?.allTime || {
+    totalUsers: 0,
+    totalDiscovered: 0,
+    totalNFTsMinted: 0,
+    totalStarEarned: 0,
+    totalStarBurned: 0,
+  };
+  const today = globalStats?.today || {
+    totalNewPlayers: 0,
+    totalDiscoveries: 0,
+    totalNFTsMinted: 0,
+    totalStarDistributed: 0,
+    totalStarBurned: 0,
+  };
 
   return (
     <div className="space-y-4">

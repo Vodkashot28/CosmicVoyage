@@ -80,16 +80,16 @@ router.post("/claim", async (req: Request, res: Response) => {
       });
     }
 
-    loginRecord = loginRecord[0];
+    const loginRecordData = loginRecord[0];
 
     // Check if already claimed today
-    const lastLogin = new Date(loginRecord.lastLoginDate!);
+    const lastLogin = new Date(loginRecordData.lastLoginDate!);
     lastLogin.setHours(0, 0, 0, 0);
 
     if (lastLogin.getTime() === today.getTime()) {
       return res.status(409).json({
         error: "Already claimed today",
-        streak: loginRecord.streak,
+        streak: loginRecordData.streak,
         nextClaimTime: new Date(today.getTime() + 24 * 60 * 60 * 1000),
       });
     }
@@ -100,8 +100,8 @@ router.post("/claim", async (req: Request, res: Response) => {
       lastLogin.getTime() === yesterdayTime.getTime() ||
       lastLogin.getTime() === today.getTime();
 
-    const newStreak = isConsecutive ? loginRecord.streak! + 1 : 1;
-    const newTotalDays = loginRecord.totalLoginDays! + 1;
+    const newStreak = isConsecutive ? loginRecordData.streak! + 1 : 1;
+    const newTotalDays = loginRecordData.totalLoginDays! + 1;
     const reward = getRewardForDay(newStreak);
 
     // Update login record
@@ -111,10 +111,10 @@ router.post("/claim", async (req: Request, res: Response) => {
         streak: newStreak,
         lastLoginDate: today,
         totalLoginDays: newTotalDays,
-        totalRewardsClaimed: (loginRecord.totalRewardsClaimed || 0) + reward,
+        totalRewardsClaimed: (loginRecordData.totalRewardsClaimed || 0) + reward,
         lastClaimedAt: new Date(),
       })
-      .where(eq(dailyLoginRewards.id, loginRecord.id));
+      .where(eq(dailyLoginRewards.id, loginRecordData.id));
 
     // Update user balance
     const newBalance = (user[0].starBalance || 0) + reward;
@@ -132,7 +132,7 @@ router.post("/claim", async (req: Request, res: Response) => {
       success: true,
       reward,
       streak: newStreak,
-      totalClaimed: (loginRecord.totalRewardsClaimed || 0) + reward,
+      totalClaimed: (loginRecordData.totalRewardsClaimed || 0) + reward,
       message: streakMessage,
     });
   } catch (error) {
