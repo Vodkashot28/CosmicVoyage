@@ -53,7 +53,7 @@ export function CelestialObject({ data }: CelestialObjectProps) {
     
     // Orbit group: handles the orbital motion around the sun (with random starting offset)
     if (orbitGroupRef.current) {
-      orbitGroupRef.current.rotation.y = orbitalOffset + data.orbitSpeed * 0.001 * state.clock.elapsedTime;
+      orbitGroupRef.current.rotation.y = orbitalOffset + data.orbitSpeed * 0.1 * state.clock.elapsedTime;
     }
     
     // Axial tilt group: applies the planet's rotation axis tilt
