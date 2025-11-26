@@ -81,27 +81,34 @@ export function CelestialObject({ data }: CelestialObjectProps) {
   });
   
   const handleClick = () => {
-    if (!discovered && canDiscover) {
-      // Mark planet as discovered (view it)
-      discoverPlanet(data.name);
-      playSuccess();
-      
-      // Open minting modal - user must confirm and mint to get rewards
-      toast.info(`${data.name} discovered!`, {
-        description: `Confirm minting to claim ${data.tokenReward} STAR tokens`,
-      });
-      setShowMintModal(true);
-    } else if (discovered) {
-      setSelectedPlanet(data.name);
-    } else if (!canDiscover) {
-      playHit();
-      const objectIndex = planetsData.findIndex(p => p.name === data.name);
-      const previousObject = objectIndex > 0 ? planetsData[objectIndex - 1] : null;
-      if (previousObject) {
-        toast.error(`Discover ${previousObject.name} first!`, {
-          description: `Must unlock sequentially`,
+    try {
+      if (!discovered && canDiscover) {
+        // Mark planet as discovered (view it)
+        discoverPlanet(data.name);
+        playSuccess();
+        
+        // Open minting modal - user must confirm and mint to get rewards
+        toast.info(`${data.name} discovered!`, {
+          description: `Confirm minting to claim ${data.tokenReward} STAR tokens`,
         });
+        setShowMintModal(true);
+      } else if (discovered) {
+        setSelectedPlanet(data.name);
+      } else if (!canDiscover) {
+        playHit();
+        const objectIndex = planetsData.findIndex(p => p.name === data.name);
+        const previousObject = objectIndex > 0 ? planetsData[objectIndex - 1] : null;
+        if (previousObject) {
+          toast.error(`Discover ${previousObject.name} first!`, {
+            description: `Must unlock sequentially`,
+          });
+        }
       }
+    } catch (error) {
+      console.error("Error handling planet click:", error);
+      toast.error("Click failed", {
+        description: "An error occurred while processing your click",
+      });
     }
   };
   
