@@ -14,7 +14,7 @@ export function CollapsibleGameMenu({ position = "right" }: { position?: "left" 
       {/* Toggle Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`flex items-center justify-center w-12 h-12 ${
+        className={`flex items-center justify-center w-10 h-10 ${
           position === "right" ? "rounded-l-lg" : "rounded-r-lg"
         } bg-gradient-to-b from-cyan-500/20 to-purple-500/20 border border-cyan-500/30 hover:border-cyan-500/60 transition-all backdrop-blur-sm ${
           isOpen ? "opacity-60" : "opacity-100"
@@ -23,15 +23,15 @@ export function CollapsibleGameMenu({ position = "right" }: { position?: "left" 
       >
         {isOpen ? (
           position === "right" ? (
-            <ChevronRight size={20} className="text-cyan-400" />
+            <ChevronRight size={18} className="text-cyan-400" />
           ) : (
-            <ChevronLeft size={20} className="text-cyan-400" />
+            <ChevronLeft size={18} className="text-cyan-400" />
           )
         ) : (
           position === "right" ? (
-            <ChevronLeft size={20} className="text-cyan-400" />
+            <ChevronLeft size={18} className="text-cyan-400" />
           ) : (
-            <ChevronRight size={20} className="text-cyan-400" />
+            <ChevronRight size={18} className="text-cyan-400" />
           )
         )}
       </button>
@@ -39,31 +39,37 @@ export function CollapsibleGameMenu({ position = "right" }: { position?: "left" 
       {/* Sliding Menu */}
       {isOpen && (
         <div
-          className={`w-80 h-full bg-gradient-to-br from-slate-900/95 via-slate-800/95 to-slate-900/95 border-l border-cyan-500/20 overflow-y-auto backdrop-blur-sm animate-in slide-in-from-right`}
+          className={`w-64 h-full bg-gradient-to-br from-slate-900/95 via-slate-800/95 to-slate-900/95 border-l border-cyan-500/20 overflow-y-auto backdrop-blur-sm animate-in slide-in-from-right`}
         >
-          <div className="p-4 space-y-4 pt-6">
+          <div className="p-2 space-y-2 pt-3">
             {/* STAR Balance Section */}
-            <div className="bg-slate-800/50 border border-cyan-500/30 rounded-lg p-4">
-              <div className="text-xs text-cyan-400 uppercase mb-2 font-semibold">
+            <div className="bg-slate-800/50 border border-cyan-500/30 rounded p-2">
+              <div className="text-xs text-cyan-400 uppercase mb-1 font-semibold leading-tight">
                 Balance
               </div>
-              <StarBalanceDisplay />
+              <div className="scale-75 origin-top-left">
+                <StarBalanceDisplay />
+              </div>
             </div>
 
             {/* Player Stats Section */}
-            <div className="bg-slate-800/50 border border-purple-500/30 rounded-lg p-4">
-              <div className="text-xs text-purple-400 uppercase mb-2 font-semibold">
+            <div className="bg-slate-800/50 border border-purple-500/30 rounded p-2">
+              <div className="text-xs text-purple-400 uppercase mb-1 font-semibold leading-tight">
                 Stats
               </div>
-              <PlayerStatsPanel />
+              <div className="scale-75 origin-top-left">
+                <PlayerStatsPanel />
+              </div>
             </div>
 
             {/* Game Controls Section */}
-            <div className="bg-slate-800/50 border border-cyan-500/20 rounded-lg p-4">
-              <div className="text-xs text-cyan-400 uppercase mb-2 font-semibold">
+            <div className="bg-slate-800/50 border border-cyan-500/20 rounded p-2">
+              <div className="text-xs text-cyan-400 uppercase mb-1 font-semibold leading-tight">
                 Game
               </div>
-              <GameUI />
+              <div className="scale-75 origin-top-left">
+                <GameUI />
+              </div>
             </div>
           </div>
         </div>
