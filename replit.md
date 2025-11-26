@@ -33,7 +33,16 @@ The game features 28 celestial objects across three phases:
 - **Phase 1 (Main Planets)**: 8 planets (Mercury to Neptune) with sequential unlock.
 - **Phase 2 (Dwarf Planets)**: 7 dwarf planets (Pluto, Ceres, etc.), unlocked after Neptune.
 - **Phase 3 (Asteroids)**: 13 asteroids across 5 rarity tiers, unlocked progressively.
-3D representation currently uses simple geometric shapes for most objects with new detailed .glb models for Mercury, Venus, and Earth.
+3D representation currently uses simple geometric shapes (spheres for planets, boxes for asteroids) with fallback support for detailed .glb models.
+
+### 3D Models Infrastructure
+**Status**: ✅ Infrastructure complete, awaiting .glb model files
+- **PlanetModel.tsx**: Reusable component for loading and rendering .glb models with auto-fallback to geometric shapes
+- **planetModels.ts**: Asset manager with configuration for all 28 objects (scale, rotation speed, model paths)
+- **Models Directory**: `client/public/models/` ready for .glb files
+- **Model Sourcing**: NASA 3D Resources, Solar System Scope, or Sketchfab (CC0/CC-BY licensed)
+- **File Size Target**: Draco-compressed .glb, 500KB-4MB per model depending on complexity
+- **Next Steps**: Place .glb files in `client/public/models/` with names matching configuration (e.g., `mercury.glb`)
 
 ## External Dependencies
 
