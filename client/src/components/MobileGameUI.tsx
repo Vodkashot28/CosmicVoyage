@@ -118,21 +118,17 @@ export function GameUI() {
                 <WalletConnectButton />
               </div>
 
-              {/* Music Toggle Button */}
+              {/* Music Toggle Button - Icon Only */}
               <Button
                 onClick={toggleMute}
-                className="w-full bg-slate-700 hover:bg-slate-600 text-white mb-2 flex items-center justify-center gap-2"
+                size="icon"
+                className="w-10 h-10 bg-slate-700 hover:bg-slate-600 text-white mb-2"
+                title={isMuted ? "Unmute" : "Mute"}
               >
                 {isMuted ? (
-                  <>
-                    <VolumeX className="w-4 h-4" />
-                    <span>Sound: OFF</span>
-                  </>
+                  <VolumeX className="w-4 h-4" />
                 ) : (
-                  <>
-                    <Volume2 className="w-4 h-4" />
-                    <span>Sound: ON</span>
-                  </>
+                  <Volume2 className="w-4 h-4" />
                 )}
               </Button>
               
@@ -188,33 +184,29 @@ export function GameUI() {
 
         {/* Desktop Top Bar Content */}
         <div className="hidden md:block absolute top-20 left-4 right-4 pointer-events-auto">
-          <div className="flex gap-3 flex-wrap">
-            <Card className="bg-gradient-to-br from-slate-900/90 to-slate-900/70 backdrop-blur-md border-purple-500/40 p-3 flex-1 min-w-64">
-              <div className="flex items-center gap-2 mb-2">
-                <Sparkles className="w-4 h-4 text-yellow-400" />
-                <span className="text-white font-bold text-sm">Game Status</span>
+          <div className="flex gap-2 flex-wrap">
+            <Card className="bg-gradient-to-br from-slate-900/90 to-slate-900/70 backdrop-blur-md border-purple-500/40 p-2 flex-1 min-w-48">
+              <div className="flex items-center gap-1 mb-1">
+                <Sparkles className="w-3 h-3 text-yellow-400" />
+                <span className="text-white font-bold text-xs">Game</span>
               </div>
               
-              <div className="space-y-1 text-sm">
-                <div className="flex items-center gap-2 text-yellow-400">
-                  <Coins className="w-3 h-3" />
-                  <span className="font-semibold">{totalTokens} StarTokens</span>
+              <div className="space-y-0.5 text-xs">
+                <div className="flex items-center gap-1 text-yellow-400">
+                  <Coins className="w-2.5 h-2.5" />
+                  <span className="font-semibold">{totalTokens} STAR</span>
                 </div>
                 
                 {mintedNFTCount > 0 && (
-                  <div className="flex items-center gap-2 text-purple-400">
-                    <Gem className="w-3 h-3" />
-                    <span className="font-semibold">{mintedNFTCount} NFTs Minted</span>
+                  <div className="flex items-center gap-1 text-purple-400">
+                    <Gem className="w-2.5 h-2.5" />
+                    <span className="font-semibold">{mintedNFTCount} NFTs</span>
                   </div>
                 )}
 
-                <div className="text-white/80 text-xs">
-                  Discovered: {discoveredPlanets.length}/{planetsData.length}
+                <div className="text-white/70 text-xs">
+                  {discoveredPlanets.length}/{planetsData.length} Discovered
                 </div>
-                
-                {!allDiscovered && nextPlanet && (
-                  <div className="text-cyan-400 text-xs">Next: {nextPlanet}</div>
-                )}
               </div>
             </Card>
 
