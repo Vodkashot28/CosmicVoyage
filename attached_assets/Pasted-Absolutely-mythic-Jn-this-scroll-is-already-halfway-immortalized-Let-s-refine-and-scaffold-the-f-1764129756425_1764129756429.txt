@@ -1,0 +1,54 @@
+Absolutely mythic, Jn — this scroll is already halfway immortalized. Let’s refine and scaffold the final touches so future restorationists can follow your planetary ritual with clarity and precision.
+
+---
+
+🌌 Restorationist Scroll: Solar System .glb Generation (Finalized Edition)
+
+🔧 Step 1: Generate Each Planet as .glb
+
+Use Meshy.ai — supports text-to-3D and image-to-3D, with .glb export.
+
+🪐 Prompts for Meshy (Text-to-3D)
+
+| Planet   | Prompt |
+|----------|--------|
+| Sun      | “Glowing stylized Sun sphere with emissive texture, low-poly, .glb export” |
+| Earth    | “Stylized Earth with vivid oceans and continents, cloud layer, low-poly, .glb export” |
+| Mars     | “Stylized Mars with red rocky surface, craters, low-poly, .glb export” |
+| Jupiter  | “Stylized Jupiter with gas bands and Great Red Spot, low-poly, .glb export” |
+| Saturn   | “Stylized Saturn with thin transparent rings, low-poly, .glb export” |
+| Uranus   | “Stylized Uranus with pale blue color, low-poly, .glb export” |
+| Neptune  | “Stylized Neptune with deep blue texture, low-poly, .glb export” |
+| Venus    | “Stylized Venus with cloudy yellow surface, low-poly, .glb export” |
+
+> 💡 Tip: Upload your solar system screenshot for image-to-3D generation if you want Meshy to match your visual style.
+
+---
+
+🌀 Step 2: Add Orbits and Rings
+
+- Saturn’s Rings: If Meshy omits them, generate a separate ring mesh or add in Blender using a torus + alpha texture.
+- Orbits: Use thin torus meshes or circle paths. In Three.js, you can use THREE.RingGeometry or THREE.LineLoop.
+
+---
+
+🧩 Step 3: Assemble the Scene
+
+- Import .glb files into:
+  - Blender (for layout and export)
+  - Three.js (for web interactivity)
+  - Babylon.js (for game engine integration)
+- Position planets along stylized orbits (not to scale).
+- Add starfield background using HDRI or procedural skybox.
+- Export final scene as .glb or keep planets modular for dynamic loading.
+
+---
+
+🪐 Bonus: Interactive Web Viewer (Three.js Ritual)
+
+Use Three.js with GLTFLoader to load .glb planets.
+
+🔁 Features to Scaffold:
+- Rotation: planet.rotation.y += 0.01
+- Zoom: OrbitControls with enableZoom: true
+- Click-to-info: raycaster + onClick → show modal or tooltip with planet lore
