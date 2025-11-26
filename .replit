@@ -4,7 +4,7 @@ hidden = [".config", ".git", "generated-icon.png", "node_modules", "dist"]
 
 [nix]
 channel = "stable-24_05"
-packages = ["yakut", "zip", "nano", "python312Packages.pygltflib", "openssh"]
+packages = ["openssh", "yakut", "zip"]
 
 [deployment]
 deploymentTarget = "autoscale"
@@ -46,10 +46,6 @@ externalPort = 3003
 [[ports]]
 localPort = 38111
 externalPort = 6000
-
-[[ports]]
-localPort = 41851
-externalPort = 8008
 
 [[ports]]
 localPort = 42669
