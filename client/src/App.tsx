@@ -4,19 +4,17 @@ import { TonConnectUIProvider } from "@tonconnect/ui-react";
 import { Analytics } from "@vercel/analytics/react";
 import "@fontsource/inter";
 import { SolarSystem } from "./components/SolarSystem";
-import { GameUI } from "./components/MobileGameUI";
 import { PlanetCard } from "./components/PlanetCard";
 import { SoundManager } from "./components/SoundManager";
 import { TokenParticles } from "./components/TokenParticles";
 import { TokenTutorial } from "./components/TokenTutorial";
 import { GameOnboarding } from "./components/GameOnboarding";
-import { StarBalanceDisplay } from "./components/StarBalanceDisplay";
-import { ReferralInvite } from "./components/ReferralInvite";
 import { DailyLoginReward } from "./components/DailyLoginReward";
 import { AudioManager } from "./components/AudioManager";
-import { PlayerStatsPanel } from "./components/PlayerStatsPanel";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/ui/tabs";
 import { Toaster } from "./components/ui/sonner";
+import { CollapsibleGameMenu } from "./components/CollapsibleGameMenu";
+import { ReferralInvite } from "./components/ReferralInvite";
 import { initDracoDecoder } from "./lib/draco-setup";
 
 function App() {
@@ -68,9 +66,7 @@ function App() {
               </Suspense>
             </Canvas>
 
-            <StarBalanceDisplay />
-            <PlayerStatsPanel />
-            <GameUI />
+            <CollapsibleGameMenu position="right" />
             <PlanetCard />
           </>
         ) : (
