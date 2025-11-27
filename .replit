@@ -4,7 +4,7 @@ hidden = [".config", ".git", "generated-icon.png", "node_modules", "dist"]
 
 [nix]
 channel = "stable-24_05"
-packages = ["cairo", "emacsPackages.panda", "ffmpeg-full", "freetype", "ghostscript", "glibcLocales", "gobject-introspection", "gtk3", "openssh", "pkg-config", "python312Packages.scikit-learn", "qhull", "tcl", "tk", "yakut", "zip", "python311Packages.joblib", "python311Packages.pandas", "python311Packages.scikit-learn"]
+packages = ["cairo", "emacsPackages.panda", "ffmpeg-full", "freetype", "ghostscript", "glibcLocales", "gobject-introspection", "gtk3", "openssh", "pkg-config", "python312Packages.scikit-learn", "qhull", "tcl", "tk", "yakut", "zip", "python311Packages.joblib", "python311Packages.pandas", "python311Packages.scikit-learn", "nano"]
 
 [deployment]
 deploymentTarget = "autoscale"
