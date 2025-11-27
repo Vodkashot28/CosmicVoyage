@@ -4,7 +4,9 @@ import { Text } from "@react-three/drei";
 import * as THREE from "three";
 import { toast } from "sonner";
 import { useSolarSystem } from "@/lib/stores/useSolarSystem";
+import { useGameBalance } from "@/lib/stores/useGameBalance";
 import { useAudio } from "@/lib/stores/useAudio";
+import { recordDiscovery } from "@/lib/api";
 import type { PlanetData } from "@/data/planets";
 import { planetsData } from "@/data/planets";
 import { PlanetMintModal } from "./PlanetMintModal";
@@ -32,8 +34,10 @@ export function CelestialObject({ data }: CelestialObjectProps) {
     canDiscoverPlanet,
     setSelectedPlanet,
     getOrbitalOffset,
-    initializeOrbitalOffsets
+    initializeOrbitalOffsets,
+    discoveredPlanets
   } = useSolarSystem();
+  const { walletAddress, addStarBalance } = useGameBalance();
   const { playSuccess, playHit } = useAudio();
   
   const discovered = isPlanetDiscovered(data.name);
@@ -83,16 +87,28 @@ export function CelestialObject({ data }: CelestialObjectProps) {
     }
   });
   
-  const handleClick = () => {
+  const handleClick = async () => {
     try {
       if (!discovered && canDiscover) {
         // Mark planet as discovered (view it)
         discoverPlanet(data.name);
         playSuccess();
         
+        // Sync discovery to backend
+        if (walletAddress) {
+          const discoveryOrder = discoveredPlanets.length + 1;
+          try {
+            await recordDiscovery(walletAddress, data.name, discoveryOrder, data.tokenReward);
+            // Award tokens to frontend balance store (passive income only - no instant rewards)
+            // Token is only added when NFT is minted
+          } catch (error) {
+            console.error("Failed to record discovery:", error);
+          }
+        }
+        
         // Open minting modal - user must confirm and mint to get rewards
         toast.info(`${data.name} discovered!`, {
-          description: `Confirm minting to claim ${data.tokenReward} STAR tokens`,
+          description: `Mint NFT to start earning passive income (0.5 STAR/hour)`,
         });
         setShowMintModal(true);
       } else if (discovered) {

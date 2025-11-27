@@ -10,7 +10,9 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { useSolarSystem } from "@/lib/stores/useSolarSystem";
+import { useGameBalance } from "@/lib/stores/useGameBalance";
 import { useAudio } from "@/lib/stores/useAudio";
+import { recordNFTMint, getStarBalance } from "@/lib/api";
 import type { PlanetData } from "@/data/planets";
 import { Zap, Coins } from "lucide-react";
 
@@ -29,7 +31,8 @@ export function PlanetMintModal({
 }: PlanetMintModalProps) {
   const [isMinting, setIsMinting] = useState(false);
   const [useCelestialShield, setUseCelestialShield] = useState(false);
-  const { claimDiscoveryReward, markNFTMinted, totalTokens } = useSolarSystem();
+  const { claimDiscoveryReward, markNFTMinted, totalTokens, discoveredPlanets } = useSolarSystem();
+  const { walletAddress, setStarBalance } = useGameBalance();
   const { playSuccess } = useAudio();
 
   if (!planet) return null;
@@ -114,11 +117,26 @@ export function PlanetMintModal({
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // Mark NFT as minted
-      markNFTMinted(planet.name, `tx_${Date.now()}`);
+      const txHash = `tx_${Date.now()}`;
+      markNFTMinted(planet.name, txHash);
+
+      // Sync NFT mint to backend
+      if (walletAddress && planet) {
+        const discoveryOrder = discoveredPlanets.findIndex(d => d.planetName === planet.name) + 1;
+        try {
+          await recordNFTMint(walletAddress, planet.name, discoveryOrder, txHash);
+          
+          // Fetch updated balance from backend
+          const balanceData = await getStarBalance(walletAddress);
+          setStarBalance(balanceData.starBalance);
+        } catch (error) {
+          console.error("Failed to record NFT mint or sync balance:", error);
+        }
+      }
 
       playSuccess();
       toast.success(`${planet.name} NFT Minted! 🎉`, {
-        description: "NFT successfully minted and added to your collection",
+        description: "NFT successfully minted and added to your collection. Earning passive income!",
       });
       onMintConfirm(planet.name);
       onClose();
