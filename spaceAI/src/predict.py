@@ -12,7 +12,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 
 class CelestialPredictor:
-    def __init__(self, model_path="../models/celestial_classifier_dt.pkl"):
+    def __init__(self, model_path="../models/celestial_classifier.pkl"):
         """Load trained model from disk"""
         try:
             self.model = joblib.load(model_path)
@@ -58,29 +58,21 @@ class CelestialPredictor:
 
 
 if __name__ == "__main__":
-    # Example usage
+    # Load the trained model
+    model = joblib.load('models/celestial_classifier.pkl')
+    
+    # Example input: orbital_period, axial_tilt, mass
+    sample_object = [[365, 23.5, 5.97e24]]  # Earth-like
+    
+    # Predict type
+    prediction = model.predict(sample_object)
+    print("Predicted type:", prediction[0])
+    
+    # Additional examples
+    print("\n--- Additional Predictions ---")
     predictor = CelestialPredictor()
     
     if predictor.model:
-        # Earth's parameters: orbital_period=365 days (1 year), axial_tilt=23.5°, mass=5.97e24 kg
-        print("\nExample Predictions:")
-        print("-" * 50)
-        
         # Single prediction
         earth_type = predictor.predict(365, 23.5, 5.97e24)
         print(f"Earth (365, 23.5, 5.97e24): {earth_type}")
-        
-        # Batch predictions
-        test_objects = [
-            (365, 23.5, 5.97e24),      # Earth
-            (88, 3.39, 3.30e23),       # Mercury
-            (687, 25.2, 6.42e23),      # Mars
-            (4.85, 177.0, 1.34e23),    # Pluto
-        ]
-        
-        batch_predictions = predictor.predict_batch(test_objects)
-        object_names = ["Earth", "Mercury", "Mars", "Pluto"]
-        
-        if batch_predictions:
-            for name, pred in zip(object_names, batch_predictions):
-                print(f"{name}: {pred}")
