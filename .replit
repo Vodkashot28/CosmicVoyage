@@ -4,7 +4,7 @@ hidden = [".config", ".git", "generated-icon.png", "node_modules", "dist"]
 
 [nix]
 channel = "stable-24_05"
-packages = ["cairo", "emacsPackages.panda", "ffmpeg-full", "freetype", "ghostscript", "glibcLocales", "gobject-introspection", "gtk3", "openssh", "pkg-config", "python312Packages.scikit-learn", "qhull", "tcl", "tk", "yakut", "zip", "python311Packages.joblib", "python311Packages.pandas", "python311Packages.scikit-learn", "nano"]
+packages = ["cairo", "emacsPackages.panda", "ffmpeg-full", "freetype", "ghostscript", "glibcLocales", "gobject-introspection", "gtk3", "nano", "openssh", "pkg-config", "python311Packages.joblib", "python311Packages.pandas", "python311Packages.scikit-learn", "python312Packages.scikit-learn", "qhull", "tcl", "tk", "yakut", "zip"]
 
 [deployment]
 deploymentTarget = "autoscale"
@@ -46,10 +46,6 @@ externalPort = 3003
 [[ports]]
 localPort = 38111
 externalPort = 6000
-
-[[ports]]
-localPort = 38757
-externalPort = 8008
 
 [[ports]]
 localPort = 42669
