@@ -185,28 +185,42 @@ export function CelestialObject({ data }: CelestialObjectProps) {
         
         <group ref={orbitGroupRef}>
           <group ref={axialTiltGroupRef} position={[data.orbitRadius, 0, 0]}>
-            <mesh
-              ref={meshRef}
-              onClick={handleClick}
-              onPointerOver={() => canDiscover && setHovered(true)}
-              onPointerOut={() => setHovered(false)}
-            >
             {isAsteroid ? (
-              // Asteroid: box geometry for irregular shape
-              <boxGeometry args={[1, 0.8, 0.6]} />
+              // Asteroids: use box geometry
+              <mesh
+                ref={meshRef}
+                onClick={handleClick}
+                onPointerOver={() => canDiscover && setHovered(true)}
+                onPointerOut={() => setHovered(false)}
+              >
+                <boxGeometry args={[1, 0.8, 0.6]} />
+                <meshStandardMaterial
+                  color={getPlanetColor()}
+                  emissive={discovered ? getRingColor() : "#000000"}
+                  emissiveIntensity={discovered ? 0.3 : 0}
+                  metalness={0.6}
+                  roughness={0.7}
+                  toneMapped={true}
+                />
+              </mesh>
             ) : (
-              // Planet/Dwarf: sphere
-              <sphereGeometry args={[1, 32, 32]} />
+              // Planets/Dwarfs: use .glb models with fallback
+              <group
+                onClick={handleClick}
+                onPointerOver={() => canDiscover && setHovered(true)}
+                onPointerOut={() => setHovered(false)}
+              >
+                {getPlanetModelConfig(data.name) && (
+                  <PlanetModel
+                    name={data.name}
+                    modelPath={getPlanetModelConfig(data.name)?.modelPath || "/models/earth.glb"}
+                    scale={getPlanetModelConfig(data.name)?.scale || 1}
+                    rotationSpeed={getPlanetModelConfig(data.name)?.rotationSpeed || 0.02}
+                    position={[0, 0, 0]}
+                  />
+                )}
+              </group>
             )}
-            <meshStandardMaterial
-              color={getPlanetColor()}
-              emissive={discovered ? getRingColor() : "#000000"}
-              emissiveIntensity={discovered ? 0.3 : 0}
-              metalness={isAsteroid ? 0.6 : 0.3}
-              roughness={isAsteroid ? 0.7 : 0.5}
-              toneMapped={true}
-            />
-            </mesh>
             
             {/* Glowing halo ring for planets/dwarfs */}
             {!isAsteroid && (
