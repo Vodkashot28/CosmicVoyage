@@ -204,22 +204,22 @@ export function CelestialObject({ data }: CelestialObjectProps) {
                 />
               </mesh>
             ) : (
-              // Planets/Dwarfs: use .glb models with fallback
-              <group
+              // Planets/Dwarfs: render as spheres with planet colors
+              <mesh
                 onClick={handleClick}
                 onPointerOver={() => canDiscover && setHovered(true)}
                 onPointerOut={() => setHovered(false)}
               >
-                {getPlanetModelConfig(data.name) && (
-                  <PlanetModel
-                    name={data.name}
-                    modelPath={getPlanetModelConfig(data.name)?.modelPath || "/models/earth.glb"}
-                    scale={getPlanetModelConfig(data.name)?.scale || 1}
-                    rotationSpeed={getPlanetModelConfig(data.name)?.rotationSpeed || 0.02}
-                    position={[0, 0, 0]}
-                  />
-                )}
-              </group>
+                <sphereGeometry args={[1, 32, 32]} />
+                <meshStandardMaterial
+                  color={getPlanetColor(data.name)}
+                  emissive={hovered || discovered ? getPlanetColor(data.name) : 0x000000}
+                  emissiveIntensity={hovered || discovered ? 0.4 : 0}
+                  metalness={0.2}
+                  roughness={0.6}
+                  toneMapped={true}
+                />
+              </mesh>
             )}
             
             {/* Glowing halo ring for planets/dwarfs */}
