@@ -4,6 +4,9 @@ import { CelestialObject } from "./CelestialObject";
 import { allCelestialObjects } from "@/data/planets";
 
 export function SolarSystem() {
+  // Only render first 3 planets (Mercury, Venus, Earth) for MVP
+  const firstThreePlanets = allCelestialObjects.slice(0, 3);
+
   return (
     <>
       <color attach="background" args={["#0a0e27"]} />
@@ -22,7 +25,7 @@ export function SolarSystem() {
 
       <Sun />
 
-      {allCelestialObjects.map((objectData) => (
+      {firstThreePlanets.map((objectData) => (
         <CelestialObject key={objectData.name} data={objectData} />
       ))}
 

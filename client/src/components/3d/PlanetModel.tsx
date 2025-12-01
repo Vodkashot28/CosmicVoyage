@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
@@ -18,48 +18,25 @@ export default function PlanetModel({
   rotationSpeed,
   position,
 }: PlanetModelProps) {
-  const meshRef = useRef<THREE.Group>(null);
-  const [modelLoaded, setModelLoaded] = useState(false);
-  const [hasError, setHasError] = useState(false);
-
-  let gltf: any = null;
-  try {
-    gltf = useGLTF(modelPath);
-  } catch (e) {
-    setHasError(true);
-    console.warn(`[Model] Fallback for ${name} - model not available`);
-  }
-
-  useEffect(() => {
-    if (meshRef.current && gltf?.scene && !hasError) {
-      const clonedScene = gltf.scene.clone();
-      
-      clonedScene.traverse((child: any) => {
-        if (child instanceof THREE.Mesh) {
-          child.castShadow = true;
-          child.receiveShadow = true;
-        }
-      });
-
-      meshRef.current.clear();
-      meshRef.current.add(clonedScene);
-      setModelLoaded(true);
-      console.log(`✅ [Model] Loaded ${name}`);
-    }
-  }, [gltf, name, hasError]);
+  const groupRef = useRef<THREE.Group>(null);
+  
+  // Load model - useGLTF handles caching automatically
+  const gltf = useGLTF(modelPath, undefined, (error) => {
+    console.warn(`[Model] ${name} using fallback - model load failed`);
+  });
 
   useFrame(() => {
-    if (meshRef.current && rotationSpeed !== 0) {
-      meshRef.current.rotation.y += rotationSpeed;
+    if (groupRef.current && rotationSpeed !== 0) {
+      groupRef.current.rotation.y += rotationSpeed;
     }
   });
 
-  // If model loaded successfully, render it
-  if (modelLoaded && !hasError) {
-    return <group ref={meshRef} position={position} scale={scale} />;
+  // If model loaded, render it
+  if (gltf?.scene) {
+    return <primitive ref={groupRef} object={gltf.scene.clone()} position={position} scale={scale} />;
   }
 
-  // Fallback: render a simple sphere
+  // Fallback sphere
   return (
     <mesh position={position} scale={scale}>
       <sphereGeometry args={[1, 32, 32]} />
