@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
@@ -23,13 +23,33 @@ export default function PlanetModel({
   position,
 }: PlanetModelProps) {
   const groupRef = useRef<THREE.Group>(null);
-  
-  let gltf: any = null;
-  try {
-    gltf = useGLTF(modelPath);
-  } catch {
-    // Silently fail - will render fallback
-  }
+  const gltf = useGLTF(modelPath);
+
+  useEffect(() => {
+    if (groupRef.current && gltf?.scene) {
+      // Clone the scene to avoid reference issues
+      const clonedScene = gltf.scene.clone();
+      
+      // Setup shadows and material for all meshes
+      clonedScene.traverse((child: any) => {
+        if (child instanceof THREE.Mesh) {
+          child.castShadow = true;
+          child.receiveShadow = true;
+          
+          // Ensure materials are visible
+          if (child.material) {
+            child.material.side = THREE.FrontSide;
+          }
+        }
+      });
+
+      // Clear previous and add new
+      groupRef.current.clear();
+      groupRef.current.add(clonedScene);
+      
+      console.log(`✅ [Model] Loaded and rendered ${name}`);
+    }
+  }, [gltf?.scene, name]);
 
   useFrame(() => {
     if (groupRef.current && rotationSpeed !== 0) {
@@ -37,12 +57,10 @@ export default function PlanetModel({
     }
   });
 
-  // If model loaded successfully, render cloned scene
+  // If model loaded, render it
   if (gltf?.scene) {
     return (
-      <group ref={groupRef} position={position} scale={scale}>
-        <primitive object={gltf.scene} />
-      </group>
+      <group ref={groupRef} position={position} scale={scale} />
     );
   }
 
