@@ -11,6 +11,10 @@ interface PlanetModelProps {
   position: [number, number, number];
 }
 
+useGLTF.preload('/models/mercury.glb');
+useGLTF.preload('/models/venus.glb');
+useGLTF.preload('/models/earth.glb');
+
 export default function PlanetModel({
   name,
   modelPath,
@@ -20,10 +24,12 @@ export default function PlanetModel({
 }: PlanetModelProps) {
   const groupRef = useRef<THREE.Group>(null);
   
-  // Load model - useGLTF handles caching automatically
-  const gltf = useGLTF(modelPath, undefined, (error) => {
-    console.warn(`[Model] ${name} using fallback - model load failed`);
-  });
+  let gltf: any = null;
+  try {
+    gltf = useGLTF(modelPath);
+  } catch {
+    // Silently fail - will render fallback
+  }
 
   useFrame(() => {
     if (groupRef.current && rotationSpeed !== 0) {
@@ -31,12 +37,16 @@ export default function PlanetModel({
     }
   });
 
-  // If model loaded, render it
+  // If model loaded successfully, render cloned scene
   if (gltf?.scene) {
-    return <primitive ref={groupRef} object={gltf.scene.clone()} position={position} scale={scale} />;
+    return (
+      <group ref={groupRef} position={position} scale={scale}>
+        <primitive object={gltf.scene} />
+      </group>
+    );
   }
 
-  // Fallback sphere
+  // Fallback: blue sphere
   return (
     <mesh position={position} scale={scale}>
       <sphereGeometry args={[1, 32, 32]} />
