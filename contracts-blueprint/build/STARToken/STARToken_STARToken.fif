@@ -1,4 +1,4 @@
-// automatically generated from `@stdlib/std/stdlib.fc` `/data/data/com.termux/files/home/CosmicVoyage/contracts-blueprint/build/STARToken/STARToken_STARToken.fc` 
+// automatically generated from `@stdlib/std/stdlib.fc` `/home/runner/workspace/contracts-blueprint/build/STARToken/STARToken_STARToken.fc` 
 PROGRAM{
   DECLPROC __tact_context_get_sender
   DECLPROC $STARToken$_contract_load

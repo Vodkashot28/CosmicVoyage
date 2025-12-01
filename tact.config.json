@@ -3,8 +3,18 @@
   "projects": [
     {
       "name": "STARToken",
-      "path": "contracts/s_t_a_r_token.tact",
-      "output": "build/STARToken",
+      "path": "contracts-blueprint/contracts/s_t_a_r_token.tact",
+      "output": "contracts-blueprint/build/STARToken",
+      "options": {
+        "debug": false,
+        "external": false
+      },
+      "mode": "full"
+    },
+    {
+      "name": "STARTokenWallet",
+      "path": "contracts-blueprint/contracts/STARTokenWallet.tact",
+      "output": "contracts-blueprint/build/STARTokenWallet",
       "options": {
         "debug": false,
         "external": false
@@ -13,8 +23,8 @@
     },
     {
       "name": "PlanetNFT",
-      "path": "contracts/planet_n_f_t.tact",
-      "output": "build/PlanetNFT",
+      "path": "contracts-blueprint/contracts/PlanetNFT.tact",
+      "output": "contracts-blueprint/build/PlanetNFT",
       "options": {
         "debug": false,
         "external": false
@@ -22,9 +32,59 @@
       "mode": "full"
     },
     {
-      "name": "PlanetNFT",
-      "path": "contracts/planet_n_f_t.tact",
-      "output": "build/PlanetNFT",
+      "name": "PlanetNFTItem",
+      "path": "contracts-blueprint/contracts/PlanetNFTItem.tact",
+      "output": "contracts-blueprint/build/PlanetNFTItem",
+      "options": {
+        "debug": false,
+        "external": false
+      },
+      "mode": "full"
+    },
+    {
+      "name": "ReferralFaucet",
+      "path": "contracts-blueprint/contracts/ReferralFaucet.tact",
+      "output": "contracts-blueprint/build/ReferralFaucet",
+      "options": {
+        "debug": false,
+        "external": false
+      },
+      "mode": "full"
+    },
+    {
+      "name": "CosmicRefinement",
+      "path": "contracts-blueprint/contracts/CosmicRefinement.tact",
+      "output": "contracts-blueprint/build/CosmicRefinement",
+      "options": {
+        "debug": false,
+        "external": false
+      },
+      "mode": "full"
+    },
+    {
+      "name": "StellarMapUnification",
+      "path": "contracts-blueprint/contracts/StellarMapUnification.tact",
+      "output": "contracts-blueprint/build/StellarMapUnification",
+      "options": {
+        "debug": false,
+        "external": false
+      },
+      "mode": "full"
+    },
+    {
+      "name": "SatelliteModuleBlueprint",
+      "path": "contracts-blueprint/contracts/SatelliteModuleBlueprint.tact",
+      "output": "contracts-blueprint/build/SatelliteModuleBlueprint",
+      "options": {
+        "debug": false,
+        "external": false
+      },
+      "mode": "full"
+    },
+    {
+      "name": "StellarImmortalityLedger",
+      "path": "contracts-blueprint/contracts/StellarImmortalityLedger.tact",
+      "output": "contracts-blueprint/build/StellarImmortalityLedger",
       "options": {
         "debug": false,
         "external": false
