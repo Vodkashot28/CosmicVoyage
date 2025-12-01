@@ -4,8 +4,8 @@ import { SunModel } from "./3d/SunModel";
 import { allCelestialObjects } from "@/data/planets";
 
 export function SolarSystem() {
-  // Only render first 3 planets (Mercury, Venus, Earth) for MVP
-  const firstThreePlanets = allCelestialObjects.slice(0, 3);
+  // DEBUG: Only render Sun first to verify .glb model pipeline works
+  // Will add planets incrementally once Sun is confirmed rendering
 
   return (
     <>
@@ -24,10 +24,6 @@ export function SolarSystem() {
       />
 
       <SunModel />
-
-      {firstThreePlanets.map((objectData) => (
-        <CelestialObject key={objectData.name} data={objectData} />
-      ))}
 
       <OrbitControls
         enablePan={true}
