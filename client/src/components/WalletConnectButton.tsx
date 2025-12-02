@@ -8,7 +8,7 @@ import { useGameBalance } from "@/lib/stores/useGameBalance";
  */
 export function WalletConnectButton() {
   const address = useTonAddress();
-  const { fetchBalance } = useGameBalance();
+  const { setWalletAddress } = useGameBalance();
   const [tonConnectUI] = useTonConnectUI();
 
   useEffect(() => {
@@ -23,11 +23,12 @@ export function WalletConnectButton() {
   useEffect(() => {
     if (address) {
       console.log("Wallet connected:", address);
-      fetchBalance(address);
+      setWalletAddress(address);
     } else {
       console.log("Wallet disconnected or not connected");
+      setWalletAddress(null);
     }
-  }, [address, fetchBalance]);
+  }, [address, setWalletAddress]);
 
   return (
     <div className="flex items-center justify-center">
