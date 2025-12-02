@@ -1,4 +1,4 @@
-import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
 
 let dracoLoader: DRACOLoader | null = null;
 

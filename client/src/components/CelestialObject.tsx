@@ -27,10 +27,10 @@ export function CelestialObject({ data }: CelestialObjectProps) {
   const axialTiltGroupRef = useRef<THREE.Group>(null);
   const [hovered, setHovered] = useState(false);
   const [showMintModal, setShowMintModal] = useState(false);
-
-  const {
-    discoverPlanet,
-    isPlanetDiscovered,
+  
+  const { 
+    discoverPlanet, 
+    isPlanetDiscovered, 
     canDiscoverPlanet,
     setSelectedPlanet,
     getOrbitalOffset,
@@ -39,20 +39,20 @@ export function CelestialObject({ data }: CelestialObjectProps) {
   } = useSolarSystem();
   const { walletAddress, addStarBalance } = useGameBalance();
   const { playSuccess, playHit } = useAudio();
-
+  
   const discovered = isPlanetDiscovered(data.name);
   const canDiscover = canDiscoverPlanet(data.name);
-
+  
   // Initialize orbital offsets on first render
   useMemo(() => {
     initializeOrbitalOffsets();
   }, [initializeOrbitalOffsets]);
-
+  
   const orbitalTilt = data.orbitalInclination || 0;
   const axialTilt = data.axialTilt || 0;
   const isAsteroid = data.type === "asteroid";
   const orbitalOffset = getOrbitalOffset(data.name);
-
+  
   // Get model configuration
   const modelConfig = getPlanetModelConfig(data.name);
   const modelPath = modelConfig?.modelPath || "";
@@ -68,48 +68,48 @@ export function CelestialObject({ data }: CelestialObjectProps) {
       modelScale
     });
   }, [data.name, discovered, canDiscover, modelPath, modelScale]);
-
+  
   useFrame((state) => {
     if (inclinationGroupRef.current) {
       inclinationGroupRef.current.rotation.x = orbitalTilt;
     }
-
+    
     // Orbit group: handles the orbital motion around the sun (with random starting offset)
     if (orbitGroupRef.current) {
       orbitGroupRef.current.rotation.y = orbitalOffset + data.orbitSpeed * 0.1 * state.clock.elapsedTime;
     }
-
+    
     // Axial tilt group: applies the planet's rotation axis tilt
     if (axialTiltGroupRef.current) {
       axialTiltGroupRef.current.rotation.z = axialTilt;
     }
-
+    
     if (meshRef.current) {
       // Enhanced rotation: faster when hovering
       const rotationSpeed = hovered && canDiscover ? data.rotationSpeed * 2 : data.rotationSpeed;
       meshRef.current.rotation.y += rotationSpeed;
-
+      
       if (hovered && !discovered && canDiscover) {
         meshRef.current.scale.setScalar(data.size * 1.3);
       } else {
         meshRef.current.scale.setScalar(data.size);
       }
     }
-
+    
     // Pulsing glow effect
     if (glowRef.current) {
       const pulse = Math.sin(state.clock.elapsedTime * 2) * 0.3 + 0.7;
       glowRef.current.scale.setScalar(discovered ? (isAsteroid ? 1.3 : 1.4) * pulse : 1.3 * pulse);
     }
   });
-
+  
   const handleClick = async () => {
     try {
       if (!discovered && canDiscover) {
         // Mark planet as discovered (view it)
         discoverPlanet(data.name);
         playSuccess();
-
+        
         // Sync discovery to backend
         if (walletAddress) {
           const discoveryOrder = discoveredPlanets.length + 1;
@@ -121,7 +121,7 @@ export function CelestialObject({ data }: CelestialObjectProps) {
             console.error("Failed to record discovery:", error);
           }
         }
-
+        
         // Open minting modal - user must confirm and mint to get rewards
         toast.info(`${data.name} discovered!`, {
           description: `Mint NFT to start earning passive income (0.5 STAR/hour)`,
@@ -146,7 +146,7 @@ export function CelestialObject({ data }: CelestialObjectProps) {
       });
     }
   };
-
+  
   const orbitPoints = [];
   const segments = 128;
   for (let i = 0; i <= segments; i++) {
@@ -159,18 +159,18 @@ export function CelestialObject({ data }: CelestialObjectProps) {
       )
     );
   }
-
+  
   const getEmissiveIntensity = () => {
     if (!canDiscover) return 0;
     if (discovered) return 0.4;
     return 0.7;
   };
-
+  
   const getPlanetColor = () => {
     if (!canDiscover) return "#1a1a1a";
     return data.color;
   };
-
+  
   const getRingColor = () => {
     const ringColors: Record<string, string> = {
       "Mercury": "#FFD700",
@@ -184,10 +184,10 @@ export function CelestialObject({ data }: CelestialObjectProps) {
     };
     return ringColors[data.name] || data.color;
   };
-
+  
   const shouldHaveRing = ["Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune"].includes(data.name);
   const isAsteroidLike = data.type === "asteroid" || data.type === "dwarfPlanet";
-
+  
   return (
     <>
       <group ref={inclinationGroupRef}>
@@ -198,7 +198,7 @@ export function CelestialObject({ data }: CelestialObjectProps) {
           segments={128}
           color={getRingColor()}
         />
-
+        
         <group ref={orbitGroupRef}>
           <group ref={axialTiltGroupRef} position={[data.orbitRadius, 0, 0]}>
             {isAsteroid ? (
@@ -236,7 +236,7 @@ export function CelestialObject({ data }: CelestialObjectProps) {
                 />
               </group>
             )}
-
+            
             {/* Glowing halo ring for planets/dwarfs */}
             {!isAsteroid && (
               <mesh>
@@ -249,7 +249,7 @@ export function CelestialObject({ data }: CelestialObjectProps) {
                 />
               </mesh>
             )}
-
+            
             {/* Outer glow for discovered objects with pulsing animation */}
             {discovered && !isAsteroid && (
               <mesh ref={glowRef}>
@@ -278,10 +278,10 @@ export function CelestialObject({ data }: CelestialObjectProps) {
           </group>
         </group>
       </group>
-
+      
       {/* Orbital information on hover */}
       <OrbitalInfo data={data} hovered={hovered} />
-
+      
       {/* Minting Modal - shown after discovery */}
       <PlanetMintModal
         planet={discovered ? data : null}
