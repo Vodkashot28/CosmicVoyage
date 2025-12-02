@@ -8,6 +8,7 @@ import analyticsRouter from "./routes/analytics";
 import emailRouter from "./routes/email";
 import dailyLoginRouter from "./routes/dailyLogin";
 import { orbitalRouter } from "./routes/orbital";
+import blockchainRouter from "./routes/blockchain";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // ============ EMAIL VERIFICATION ROUTES ============
@@ -21,6 +22,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // ============ ORBITAL ROUTES ============
   app.use("/api/orbital", orbitalRouter);
+
+  // ============ BLOCKCHAIN ROUTES ============
+  app.use("/api/blockchain", blockchainRouter);
 
   // ============ GENESIS FAUCET ROUTES ============
 
