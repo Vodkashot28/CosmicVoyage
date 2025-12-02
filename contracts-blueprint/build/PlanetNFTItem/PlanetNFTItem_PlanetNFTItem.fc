@@ -1,0 +1,438 @@
+#pragma version =0.4.6;
+#pragma allow-post-modification;
+#pragma compute-asm-ltr;
+
+;; PlanetNFTItem_PlanetNFTItem.headers.fc
+;;
+;; Header files for PlanetNFTItem
+;; NOTE: declarations are sorted for optimal order
+;;
+
+;; __tact_context_get
+(int, slice, int, slice) __tact_context_get() inline;
+
+;; __tact_context_get_sender
+slice __tact_context_get_sender() inline;
+
+;; $DeployOk$_store
+builder $DeployOk$_store(builder build_0, (int) v) inline;
+
+;; $DeployOk$_store_cell
+cell $DeployOk$_store_cell((int) v, builder b) inline;
+
+;; $PlanetNFTItem$_store
+builder $PlanetNFTItem$_store(builder build_0, (int, slice, slice, slice, int, int, slice, slice, int, int, slice) v) inline;
+
+;; $PlanetNFTItem$_load
+(slice, ((int, slice, slice, slice, int, int, slice, slice, int, int, slice))) $PlanetNFTItem$_load(slice sc_0) inline;
+
+;; $Context$_get_value
+_ $Context$_get_value((int, slice, int, slice) v) inline;
+
+;; $PlanetNFTItem$init$_load
+(slice, ((int, slice, slice, slice, int, slice))) $PlanetNFTItem$init$_load(slice sc_0) inline;
+
+;; $PlanetNFTItem$_contract_init
+(int, slice, slice, slice, int, int, slice, slice, int, int, slice) $PlanetNFTItem$_contract_init(int $itemIndex, slice $collectionAddress, slice $owner, slice $planetName, int $discoveryOrder, slice $glowColor) impure inline;
+
+;; $PlanetNFTItem$_contract_load
+(int, slice, slice, slice, int, int, slice, slice, int, int, slice) $PlanetNFTItem$_contract_load() impure inline;
+
+;; $PlanetNFTItem$_contract_store
+() $PlanetNFTItem$_contract_store((int, slice, slice, slice, int, int, slice, slice, int, int, slice) v) impure inline;
+
+;; $MessageParameters$_constructor_bounce_to_value_mode_body
+((int, cell, int, slice, int)) $MessageParameters$_constructor_bounce_to_value_mode_body(int $bounce, slice $to, int $value, int $mode, cell $body) inline;
+
+;; $PlanetNFTItem$_fun_notify
+((int, slice, slice, slice, int, int, slice, slice, int, int, slice), ()) $PlanetNFTItem$_fun_notify((int, slice, slice, slice, int, int, slice, slice, int, int, slice) $self, cell $body) impure inline;
+
+;; $DeployOk$_constructor_queryId
+((int)) $DeployOk$_constructor_queryId(int $queryId) inline;
+
+
+;; PlanetNFTItem_PlanetNFTItem.stdlib.fc
+global (int, slice, int, slice) __tact_context;
+global slice __tact_context_sender;
+global cell __tact_child_contract_codes;
+global int __tact_randomized;
+
+(int, slice, int, slice) __tact_context_get() inline {
+    return __tact_context;
+}
+
+slice __tact_context_get_sender() inline {
+    return __tact_context_sender;
+}
+
+int $global_now() impure asm """
+    NOW
+""";
+
+int $global_myBalance() impure asm """
+    BALANCE FIRST
+""";
+
+() $global_nativeReserve(int $amount, int $mode) impure asm """
+    RAWRESERVE
+""";
+
+() $global_message((int, cell, int, slice, int) $params) impure asm """
+    NEWC
+    b{01} STSLICECONST  // store tag = $0 and ihr_disabled = true
+    1 STI               // store `bounce`
+    b{000} STSLICECONST // store bounced = false and src = addr_none
+    STSLICE             // store `to`
+    SWAP
+    STGRAMS             // store `value`
+    106 PUSHINT         // 1 + 4 + 4 + 64 + 32 + 1
+    STZEROES
+    // → Stack state
+    // s0: Builder
+    // s1: `body`
+    // s2: `mode`
+    STDICT
+    ENDC
+    SWAP
+    SENDRAWMSG
+""";
+
+((int, slice, slice, slice, int, int, slice, slice, int, int, slice), ()) $PlanetNFTItem$_fun_notify((int, slice, slice, slice, int, int, slice, slice, int, int, slice) $self, cell $body) impure inline {
+    var (($self'itemIndex, $self'collectionAddress, $self'owner, $self'planetName, $self'discoveryOrder, $self'discoveredAt, $self'rarity, $self'glowColor, $self'earnsPassiveIncome, $self'passiveIncomeRate, $self'imageURI)) = $self;
+    slice $to = __tact_context_get_sender();
+    int $bounce = false;
+    if (false) {
+        int $balance = $global_myBalance();
+        int $balanceBeforeMessage = ($balance - $Context$_get_value(__tact_context_get()));
+        if (($balanceBeforeMessage < 0)) {
+            $global_nativeReserve(0, 0);
+            $global_message($MessageParameters$_constructor_bounce_to_value_mode_body($bounce, $to, 0, 130, $body));
+            return (($self'itemIndex, $self'collectionAddress, $self'owner, $self'planetName, $self'discoveryOrder, $self'discoveredAt, $self'rarity, $self'glowColor, $self'earnsPassiveIncome, $self'passiveIncomeRate, $self'imageURI), ());
+        }
+    }
+    $global_message($MessageParameters$_constructor_bounce_to_value_mode_body($bounce, $to, 0, 66, $body));
+    return (($self'itemIndex, $self'collectionAddress, $self'owner, $self'planetName, $self'discoveryOrder, $self'discoveredAt, $self'rarity, $self'glowColor, $self'earnsPassiveIncome, $self'passiveIncomeRate, $self'imageURI), ());
+}
+
+;; PlanetNFTItem_PlanetNFTItem.constants.fc
+;; String ""
+slice __gen_slice_string_96a296d224f285c67bee93c30f8a309157f0daa35dc5b87e410b78630a09cfc7() asm """
+    B{b5ee9c724101010100020000004cacb9cd} B>boc <s PUSHSLICE
+""";
+
+;; String "https://solarsystemexplorer.com/nft/planet.json"
+slice __gen_slice_string_b336f6955e1a507de1dfce3dfde41561938c138e2ecf090ea2799156a57e4ee9() asm """
+    B{b5ee9c7241010101003100005e68747470733a2f2f736f6c617273797374656d6578706c6f7265722e636f6d2f6e66742f706c616e65742e6a736f6e37bcfb84} B>boc <s PUSHSLICE
+""";
+
+;; String "common"
+slice __gen_slice_string_c6ab9d0472ed5ff650b9c62f15241fb2afe6d3f5b17be6f3f489c0ed46398451() asm """
+    B{b5ee9c7241010101000800000c636f6d6d6f6e7b4a7eb0} B>boc <s PUSHSLICE
+""";
+
+;; String "rare"
+slice __gen_slice_string_aa8feda312872da8efb40c9f0e42f9aad1054c92d1df301ac4bede30f5c9a9cc() asm """
+    B{b5ee9c72410101010006000008726172659753646a} B>boc <s PUSHSLICE
+""";
+
+;; String "epic"
+slice __gen_slice_string_1c6f7f062ab03083de0c41693d171b24f00b038198ebb2cad5ac5273cb0698a5() asm """
+    B{b5ee9c7241010101000600000865706963dcc874ff} B>boc <s PUSHSLICE
+""";
+
+;; String "legendary"
+slice __gen_slice_string_4e7c269e0d938a5b0148198e0da5943385b45959707cd58edde4ad45b68c5c29() asm """
+    B{b5ee9c7241010101000b0000126c6567656e64617279d7d71364} B>boc <s PUSHSLICE
+""";
+
+;; PlanetNFTItem_PlanetNFTItem.storage.fc
+;;
+;; Type: Context
+;; TLB: _ bounceable:bool sender:address value:int257 raw:^slice = Context
+;;
+
+_ $Context$_get_value((int, slice, int, slice) v) inline {
+    var (v'bounceable, v'sender, v'value, v'raw) = v;
+    return v'value;
+}
+
+;;
+;; Type: MessageParameters
+;; TLB: _ mode:int257 body:Maybe ^cell value:int257 to:address bounce:bool = MessageParameters
+;;
+
+((int, cell, int, slice, int)) $MessageParameters$_constructor_bounce_to_value_mode_body(int $bounce, slice $to, int $value, int $mode, cell $body) inline {
+    return ($mode, $body, $value, $to, $bounce);
+}
+
+;;
+;; Type: DeployOk
+;; Header: 0xaff90f57
+;; TLB: deploy_ok#aff90f57 queryId:uint64 = DeployOk
+;;
+
+builder $DeployOk$_store(builder build_0, (int) v) inline {
+    var (v'queryId) = v;
+    build_0 = store_uint(build_0, 2952335191, 32);
+    build_0 = build_0.store_uint(v'queryId, 64);
+    return build_0;
+}
+
+cell $DeployOk$_store_cell((int) v, builder b) inline {
+    return $DeployOk$_store(b, v).end_cell();
+}
+
+((int)) $DeployOk$_constructor_queryId(int $queryId) inline {
+    return ($queryId);
+}
+
+;;
+;; Type: PlanetNFTItem
+;; TLB: _ itemIndex:int257 collectionAddress:address owner:address planetName:^string discoveryOrder:int257 discoveredAt:int257 rarity:^string glowColor:^string earnsPassiveIncome:bool passiveIncomeRate:int257 imageURI:^string = PlanetNFTItem
+;;
+
+builder $PlanetNFTItem$_store(builder build_0, (int, slice, slice, slice, int, int, slice, slice, int, int, slice) v) inline {
+    var (v'itemIndex, v'collectionAddress, v'owner, v'planetName, v'discoveryOrder, v'discoveredAt, v'rarity, v'glowColor, v'earnsPassiveIncome, v'passiveIncomeRate, v'imageURI) = v;
+    build_0 = build_0.store_int(v'itemIndex, 257);
+    build_0 = build_0.store_slice(v'collectionAddress);
+    build_0 = build_0.store_slice(v'owner);
+    build_0 = build_0.store_builder_ref(begin_cell().store_slice(v'planetName));
+    var build_1 = begin_cell();
+    build_1 = build_1.store_int(v'discoveryOrder, 257);
+    build_1 = build_1.store_int(v'discoveredAt, 257);
+    build_1 = build_1.store_builder_ref(begin_cell().store_slice(v'rarity));
+    build_1 = build_1.store_builder_ref(begin_cell().store_slice(v'glowColor));
+    build_1 = build_1.store_int(v'earnsPassiveIncome, 1);
+    build_1 = build_1.store_int(v'passiveIncomeRate, 257);
+    build_1 = build_1.store_builder_ref(begin_cell().store_slice(v'imageURI));
+    build_0 = store_builder_ref(build_0, build_1);
+    return build_0;
+}
+
+(slice, ((int, slice, slice, slice, int, int, slice, slice, int, int, slice))) $PlanetNFTItem$_load(slice sc_0) inline {
+    var v'itemIndex = sc_0~load_int(257);
+    var v'collectionAddress = sc_0~load_msg_addr();
+    var v'owner = sc_0~load_msg_addr();
+    var v'planetName = sc_0~load_ref().begin_parse();
+    slice sc_1 = sc_0~load_ref().begin_parse();
+    var v'discoveryOrder = sc_1~load_int(257);
+    var v'discoveredAt = sc_1~load_int(257);
+    var v'rarity = sc_1~load_ref().begin_parse();
+    var v'glowColor = sc_1~load_ref().begin_parse();
+    var v'earnsPassiveIncome = sc_1~load_int(1);
+    var v'passiveIncomeRate = sc_1~load_int(257);
+    var v'imageURI = sc_1~load_ref().begin_parse();
+    return (sc_0, (v'itemIndex, v'collectionAddress, v'owner, v'planetName, v'discoveryOrder, v'discoveredAt, v'rarity, v'glowColor, v'earnsPassiveIncome, v'passiveIncomeRate, v'imageURI));
+}
+
+(slice, ((int, slice, slice, slice, int, slice))) $PlanetNFTItem$init$_load(slice sc_0) inline {
+    var v'itemIndex = sc_0~load_int(257);
+    var v'collectionAddress = sc_0~load_msg_addr();
+    var v'owner = sc_0~load_msg_addr();
+    var v'planetName = sc_0~load_ref().begin_parse();
+    slice sc_1 = sc_0~load_ref().begin_parse();
+    var v'discoveryOrder = sc_1~load_int(257);
+    var v'glowColor = sc_1~load_ref().begin_parse();
+    return (sc_0, (v'itemIndex, v'collectionAddress, v'owner, v'planetName, v'discoveryOrder, v'glowColor));
+}
+
+(int, slice, slice, slice, int, int, slice, slice, int, int, slice) $PlanetNFTItem$_contract_load() impure inline {
+    slice $sc = get_data().begin_parse();
+    int $loaded = $sc~load_int(1);
+    if ($loaded) {
+        return $sc~$PlanetNFTItem$_load();
+    }
+    else {
+        (int $itemIndex, slice $collectionAddress, slice $owner, slice $planetName, int $discoveryOrder, slice $glowColor) = $sc~$PlanetNFTItem$init$_load();
+        $sc.end_parse();
+        return $PlanetNFTItem$_contract_init($itemIndex, $collectionAddress, $owner, $planetName, $discoveryOrder, $glowColor);
+    }
+}
+
+() $PlanetNFTItem$_contract_store((int, slice, slice, slice, int, int, slice, slice, int, int, slice) v) impure inline {
+    builder b = begin_cell();
+    b = b.store_int(true, 1);
+    b = $PlanetNFTItem$_store(b, v);
+    set_data(b.end_cell());
+}
+
+;;
+;; Contract PlanetNFTItem functions
+;;
+
+(int, slice, slice, slice, int, int, slice, slice, int, int, slice) $PlanetNFTItem$_contract_init(int $itemIndex, slice $collectionAddress, slice $owner, slice $planetName, int $discoveryOrder, slice $glowColor) impure inline {
+    var (($self'itemIndex, $self'collectionAddress, $self'owner, $self'planetName, $self'discoveryOrder, $self'discoveredAt, $self'rarity, $self'glowColor, $self'earnsPassiveIncome, $self'passiveIncomeRate, $self'imageURI)) = (null(), null(), null(), null(), null(), null(), null(), null(), true, 50, __gen_slice_string_96a296d224f285c67bee93c30f8a309157f0daa35dc5b87e410b78630a09cfc7());
+    $self'itemIndex = $itemIndex;
+    $self'collectionAddress = $collectionAddress;
+    $self'owner = $owner;
+    $self'planetName = $planetName;
+    $self'discoveryOrder = $discoveryOrder;
+    $self'glowColor = $glowColor;
+    $self'discoveredAt = $global_now();
+    $self'imageURI = __gen_slice_string_b336f6955e1a507de1dfce3dfde41561938c138e2ecf090ea2799156a57e4ee9();
+    if (($discoveryOrder == 1)) {
+        $self'rarity = __gen_slice_string_c6ab9d0472ed5ff650b9c62f15241fb2afe6d3f5b17be6f3f489c0ed46398451();
+    } elseif (($discoveryOrder <= 3)) {
+        $self'rarity = __gen_slice_string_aa8feda312872da8efb40c9f0e42f9aad1054c92d1df301ac4bede30f5c9a9cc();
+    } elseif (($discoveryOrder <= 6)) {
+        $self'rarity = __gen_slice_string_1c6f7f062ab03083de0c41693d171b24f00b038198ebb2cad5ac5273cb0698a5();
+    } else {
+        $self'rarity = __gen_slice_string_4e7c269e0d938a5b0148198e0da5943385b45959707cd58edde4ad45b68c5c29();
+    }
+    return ($self'itemIndex, $self'collectionAddress, $self'owner, $self'planetName, $self'discoveryOrder, $self'discoveredAt, $self'rarity, $self'glowColor, $self'earnsPassiveIncome, $self'passiveIncomeRate, $self'imageURI);
+}
+
+;;
+;; Get methods of a Contract PlanetNFTItem
+;;
+
+;;
+;; Routing of a Contract PlanetNFTItem
+;;
+
+;; message opcode reader utility: only binary receivers
+;; Returns 32 bit message opcode, otherwise throws the "Invalid incoming message" exit code
+(slice, int) ~load_opcode_internal(slice s) asm( -> 1 0) "32 LDUQ 130 THROWIFNOT";
+
+() recv_internal(int msg_value, cell in_msg_cell, slice in_msg) impure {
+    
+    ;; Context
+    var cs = in_msg_cell.begin_parse();
+    cs~skip_bits(2);
+    var msg_bounceable = cs~load_int(1);
+    var msg_bounced = cs~load_int(1);
+    slice msg_sender_addr = cs~load_msg_addr();
+    __tact_context = (msg_bounceable, msg_sender_addr, msg_value, cs);
+    __tact_context_sender = msg_sender_addr;
+    
+    ;; Load contract data
+    var ($self'itemIndex, $self'collectionAddress, $self'owner, $self'planetName, $self'discoveryOrder, $self'discoveredAt, $self'rarity, $self'glowColor, $self'earnsPassiveIncome, $self'passiveIncomeRate, $self'imageURI) = $PlanetNFTItem$_contract_load();
+    
+    ;; Handle bounced messages
+    if (msg_bounced) { return (); }
+    int op = 0;
+    int in_msg_length = slice_bits(in_msg);
+    if (in_msg_length >= 32) {
+        op = in_msg~load_uint(32);
+    }
+    ;; Receive Transfer message
+    if (op == 609864198) {
+        var $msg'queryId = in_msg~load_int(257);
+        var $msg'newOwner = in_msg~load_msg_addr();
+        var $msg'responseDestination = in_msg~load_msg_addr();
+        var $msg'customPayload = in_msg~load_maybe_ref();
+        slice sc_1 = in_msg~load_ref().begin_parse();
+        var $msg'forwardAmount = sc_1~load_int(257);
+        var $msg'forwardPayload = sc_1~load_ref();
+        throw_unless(36952, ( equal_slices_bits(__tact_context_get_sender(), $self'owner) ));
+        $self'owner = $msg'newOwner;
+        $PlanetNFTItem$_contract_store(($self'itemIndex, $self'collectionAddress, $self'owner, $self'planetName, $self'discoveryOrder, $self'discoveredAt, $self'rarity, $self'glowColor, $self'earnsPassiveIncome, $self'passiveIncomeRate, $self'imageURI));
+        return ();
+    }
+    
+    ;; Receive GetStaticData message
+    if (op == 3057312375) {
+        var $msg'queryId = in_msg~load_int(257);
+        $PlanetNFTItem$_contract_store(($self'itemIndex, $self'collectionAddress, $self'owner, $self'planetName, $self'discoveryOrder, $self'discoveredAt, $self'rarity, $self'glowColor, $self'earnsPassiveIncome, $self'passiveIncomeRate, $self'imageURI));
+        return ();
+    }
+    
+    ;; Receive Deploy message
+    if (op == 0x946a98b6) {
+        var $deploy'queryId = in_msg~load_uint(64);
+        ($self'itemIndex, $self'collectionAddress, $self'owner, $self'planetName, $self'discoveryOrder, $self'discoveredAt, $self'rarity, $self'glowColor, $self'earnsPassiveIncome, $self'passiveIncomeRate, $self'imageURI)~$PlanetNFTItem$_fun_notify($DeployOk$_store_cell($DeployOk$_constructor_queryId($deploy'queryId), begin_cell()));
+        $PlanetNFTItem$_contract_store(($self'itemIndex, $self'collectionAddress, $self'owner, $self'planetName, $self'discoveryOrder, $self'discoveredAt, $self'rarity, $self'glowColor, $self'earnsPassiveIncome, $self'passiveIncomeRate, $self'imageURI));
+        return ();
+    }
+    
+    ;; Receive empty message
+    if ((op == 0) & (in_msg_length <= 32)) {
+        $PlanetNFTItem$_contract_store(($self'itemIndex, $self'collectionAddress, $self'owner, $self'planetName, $self'discoveryOrder, $self'discoveredAt, $self'rarity, $self'glowColor, $self'earnsPassiveIncome, $self'passiveIncomeRate, $self'imageURI));
+        return ();
+    }
+    ;; Throw if not handled
+    throw(130);
+}
+
+
+() __tact_selector_hack_asm() impure asm """
+@atend @ 1 {
+        execute current@ context@ current!
+        {
+            // The core idea of this function is to save gas by avoiding unnecessary dict jump, when recv_internal/recv_external is called
+            // We want to extract recv_internal/recv_external from the dict and select needed function
+            // not by jumping to the needed function by it's index, but by using usual IF statements.
+
+            }END> b> // Close previous builder, now we have a cell of previous code on top of the stack
+
+            <{ // Start of the new code builder
+                SETCP0
+                // Swap the new code builder with the previous code, now we have previous code on top of the stack
+                swap
+                // Transform cell to slice and load first ref from the previous code, now we have the dict on top of the stack
+                <s ref@
+
+                // Extract the recv_internal from the dict
+                dup 0 swap @procdictkeylen idict@ { "internal shortcut error" abort } ifnot
+                swap
+
+                // Delete the recv_internal from the dict
+                0 swap @procdictkeylen idict- drop
+                // Delete the recv_external from the dict (it's okay if it's not there)
+                -1 swap @procdictkeylen idict- drop
+                // Delete the __tact_selector_hack from the dict
+                65535 swap @procdictkeylen idict- drop
+
+                // Bring the code builder from the bottom of the stack
+                // because if recv_external extraction is optional, and the number of elements on the stack is not fixed
+                depth 1- roll
+                // Swap with the dict from which we extracted recv_internal and (maybe) recv_external
+                swap
+
+                // Check if the dict is empty
+                dup null?
+                // Store a copy of this flag in the bottom of the stack
+                dup depth 1- -roll
+                {
+                    // If the dict is empty, just drop it (it will be null if it's empty)
+                    drop
+                }
+                {
+                    // If the dict is not empty, prepare continuation to be stored in c3
+                    <{
+                        // Save this dict as first ref in this continuation, it will be pushed in runtime by DICTPUSHCONST
+                        swap @procdictkeylen DICTPUSHCONST
+                        // Jump to the needed function by it's index
+                        DICTIGETJMPZ
+                        // If such key is not found, throw 11 along with the key as an argument
+                        11 THROWARG
+                    }> PUSHCONT
+                    // Store the continuation in c3
+                    c3 POP
+                } cond
+
+                // Function id is on top of the (runtime) stack
+                DUP IFNOTJMP:<{
+                    // place recv_internal here
+                    DROP swap @addop
+                }>
+
+                // Bring back the flag, indicating if the dict is empty or not from the bottom of the stack
+                depth 1- roll
+                {
+                    // If the dict is empty, throw 11
+                    11 THROWARG
+                }
+                {
+                    // If the dict is not empty, jump to continuation from c3
+                    c3 PUSH JMPX
+                } cond
+            }> b>
+        } : }END>c
+        current@ context! current!
+    } does @atend !
+""";
+
+() __tact_selector_hack() method_id(65535) {
+    return __tact_selector_hack_asm();
+}

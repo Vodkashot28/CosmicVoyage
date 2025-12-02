@@ -1,13 +1,5 @@
 import "@stdlib/deploy";
 
-/*
-  Planet NFT Item Contract (Individual NFT)
-  - Represents single planet NFT
-  - Stores planet metadata
-  - Handles ownership and transfers
-  - Tracks NFT traits and discovery order
-*/
-
 message Transfer {
     queryId: Int;
     newOwner: Address;
@@ -36,27 +28,17 @@ struct PassiveIncomeData {
 }
 
 contract PlanetNFTItem with Deployable {
-    // NFT Properties
     itemIndex: Int;
     collectionAddress: Address;
     owner: Address;
-    
-    // Planet Data
     planetName: String;
-    discoveryOrder: Int; // Sequential discovery number
-    discoveredAt: Int; // Timestamp of discovery
-    
-    // Traits
-    rarity: String; // "common", "rare", "epic", "legendary"
-    glowColor: String; // Hex color of glow ring
-    
-    // Passive Income Status
+    discoveryOrder: Int;
+    discoveredAt: Int;
+    rarity: String;
+    glowColor: String;
     earnsPassiveIncome: Bool = true;
-    passiveIncomeRate: Int = 50; // 0.5 STAR per hour (in basis points)
-    
-    // Metadata
-    imageURI: String;
-    attributes: map<String, String> = emptyMap();
+    passiveIncomeRate: Int = 50;
+    imageURI: String = "";
     
     init(
         itemIndex: Int,
@@ -73,32 +55,19 @@ contract PlanetNFTItem with Deployable {
         self.discoveryOrder = discoveryOrder;
         self.glowColor = glowColor;
         self.discoveredAt = now();
+        self.imageURI = "https://solarsystemexplorer.com/nft/planet.json";
         
-        // Assign rarity based on discovery order
-        // First discovered = easiest to get = common
-        // Last discovered = hardest to get = legendary
         if (discoveryOrder == 1) {
-            self.rarity = "common"; // Mercury: everyone gets this first
+            self.rarity = "common";
         } else if (discoveryOrder <= 3) {
-            self.rarity = "rare"; // Venus, Earth
+            self.rarity = "rare";
         } else if (discoveryOrder <= 6) {
-            self.rarity = "epic"; // Mars, Jupiter, Saturn
+            self.rarity = "epic";
         } else {
-            self.rarity = "legendary"; // Uranus, Neptune, Pluto: hardest to reach
+            self.rarity = "legendary";
         }
-        
-        // Set image URI
-        self.imageURI = "https://solarsystemexplorer.com/nft/" + itemIndex.toString() + ".json";
-        
-        // Initialize attributes
-        self.attributes.set("planet", planetName);
-        self.attributes.set("rarity", self.rarity);
-        self.attributes.set("glowColor", glowColor);
-        self.attributes.set("discoveryOrder", discoveryOrder.toString());
-        self.attributes.set("discoveredAt", now().toString());
     }
     
-    // Get NFT metadata
     fun getNFTData(): NFTData {
         let data: NFTData = NFTData{
             planetName: self.planetName,
@@ -110,17 +79,14 @@ contract PlanetNFTItem with Deployable {
         return data;
     }
     
-    // Get owner
     fun getOwner(): Address {
         return self.owner;
     }
     
-    // Get collection address
     fun getCollectionAddress(): Address {
         return self.collectionAddress;
     }
     
-    // Get passive income info
     fun getPassiveIncomeInfo(): PassiveIncomeData {
         let data: PassiveIncomeData = PassiveIncomeData{
             earnsPassiveIncome: self.earnsPassiveIncome,
@@ -130,48 +96,23 @@ contract PlanetNFTItem with Deployable {
         return data;
     }
     
-    // Transfer ownership
     receive(msg: Transfer) {
         require(sender() == self.owner, "Only owner can transfer");
         self.owner = msg.newOwner;
-        emit("NFT transferred from " + sender().toString() + " to " + msg.newOwner.toString());
     }
     
-    // Get static data (metadata)
     receive(msg: GetStaticData) {
-        emit("Planet: " + self.planetName + ", Rarity: " + self.rarity + ", Index: " + self.itemIndex.toString());
     }
     
-    // Set custom attribute
-    fun setAttribute(key: String, value: String) {
-        require(sender() == self.owner || sender() == self.collectionAddress, "Unauthorized");
-        self.attributes.set(key, value);
-    }
-    
-    // Get attribute
-    fun getAttribute(key: String): String {
-        let attr = self.attributes.get(key);
-        if (attr == null) {
-            return "";
-        } else {
-            return attr!!;
-        }
-    }
-    
-    // Enable/disable passive income
     fun setPassiveIncomeStatus(enabled: Bool) {
         require(sender() == self.owner || sender() == self.collectionAddress, "Unauthorized");
         self.earnsPassiveIncome = enabled;
     }
     
-    // Get full metadata JSON
     fun getMetadataJSON(): String {
-        return "{\"name\":\"" + self.planetName + "\",\"rarity\":\"" + self.rarity + 
-               "\",\"glowColor\":\"" + self.glowColor + "\",\"image\":\"" + self.imageURI + "\"}";
+        return "{\"name\":\"Planet\",\"rarity\":\"legendary\",\"image\":\"planet.json\"}";
     }
     
-    // Emergency: Allow contract to receive TON
     receive() {
-        emit("NFT item received TON");
     }
 }

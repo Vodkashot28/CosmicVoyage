@@ -1,0 +1,469 @@
+#pragma version =0.4.6;
+#pragma allow-post-modification;
+#pragma compute-asm-ltr;
+
+;; ReferralFaucet_ReferralFaucet.headers.fc
+;;
+;; Header files for ReferralFaucet
+;; NOTE: declarations are sorted for optimal order
+;;
+
+;; __tact_not_null
+forall X -> X __tact_not_null(X x) impure inline;
+
+;; __tact_context_get
+(int, slice, int, slice) __tact_context_get() inline;
+
+;; __tact_context_get_sender
+slice __tact_context_get_sender() inline;
+
+;; __tact_dict_set_slice_slice
+(cell, ()) __tact_dict_set_slice_slice(cell d, int kl, slice k, slice v) inline;
+
+;; __tact_dict_get_slice_int
+int __tact_dict_get_slice_int(cell d, int kl, slice k, int vl) inline;
+
+;; __tact_dict_set_slice_int
+(cell, ()) __tact_dict_set_slice_int(cell d, int kl, slice k, int v, int vl) inline;
+
+;; $DeployOk$_store
+builder $DeployOk$_store(builder build_0, (int) v) inline;
+
+;; $DeployOk$_store_cell
+cell $DeployOk$_store_cell((int) v, builder b) inline;
+
+;; $ReferralFaucet$_store
+builder $ReferralFaucet$_store(builder build_0, (slice, int, int, int, int, cell, cell, cell, cell) v) inline;
+
+;; $ReferralFaucet$_load
+(slice, ((slice, int, int, int, int, cell, cell, cell, cell))) $ReferralFaucet$_load(slice sc_0) inline;
+
+;; $Context$_get_value
+_ $Context$_get_value((int, slice, int, slice) v) inline;
+
+;; $ReferralFaucet$init$_load
+(slice, ((slice, int, int, int))) $ReferralFaucet$init$_load(slice sc_0) inline;
+
+;; $ReferralFaucet$_contract_init
+(slice, int, int, int, int, cell, cell, cell, cell) $ReferralFaucet$_contract_init(slice $starToken, int $giftAmount, int $referralBonus, int $maxReferralBonus) impure inline;
+
+;; $ReferralFaucet$_contract_load
+(slice, int, int, int, int, cell, cell, cell, cell) $ReferralFaucet$_contract_load() impure inline;
+
+;; $ReferralFaucet$_contract_store
+() $ReferralFaucet$_contract_store((slice, int, int, int, int, cell, cell, cell, cell) v) impure inline;
+
+;; $MessageParameters$_constructor_bounce_to_value_mode_body
+((int, cell, int, slice, int)) $MessageParameters$_constructor_bounce_to_value_mode_body(int $bounce, slice $to, int $value, int $mode, cell $body) inline;
+
+;; $ReferralFaucet$_fun_notify
+((slice, int, int, int, int, cell, cell, cell, cell), ()) $ReferralFaucet$_fun_notify((slice, int, int, int, int, cell, cell, cell, cell) $self, cell $body) impure inline;
+
+;; $DeployOk$_constructor_queryId
+((int)) $DeployOk$_constructor_queryId(int $queryId) inline;
+
+
+;; ReferralFaucet_ReferralFaucet.stdlib.fc
+global (int, slice, int, slice) __tact_context;
+global slice __tact_context_sender;
+global cell __tact_child_contract_codes;
+global int __tact_randomized;
+
+(slice, slice) __tact_load_address_opt(slice cs) asm """
+
+            b{00} SDBEGINSQ
+            IF:<{
+              PUSHNULL
+            }>ELSE<{
+              LDMSGADDR
+              SWAP
+            }>
+
+""";
+
+forall X -> X __tact_not_null(X x) impure inline {
+    throw_if(128, null?(x)); return x;
+}
+
+(cell, int) __tact_dict_delete(cell dict, int key_len, slice index) asm(index dict key_len) """
+    DICTDEL
+""";
+
+(slice, int) __tact_dict_get(cell dict, int key_len, slice index) asm(index dict key_len) """
+    DICTGET NULLSWAPIFNOT
+""";
+
+(int, slice, int, slice) __tact_context_get() inline {
+    return __tact_context;
+}
+
+slice __tact_context_get_sender() inline {
+    return __tact_context_sender;
+}
+
+(cell, ()) __tact_dict_set_slice_slice(cell d, int kl, slice k, slice v) inline {
+    if (null?(v)) {
+        var (r, ok) = __tact_dict_delete(d, kl, k);
+        return (r, ());
+    } else {
+        return (dict_set_builder(d, kl, k, begin_cell().store_slice(v)), ());
+    }
+}
+
+int __tact_dict_get_slice_int(cell d, int kl, slice k, int vl) inline {
+    var (r, ok) = __tact_dict_get(d, kl, k);
+    if (ok) {
+        return r~load_int(vl);
+    } else {
+        return null();
+    }
+}
+
+(cell, ()) __tact_dict_set_slice_int(cell d, int kl, slice k, int v, int vl) inline {
+    if (null?(v)) {
+        var (r, ok) = __tact_dict_delete(d, kl, k);
+        return (r, ());
+    } else {
+        return (dict_set_builder(d, kl, k, begin_cell().store_int(v, vl)), ());
+    }
+}
+
+int $global_myBalance() impure asm """
+    BALANCE FIRST
+""";
+
+() $global_nativeReserve(int $amount, int $mode) impure asm """
+    RAWRESERVE
+""";
+
+() $global_message((int, cell, int, slice, int) $params) impure asm """
+    NEWC
+    b{01} STSLICECONST  // store tag = $0 and ihr_disabled = true
+    1 STI               // store `bounce`
+    b{000} STSLICECONST // store bounced = false and src = addr_none
+    STSLICE             // store `to`
+    SWAP
+    STGRAMS             // store `value`
+    106 PUSHINT         // 1 + 4 + 4 + 64 + 32 + 1
+    STZEROES
+    // → Stack state
+    // s0: Builder
+    // s1: `body`
+    // s2: `mode`
+    STDICT
+    ENDC
+    SWAP
+    SENDRAWMSG
+""";
+
+((slice, int, int, int, int, cell, cell, cell, cell), ()) $ReferralFaucet$_fun_notify((slice, int, int, int, int, cell, cell, cell, cell) $self, cell $body) impure inline {
+    var (($self'starToken, $self'giftAmount, $self'referralBonus, $self'maxReferralBonus, $self'passiveIncomeBonusPercent, $self'claimed, $self'referralCount, $self'referredBy, $self'referralBonusEarned)) = $self;
+    slice $to = __tact_context_get_sender();
+    int $bounce = false;
+    if (false) {
+        int $balance = $global_myBalance();
+        int $balanceBeforeMessage = ($balance - $Context$_get_value(__tact_context_get()));
+        if (($balanceBeforeMessage < 0)) {
+            $global_nativeReserve(0, 0);
+            $global_message($MessageParameters$_constructor_bounce_to_value_mode_body($bounce, $to, 0, 130, $body));
+            return (($self'starToken, $self'giftAmount, $self'referralBonus, $self'maxReferralBonus, $self'passiveIncomeBonusPercent, $self'claimed, $self'referralCount, $self'referredBy, $self'referralBonusEarned), ());
+        }
+    }
+    $global_message($MessageParameters$_constructor_bounce_to_value_mode_body($bounce, $to, 0, 66, $body));
+    return (($self'starToken, $self'giftAmount, $self'referralBonus, $self'maxReferralBonus, $self'passiveIncomeBonusPercent, $self'claimed, $self'referralCount, $self'referredBy, $self'referralBonusEarned), ());
+}
+
+;; ReferralFaucet_ReferralFaucet.storage.fc
+;;
+;; Type: Context
+;; TLB: _ bounceable:bool sender:address value:int257 raw:^slice = Context
+;;
+
+_ $Context$_get_value((int, slice, int, slice) v) inline {
+    var (v'bounceable, v'sender, v'value, v'raw) = v;
+    return v'value;
+}
+
+;;
+;; Type: MessageParameters
+;; TLB: _ mode:int257 body:Maybe ^cell value:int257 to:address bounce:bool = MessageParameters
+;;
+
+((int, cell, int, slice, int)) $MessageParameters$_constructor_bounce_to_value_mode_body(int $bounce, slice $to, int $value, int $mode, cell $body) inline {
+    return ($mode, $body, $value, $to, $bounce);
+}
+
+;;
+;; Type: DeployOk
+;; Header: 0xaff90f57
+;; TLB: deploy_ok#aff90f57 queryId:uint64 = DeployOk
+;;
+
+builder $DeployOk$_store(builder build_0, (int) v) inline {
+    var (v'queryId) = v;
+    build_0 = store_uint(build_0, 2952335191, 32);
+    build_0 = build_0.store_uint(v'queryId, 64);
+    return build_0;
+}
+
+cell $DeployOk$_store_cell((int) v, builder b) inline {
+    return $DeployOk$_store(b, v).end_cell();
+}
+
+((int)) $DeployOk$_constructor_queryId(int $queryId) inline {
+    return ($queryId);
+}
+
+;;
+;; Type: ReferralFaucet
+;; TLB: _ starToken:address giftAmount:int257 referralBonus:int257 maxReferralBonus:int257 passiveIncomeBonusPercent:int257 claimed:dict<address, bool> referralCount:dict<address, int> referredBy:dict<address, address> referralBonusEarned:dict<address, int> = ReferralFaucet
+;;
+
+builder $ReferralFaucet$_store(builder build_0, (slice, int, int, int, int, cell, cell, cell, cell) v) inline {
+    var (v'starToken, v'giftAmount, v'referralBonus, v'maxReferralBonus, v'passiveIncomeBonusPercent, v'claimed, v'referralCount, v'referredBy, v'referralBonusEarned) = v;
+    build_0 = build_0.store_slice(v'starToken);
+    build_0 = build_0.store_int(v'giftAmount, 257);
+    build_0 = build_0.store_int(v'referralBonus, 257);
+    var build_1 = begin_cell();
+    build_1 = build_1.store_int(v'maxReferralBonus, 257);
+    build_1 = build_1.store_int(v'passiveIncomeBonusPercent, 257);
+    build_1 = build_1.store_dict(v'claimed);
+    build_1 = build_1.store_dict(v'referralCount);
+    build_1 = build_1.store_dict(v'referredBy);
+    build_1 = build_1.store_dict(v'referralBonusEarned);
+    build_0 = store_builder_ref(build_0, build_1);
+    return build_0;
+}
+
+(slice, ((slice, int, int, int, int, cell, cell, cell, cell))) $ReferralFaucet$_load(slice sc_0) inline {
+    var v'starToken = sc_0~load_msg_addr();
+    var v'giftAmount = sc_0~load_int(257);
+    var v'referralBonus = sc_0~load_int(257);
+    slice sc_1 = sc_0~load_ref().begin_parse();
+    var v'maxReferralBonus = sc_1~load_int(257);
+    var v'passiveIncomeBonusPercent = sc_1~load_int(257);
+    var v'claimed = sc_1~load_dict();
+    var v'referralCount = sc_1~load_dict();
+    var v'referredBy = sc_1~load_dict();
+    var v'referralBonusEarned = sc_1~load_dict();
+    return (sc_0, (v'starToken, v'giftAmount, v'referralBonus, v'maxReferralBonus, v'passiveIncomeBonusPercent, v'claimed, v'referralCount, v'referredBy, v'referralBonusEarned));
+}
+
+(slice, ((slice, int, int, int))) $ReferralFaucet$init$_load(slice sc_0) inline {
+    var v'starToken = sc_0~load_msg_addr();
+    var v'giftAmount = sc_0~load_int(257);
+    var v'referralBonus = sc_0~load_int(257);
+    slice sc_1 = sc_0~load_ref().begin_parse();
+    var v'maxReferralBonus = sc_1~load_int(257);
+    return (sc_0, (v'starToken, v'giftAmount, v'referralBonus, v'maxReferralBonus));
+}
+
+(slice, int, int, int, int, cell, cell, cell, cell) $ReferralFaucet$_contract_load() impure inline {
+    slice $sc = get_data().begin_parse();
+    int $loaded = $sc~load_int(1);
+    if ($loaded) {
+        return $sc~$ReferralFaucet$_load();
+    }
+    else {
+        (slice $starToken, int $giftAmount, int $referralBonus, int $maxReferralBonus) = $sc~$ReferralFaucet$init$_load();
+        $sc.end_parse();
+        return $ReferralFaucet$_contract_init($starToken, $giftAmount, $referralBonus, $maxReferralBonus);
+    }
+}
+
+() $ReferralFaucet$_contract_store((slice, int, int, int, int, cell, cell, cell, cell) v) impure inline {
+    builder b = begin_cell();
+    b = b.store_int(true, 1);
+    b = $ReferralFaucet$_store(b, v);
+    set_data(b.end_cell());
+}
+
+;;
+;; Contract ReferralFaucet functions
+;;
+
+(slice, int, int, int, int, cell, cell, cell, cell) $ReferralFaucet$_contract_init(slice $starToken, int $giftAmount, int $referralBonus, int $maxReferralBonus) impure inline {
+    var (($self'starToken, $self'giftAmount, $self'referralBonus, $self'maxReferralBonus, $self'passiveIncomeBonusPercent, $self'claimed, $self'referralCount, $self'referredBy, $self'referralBonusEarned)) = (null(), null(), null(), null(), null(), null(), null(), null(), null());
+    $self'starToken = $starToken;
+    $self'giftAmount = $giftAmount;
+    $self'referralBonus = $referralBonus;
+    $self'maxReferralBonus = $maxReferralBonus;
+    $self'passiveIncomeBonusPercent = 10;
+    return ($self'starToken, $self'giftAmount, $self'referralBonus, $self'maxReferralBonus, $self'passiveIncomeBonusPercent, $self'claimed, $self'referralCount, $self'referredBy, $self'referralBonusEarned);
+}
+
+;;
+;; Get methods of a Contract ReferralFaucet
+;;
+
+;;
+;; Routing of a Contract ReferralFaucet
+;;
+
+;; message opcode reader utility: only binary receivers
+;; Returns 32 bit message opcode, otherwise throws the "Invalid incoming message" exit code
+(slice, int) ~load_opcode_internal(slice s) asm( -> 1 0) "32 LDUQ 130 THROWIFNOT";
+
+() recv_internal(int msg_value, cell in_msg_cell, slice in_msg) impure {
+    
+    ;; Context
+    var cs = in_msg_cell.begin_parse();
+    cs~skip_bits(2);
+    var msg_bounceable = cs~load_int(1);
+    var msg_bounced = cs~load_int(1);
+    slice msg_sender_addr = cs~load_msg_addr();
+    __tact_context = (msg_bounceable, msg_sender_addr, msg_value, cs);
+    __tact_context_sender = msg_sender_addr;
+    
+    ;; Load contract data
+    var ($self'starToken, $self'giftAmount, $self'referralBonus, $self'maxReferralBonus, $self'passiveIncomeBonusPercent, $self'claimed, $self'referralCount, $self'referredBy, $self'referralBonusEarned) = $ReferralFaucet$_contract_load();
+    
+    ;; Handle bounced messages
+    if (msg_bounced) { return (); }
+    var op = in_msg~load_opcode_internal();
+    ;; Receive ClaimFaucet message
+    if (op == 1915398079) {
+        var $msg'referral = in_msg~__tact_load_address_opt();
+        slice $senderAddress = __tact_context_get_sender();
+        int $hasClaimed = __tact_dict_get_slice_int($self'claimed, 267, $senderAddress, 1);
+        int $alreadyClaimed = false;
+        if ((~ null?($hasClaimed))) {
+            $alreadyClaimed = __tact_not_null($hasClaimed);
+        }
+        throw_unless(17148, (~ $alreadyClaimed));
+        $self'claimed~__tact_dict_set_slice_int(267, $senderAddress, true, 1);
+        if ((~ null?($msg'referral))) {
+            slice $referralAddr = __tact_not_null($msg'referral);
+            if (( ~ equal_slices_bits($referralAddr, $senderAddress) )) {
+                int $referralClaimedOpt = __tact_dict_get_slice_int($self'claimed, 267, $referralAddr, 1);
+                int $isReferralValid = false;
+                if ((~ null?($referralClaimedOpt))) {
+                    $isReferralValid = __tact_not_null($referralClaimedOpt);
+                }
+                if ($isReferralValid) {
+                    int $countOpt = __tact_dict_get_slice_int($self'referralCount, 267, $referralAddr, 257);
+                    int $count = 0;
+                    if ((~ null?($countOpt))) {
+                        $count = __tact_not_null($countOpt);
+                    }
+                    $self'referralCount~__tact_dict_set_slice_int(267, $referralAddr, ($count + 1), 257);
+                    $self'referredBy~__tact_dict_set_slice_slice(267, $senderAddress, $referralAddr);
+                    int $bonus = 0;
+                    if (($count < 3)) {
+                        $bonus = $self'referralBonus;
+                    } elseif (($count < 7)) {
+                        $bonus = ($self'referralBonus + 2);
+                    } else {
+                        $bonus = ($self'referralBonus + 5);
+                    }
+                    int $bonusOpt = __tact_dict_get_slice_int($self'referralBonusEarned, 267, $referralAddr, 257);
+                    int $currentBonus = 0;
+                    if ((~ null?($bonusOpt))) {
+                        $currentBonus = __tact_not_null($bonusOpt);
+                    }
+                    int $totalBonus = ($currentBonus + $bonus);
+                    if (($totalBonus > $self'maxReferralBonus)) {
+                        $bonus = ($self'maxReferralBonus - $currentBonus);
+                    }
+                    $self'referralBonusEarned~__tact_dict_set_slice_int(267, $referralAddr, ($currentBonus + $bonus), 257);
+                }
+            }
+        }
+        $ReferralFaucet$_contract_store(($self'starToken, $self'giftAmount, $self'referralBonus, $self'maxReferralBonus, $self'passiveIncomeBonusPercent, $self'claimed, $self'referralCount, $self'referredBy, $self'referralBonusEarned));
+        return ();
+    }
+    
+    ;; Receive Deploy message
+    if (op == 0x946a98b6) {
+        var $deploy'queryId = in_msg~load_uint(64);
+        ($self'starToken, $self'giftAmount, $self'referralBonus, $self'maxReferralBonus, $self'passiveIncomeBonusPercent, $self'claimed, $self'referralCount, $self'referredBy, $self'referralBonusEarned)~$ReferralFaucet$_fun_notify($DeployOk$_store_cell($DeployOk$_constructor_queryId($deploy'queryId), begin_cell()));
+        $ReferralFaucet$_contract_store(($self'starToken, $self'giftAmount, $self'referralBonus, $self'maxReferralBonus, $self'passiveIncomeBonusPercent, $self'claimed, $self'referralCount, $self'referredBy, $self'referralBonusEarned));
+        return ();
+    }
+    
+    ;; Throw if not handled
+    throw(130);
+}
+
+
+() __tact_selector_hack_asm() impure asm """
+@atend @ 1 {
+        execute current@ context@ current!
+        {
+            // The core idea of this function is to save gas by avoiding unnecessary dict jump, when recv_internal/recv_external is called
+            // We want to extract recv_internal/recv_external from the dict and select needed function
+            // not by jumping to the needed function by it's index, but by using usual IF statements.
+
+            }END> b> // Close previous builder, now we have a cell of previous code on top of the stack
+
+            <{ // Start of the new code builder
+                SETCP0
+                // Swap the new code builder with the previous code, now we have previous code on top of the stack
+                swap
+                // Transform cell to slice and load first ref from the previous code, now we have the dict on top of the stack
+                <s ref@
+
+                // Extract the recv_internal from the dict
+                dup 0 swap @procdictkeylen idict@ { "internal shortcut error" abort } ifnot
+                swap
+
+                // Delete the recv_internal from the dict
+                0 swap @procdictkeylen idict- drop
+                // Delete the recv_external from the dict (it's okay if it's not there)
+                -1 swap @procdictkeylen idict- drop
+                // Delete the __tact_selector_hack from the dict
+                65535 swap @procdictkeylen idict- drop
+
+                // Bring the code builder from the bottom of the stack
+                // because if recv_external extraction is optional, and the number of elements on the stack is not fixed
+                depth 1- roll
+                // Swap with the dict from which we extracted recv_internal and (maybe) recv_external
+                swap
+
+                // Check if the dict is empty
+                dup null?
+                // Store a copy of this flag in the bottom of the stack
+                dup depth 1- -roll
+                {
+                    // If the dict is empty, just drop it (it will be null if it's empty)
+                    drop
+                }
+                {
+                    // If the dict is not empty, prepare continuation to be stored in c3
+                    <{
+                        // Save this dict as first ref in this continuation, it will be pushed in runtime by DICTPUSHCONST
+                        swap @procdictkeylen DICTPUSHCONST
+                        // Jump to the needed function by it's index
+                        DICTIGETJMPZ
+                        // If such key is not found, throw 11 along with the key as an argument
+                        11 THROWARG
+                    }> PUSHCONT
+                    // Store the continuation in c3
+                    c3 POP
+                } cond
+
+                // Function id is on top of the (runtime) stack
+                DUP IFNOTJMP:<{
+                    // place recv_internal here
+                    DROP swap @addop
+                }>
+
+                // Bring back the flag, indicating if the dict is empty or not from the bottom of the stack
+                depth 1- roll
+                {
+                    // If the dict is empty, throw 11
+                    11 THROWARG
+                }
+                {
+                    // If the dict is not empty, jump to continuation from c3
+                    c3 PUSH JMPX
+                } cond
+            }> b>
+        } : }END>c
+        current@ context! current!
+    } does @atend !
+""";
+
+() __tact_selector_hack() method_id(65535) {
+    return __tact_selector_hack_asm();
+}
