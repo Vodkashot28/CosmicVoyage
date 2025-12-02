@@ -44,16 +44,18 @@ export default function PlanetModel({
   const groupRef = useRef<THREE.Group>(null);
   const [modelLoaded, setModelLoaded] = useState(false);
 
+  // Always call useGLTF unconditionally to follow Rules of Hooks
   let gltf: any = null;
   try {
     gltf = useGLTF(modelPath);
   } catch (err) {
-    // Model not found - use fallback
-    gltf = null;
+    // Silently fail - will use fallback
   }
 
   useEffect(() => {
-    if (groupRef.current && gltf?.scene) {
+    if (!groupRef.current || !gltf?.scene) return;
+    
+    try {
       const clonedScene = gltf.scene.clone();
       
       clonedScene.traverse((child: any) => {
@@ -71,6 +73,9 @@ export default function PlanetModel({
       groupRef.current.add(clonedScene);
       setModelLoaded(true);
       console.log(`✅ [Model] Loaded ${name}`);
+    } catch (err) {
+      console.warn(`[Model] Failed to load ${name}:`, err);
+      setModelLoaded(false);
     }
   }, [gltf?.scene, name]);
 
