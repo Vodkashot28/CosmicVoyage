@@ -131,30 +131,42 @@ The game features 28 celestial objects across three phases:
 - **Vite**: Build tool.
 - `@replit/vite-plugin-runtime-error-modal`: Development error handling.
 
-## Recent Changes (Session November 26, 2025)
+## Recent Changes (Session December 1, 2025)
 
 ### Completed
-- ✅ Generated 28 realistic .glb celestial object models (all phases complete)
-- ✅ Implemented Draco decoder initialization in App.tsx for compressed model loading
-- ✅ Set up Draco directory and configuration for Level 10 compression
-- ✅ Created OrbitLine.tsx component with shader-based energy trail effects
-- ✅ Configured all models in planetModels.ts with proper scale/rotation speeds
-- ✅ Verified 0.1x orbital speed multiplier for visible planet motion
-- ✅ Database connected and initialized on startup
+- ✅ Fixed Sun visibility with fallback golden sphere and glow effects
+- ✅ Updated SunModel.tsx to prioritize .glb model with fallback rendering
+- ✅ Compiled all 9 Tact smart contracts - STARToken compiled successfully
+- ✅ Deployed STARToken contract to TON testnet - Active and verified
+- ✅ Created deployment-info.json with contract metadata and explorer links
+
+### Compilation Status
+| Contract | Status | Issue (if any) |
+|----------|--------|---|
+| STARToken | ✅ Compiled & Deployed | - |
+| STARTokenWallet | ❌ Syntax Error | Tuple return type syntax `(Int, Int, Int)` |
+| PlanetNFT | ❌ Syntax Error | Map access `self.allowedMinters[owner]` not supported |
+| PlanetNFTItem | ❌ Syntax Error | Map access `self.attributes["planet"]` not supported |
+| ReferralFaucet | ❌ Syntax Error | Tuple return type syntax |
+| CosmicRefinement | ❌ Syntax Error | Tuple return type syntax |
+| StellarMapUnification | ❌ Syntax Error | Emit statement syntax error |
+| StellarImmortalityLedger | ❌ Syntax Error | Function name space: `getImmortality Score` |
+| SatelliteModuleBlueprint | ❌ Syntax Error | Emit statement syntax error |
 
 ### In Progress
-- 🔧 Completing OrbitLine.tsx integration into CelestialObject.tsx
-- 🔧 Adding NFT ownership tracking for orbit visualization state
-- 🔧 Testing 28-object render performance and model load times
+- 🔧 Fixing 8 contracts' Tact syntax errors for compiler v1.6.13
+- 🔧 Testing 3D model rendering pipeline (Sun visible, camera positioned)
 
 ### Known Issues
-- LSP diagnostic in OrbitLine.tsx (minor ref type casting) - resolved
-- Workflow port conflict resolved (port 5000 cleared)
+- 8/9 contracts require syntax fixes before compilation
+- 3D models pipeline simplified for debugging visibility
 
 ## Deployment Status
 - **Local Testing**: ✅ Game running on localhost:5000
 - **Production**: Deployed to solar-system.xyz (ready for testnet)
-- **Smart Contracts**: Awaiting TON testnet deployment and wallet configuration
+- **Smart Contracts**: ✅ STARToken deployed to TON testnet (Active)
+  - Address: `EQAIYlrr3UiMJ9fqI-B4j2nJdiiD7WzyaNL1MX_wiONc4OUi`
+  - Explorer: https://testnet.tonscan.org/address/EQAIYlrr3UiMJ9fqI-B4j2nJdiiD7WzyaNL1MX_wiONc4OUi
 - **Database**: Development database ready, migrations current
 
 ## Performance Targets
