@@ -1,0 +1,5 @@
+reviews:
+  enabled: true
+  summary: true
+  suggestions: true
+  auto_fix: true
