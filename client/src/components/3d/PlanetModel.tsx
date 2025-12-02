@@ -44,18 +44,18 @@ export default function PlanetModel({
   const groupRef = useRef<THREE.Group>(null);
   const [modelLoaded, setModelLoaded] = useState(false);
 
-  // Log model loading
-  console.log(`[PlanetModel] Loading ${name} from ${modelPath}`);
-
   // Always call useGLTF unconditionally to follow Rules of Hooks
   let gltf: any = null;
+  let loadError = false;
+  
   try {
     gltf = useGLTF(modelPath);
+    console.log(`[PlanetModel] Loading ${name} from ${modelPath}`);
     if (gltf?.scene) {
       console.log(`[PlanetModel] ✅ Loaded ${name} successfully`);
     }
   } catch (err) {
-    // Silently fail - will use fallback
+    loadError = true;
     console.log(`[PlanetModel] ⚠️ Failed to load ${name}, using fallback sphere`);
   }
 
@@ -117,19 +117,18 @@ export default function PlanetModel({
     );
   }
 
-  // Fallback: colored sphere with planet-specific color and enhanced PBR
+  // Fallback: colored sphere with planet-specific color
   const planetColor = color ? parseInt(color.replace('#', '0x')) : (PLANET_COLORS[name] || 0x4a9eff);
 
   return (
-    <mesh position={position} scale={scale} castShadow receiveShadow>
-      <sphereGeometry args={[1, 48, 48]} />
+    <mesh position={position} scale={scale}>
+      <sphereGeometry args={[1, 32, 32]} />
       <meshStandardMaterial
         color={planetColor}
-        metalness={0.2}
-        roughness={0.65}
+        metalness={0.3}
+        roughness={0.7}
         emissive={planetColor}
-        emissiveIntensity={0.15}
-        envMapIntensity={1.2}
+        emissiveIntensity={0.2}
       />
     </mesh>
   );

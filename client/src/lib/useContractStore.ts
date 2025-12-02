@@ -9,10 +9,10 @@ import { CONTRACT_ADDRESSES } from "./contracts";
 interface ContractStore {
   // Contract Addresses
   contracts: typeof CONTRACT_ADDRESSES;
-  
+
   // Contract states
   isContractReady: Record<keyof typeof CONTRACT_ADDRESSES, boolean>;
-  
+
   // Methods
   getContractAddress: (name: keyof typeof CONTRACT_ADDRESSES) => string;
   setContractReady: (name: keyof typeof CONTRACT_ADDRESSES, ready: boolean) => void;
@@ -22,11 +22,11 @@ interface ContractStore {
 export const useContractStore = create<ContractStore>((set, get) => ({
   contracts: CONTRACT_ADDRESSES,
   isContractReady: {
-    STAR_TOKEN: false,
-    STAR_TOKEN_WALLET: false,
-    PLANET_NFT: false,
-    PLANET_NFT_ITEM: false,
-    REFERRAL_FAUCET: false,
+    starToken: false,
+    starTokenWallet: false,
+    planetNFT: false,
+    planetNFTItem: false,
+    referralFaucet: false,
   },
 
   getContractAddress: (name: keyof typeof CONTRACT_ADDRESSES) => {
