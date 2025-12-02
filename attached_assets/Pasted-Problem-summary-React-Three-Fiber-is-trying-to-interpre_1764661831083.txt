@@ -1,0 +1,140 @@
+Problem summary
+React Three Fiber is trying to interpret a DOM element (div) as a Three.js object because a DOM node or a component that returns DOM is being rendered inside a <Canvas>. R3F only recognizes Three objects (mesh, group, light, primitive, etc.) unless you explicitly use Html or extend to register custom Three classes.
+
+---
+
+Quick fixes to remove the overlay and restore rendering
+- Move DOM out of Canvas — any UI (buttons, modals, divs) must be rendered outside the <Canvas> element.  
+- Use Html from @react-three/drei when you need DOM attached to a 3D position.  
+- Ensure components used inside Canvas return Three objects (mesh, group, primitive) not DOM.  
+- Temporarily disable the HMR overlay while iterating by setting server.hmr.overlay = false in vite.config.js.
+
+---
+
+Concrete code fixes
+
+Use Html for DOM inside the scene
+`tsx
+import { Canvas } from '@react-three/fiber';
+import { Html } from '@react-three/drei';
+
+function Scene() {
+  return (
+    <Canvas>
+      <ambientLight />
+      <mesh position={[0, 0, 0]}>
+        <sphereGeometry args={[1, 32, 32]} />
+        <meshStandardMaterial color="orange" />
+      </mesh>
+
+      <Html position={[0, 1.5, 0]}>
+        <div className="label">Mercury</div>
+      </Html>
+    </Canvas>
+  );
+}
+`
+
+Move UI outside Canvas
+`tsx
+function App() {
+  return (
+    <>
+      <Canvas>{/ only three objects here /}</Canvas>
+      <div className="ui">
+        <button>Toggle Solar System</button>
+      </div>
+    </>
+  );
+}
+`
+
+If a component is used inside Canvas, ensure it returns Three objects
+`tsx
+// Wrong: returns DOM
+function Marker() {
+  return <div className="marker">X</div>;
+}
+
+// Right: use Html or return a mesh
+function Marker3D() {
+  return (
+    <mesh>
+      <boxGeometry args={[0.2, 0.2, 0.2]} />
+      <meshStandardMaterial color="red" />
+    </mesh>
+  );
+}
+`
+
+Register a third‑party Three class only when appropriate
+`ts
+import { extend } from '@react-three/fiber';
+import { SomeThreeClass } from 'some-three-package';
+extend({ SomeThreeClass });
+
+// update TS types if needed
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      someThreeClass: any;
+    }
+  }
+}
+`
+
+---
+
+How to find the offending code quickly
+Run these searches in your project root to find DOM leaks inside Canvas:
+
+`bash
+
+find lowercase tags inside components likely used in Canvas
+rg "<div" src | sed -n '1,200p'
+
+find components used in Canvas
+rg "<Canvas" -n
+
+then inspect children components for DOM returns
+`
+
+Add a runtime guard to log first-level children types of the scene to spot DOM leaks:
+`ts
+useEffect(() => {
+  console.log('[R3F] scene children types', scene.children.map(c => c.type));
+}, []);
+`
+
+---
+
+Disable the overlay temporarily
+Edit vite.config.js:
+`js
+export default defineConfig({
+  server: {
+    hmr: {
+      overlay: false
+    }
+  }
+});
+`
+Restart dev server after the change. Fix the root cause afterward — do not leave overlay disabled in production.
+
+---
+
+Common causes to check immediately
+- A component used inside Canvas returns a fragment that contains a div.  
+- A UI library component (modal, tooltip) is rendered inside Canvas instead of outside or via Html.  
+- A custom hook or component accidentally returns JSX DOM instead of Three objects.  
+- A conditional render returns null in some branches and DOM in others — ensure consistency.
+
+---
+
+Next step I’ll take for you
+I can produce a ready-to-apply patch that:
+- Moves any DOM found inside client/src/components/SolarSystem.tsx to use Html or to render outside the Canvas,  
+- Adds the runtime guard log to the scene, and  
+- Optionally disables the HMR overlay for quick iteration.
+
+Paste the path(s) of the file(s) you want patched and I’ll generate the exact diffs you can drop into your repo.
