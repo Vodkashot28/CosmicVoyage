@@ -44,18 +44,18 @@ export default function PlanetModel({
   const groupRef = useRef<THREE.Group>(null);
   const [modelLoaded, setModelLoaded] = useState(false);
 
-  // Log model loading
-  console.log(`[PlanetModel] Loading ${name} from ${modelPath}`);
-
   // Always call useGLTF unconditionally to follow Rules of Hooks
   let gltf: any = null;
+  let loadError = false;
+  
   try {
     gltf = useGLTF(modelPath);
+    console.log(`[PlanetModel] Loading ${name} from ${modelPath}`);
     if (gltf?.scene) {
       console.log(`[PlanetModel] ✅ Loaded ${name} successfully`);
     }
   } catch (err) {
-    // Silently fail - will use fallback
+    loadError = true;
     console.log(`[PlanetModel] ⚠️ Failed to load ${name}, using fallback sphere`);
   }
 

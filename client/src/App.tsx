@@ -16,6 +16,7 @@ import { Toaster } from "./components/ui/sonner";
 import { CollapsibleGameMenu } from "./components/CollapsibleGameMenu";
 import { ReferralInvite } from "./components/ReferralInvite";
 import { initDracoDecoder } from "./lib/draco-setup";
+import { ModelDiagnostics } from "@/components/ModelDiagnostics";
 
 function App() {
   const [activeTab, setActiveTab] = useState("game");
@@ -24,13 +25,13 @@ function App() {
   useEffect(() => {
     initDracoDecoder();
   }, []);
-  
+
   // Dynamically construct manifest URL based on environment
   const manifestUrl = useMemo(() => {
     // Use current origin for development, production domain in production
     if (typeof window !== 'undefined') {
       const isDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-      return isDev 
+      return isDev
         ? `${window.location.origin}/tonconnect-manifest.json`
         : "https://solar-system.xyz/tonconnect-manifest.json";
     }
@@ -108,6 +109,7 @@ function App() {
         <SoundManager />
         <TokenParticles />
         <TokenTutorial />
+        <ModelDiagnostics />
         <Toaster />
         <Analytics />
       </div>
