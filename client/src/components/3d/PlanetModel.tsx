@@ -12,16 +12,6 @@ interface PlanetModelProps {
   color?: string;
 }
 
-// Only preload existing models
-const AVAILABLE_MODELS = ['sun.glb', 'mercury.glb', 'venus.glb', 'earth.glb'];
-AVAILABLE_MODELS.forEach(model => {
-  try {
-    useGLTF.preload(`/models/${model}`);
-  } catch (e) {
-    // Preload may fail silently - that's ok
-  }
-});
-
 const PLANET_COLORS: Record<string, number> = {
   Mercury: 0x8B7D6B,
   Venus: 0xFFC649,
@@ -34,6 +24,15 @@ const PLANET_COLORS: Record<string, number> = {
   Pluto: 0xBBBBBB,
 };
 
+// Preload existing models
+try {
+  useGLTF.preload('/models/mercury.glb');
+  useGLTF.preload('/models/venus.glb');
+  useGLTF.preload('/models/earth.glb');
+} catch (e) {
+  // Preload may fail - that's ok
+}
+
 export default function PlanetModel({
   name,
   modelPath,
@@ -44,17 +43,13 @@ export default function PlanetModel({
 }: PlanetModelProps) {
   const groupRef = useRef<THREE.Group>(null);
   const [modelLoaded, setModelLoaded] = useState(false);
-  const [loadError, setLoadError] = useState(false);
 
   let gltf: any = null;
   try {
-    gltf = useGLTF(modelPath, undefined, (error) => {
-      console.warn(`[Model] Failed to load ${name} from ${modelPath}`, error);
-      setLoadError(true);
-    });
+    gltf = useGLTF(modelPath);
   } catch (err) {
-    console.warn(`[Model] Error loading ${name}:`, err);
-    setLoadError(true);
+    // Model not found - use fallback
+    gltf = null;
   }
 
   useEffect(() => {

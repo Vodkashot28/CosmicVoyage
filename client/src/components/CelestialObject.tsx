@@ -53,6 +53,12 @@ export function CelestialObject({ data }: CelestialObjectProps) {
   const isAsteroid = data.type === "asteroid";
   const orbitalOffset = getOrbitalOffset(data.name);
   
+  // Get model configuration
+  const modelConfig = getPlanetModelConfig(data.name);
+  const modelPath = modelConfig?.modelPath || "";
+  const modelScale = modelConfig?.scale || data.size;
+  const modelRotationSpeed = modelConfig?.rotationSpeed || data.rotationSpeed;
+  
   useFrame((state) => {
     if (inclinationGroupRef.current) {
       inclinationGroupRef.current.rotation.x = orbitalTilt;
@@ -212,10 +218,11 @@ export function CelestialObject({ data }: CelestialObjectProps) {
               >
                 <PlanetModel
                   name={data.name}
-                  modelPath={getPlanetModelConfig(data.name).modelPath}
-                  scale={getPlanetModelConfig(data.name).scale}
-                  rotationSpeed={getPlanetModelConfig(data.name).rotationSpeed}
+                  modelPath={modelPath}
+                  scale={modelScale}
+                  rotationSpeed={modelRotationSpeed}
                   position={[0, 0, 0]}
+                  color={data.color}
                 />
               </group>
             )}
