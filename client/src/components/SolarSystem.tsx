@@ -4,14 +4,17 @@ import { SunModel } from "./3d/SunModel";
 import { allCelestialObjects } from "@/data/planets";
 
 export function SolarSystem() {
-  // DEBUG: Only render Sun first to verify .glb model pipeline works
-  // Will add planets incrementally once Sun is confirmed rendering
-
   return (
     <>
       <color attach="background" args={["#0a0e27"]} />
 
       <ambientLight intensity={0.15} />
+      
+      <directionalLight 
+        position={[30, 20, 30]} 
+        intensity={1.2} 
+        castShadow 
+      />
 
       <Stars
         radius={500}
@@ -24,6 +27,11 @@ export function SolarSystem() {
       />
 
       <SunModel />
+
+      {/* Render all celestial objects */}
+      {allCelestialObjects.map((celestialObject) => (
+        <CelestialObject key={celestialObject.name} data={celestialObject} />
+      ))}
 
       <OrbitControls
         enablePan={true}
