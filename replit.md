@@ -161,12 +161,15 @@ The game features 28 celestial objects across three phases:
 - 8/9 contracts require syntax fixes before compilation
 - 3D models pipeline simplified for debugging visibility
 
-## Deployment Status
+## Deployment Status (December 2, 2025)
 - **Local Testing**: ✅ Game running on localhost:5000
-- **Production**: Deployed to solar-system.xyz (ready for testnet)
-- **Smart Contracts**: ✅ STARToken deployed to TON testnet (Active)
-  - Address: `EQAIYlrr3UiMJ9fqI-B4j2nJdiiD7WzyaNL1MX_wiONc4OUi`
-  - Explorer: https://testnet.tonscan.org/address/EQAIYlrr3UiMJ9fqI-B4j2nJdiiD7WzyaNL1MX_wiONc4OUi
+- **Frontend/Backend**: Ready for publishing (awaiting Core plan or alternative)
+- **Smart Contracts**: ✅ ALL 5 DEPLOYED TO TON TESTNET
+  - **STARToken**: ✅ EQAIYlrr3UiMJ9fqI-B4j2nJdiiD7WzyaNL1MX_wiONc4OUi
+  - **STARTokenWallet**: ✅ EQDy43am74uRimAbuKFthYO4PJY95wzNOpsfOAfBhkwwnC9c
+  - **PlanetNFT**: ✅ EQBuZlqecX7qIEHlakYKEqPVtQ5An3XwqDg4DoAh3dNHlHqS
+  - **PlanetNFTItem**: ✅ EQCxm_x7fTE-_bpyb4yXdSbd3rck6ctxPNV7HhtDc0PA-JRk
+  - **ReferralFaucet**: ⏳ EQC4EQAmL5WKePiV0zzRXZjraZdlpqJOgQOVaH_PKs_FVF8a (deployed, confirming)
 - **Database**: Development database ready, migrations current
 
 ## Performance Targets

@@ -1,10 +1,27 @@
 {
-  "contractName": "STARToken",
-  "address": "EQAIYlrr3UiMJ9fqI-B4j2nJdiiD7WzyaNL1MX_wiONc4OUi",
-  "deployedAt": "2025-12-01T23:55:00Z",
+  "deployedAt": "2025-12-02T01:01:13.937Z",
   "network": "testnet",
-  "explorerUrl": "https://testnet.tonscan.org/address/EQAIYlrr3UiMJ9fqI-B4j2nJdiiD7WzyaNL1MX_wiONc4OUi",
-  "deployerWallet": "EQD6FGUpuOJp_816Xqz5RztkHjU4nDAtfow99W6z3px_AeLH",
-  "walletBalance": "49.891786593 TON",
-  "status": "active"
+  "contracts": [
+    {
+      "contractName": "STARTokenWallet",
+      "address": "EQDy43am74uRimAbuKFthYO4PJY95wzNOpsfOAfBhkwwnC9c",
+      "deployedAt": "2025-12-02T00:59:33.388Z",
+      "network": "testnet",
+      "explorerUrl": "https://testnet.tonscan.org/address/EQDy43am74uRimAbuKFthYO4PJY95wzNOpsfOAfBhkwwnC9c"
+    },
+    {
+      "contractName": "PlanetNFT",
+      "address": "EQBuZlqecX7qIEHlakYKEqPVtQ5An3XwqDg4DoAh3dNHlHqS",
+      "deployedAt": "2025-12-02T01:00:06.317Z",
+      "network": "testnet",
+      "explorerUrl": "https://testnet.tonscan.org/address/EQBuZlqecX7qIEHlakYKEqPVtQ5An3XwqDg4DoAh3dNHlHqS"
+    },
+    {
+      "contractName": "PlanetNFTItem",
+      "address": "EQCxm_x7fTE-_bpyb4yXdSbd3rck6ctxPNV7HhtDc0PA-JRk",
+      "deployedAt": "2025-12-02T01:00:40.333Z",
+      "network": "testnet",
+      "explorerUrl": "https://testnet.tonscan.org/address/EQCxm_x7fTE-_bpyb4yXdSbd3rck6ctxPNV7HhtDc0PA-JRk"
+    }
+  ]
 }
