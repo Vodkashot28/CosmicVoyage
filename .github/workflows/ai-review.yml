@@ -1,0 +1,22 @@
+name: AI Code Review
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  coderabbit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      # CodeRabbit runs automatically via its GitHub App once installed,
+      # so no extra action is needed here. The checkout ensures context.
+
+  sourcery:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: sourcery-ai/action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
