@@ -15,62 +15,6 @@ run = ["npm", "run", "start"]
 localPort = 5000
 externalPort = 80
 
-[[ports]]
-localPort = 34319
-externalPort = 5000
-
-[[ports]]
-localPort = 34721
-externalPort = 6800
-
-[[ports]]
-localPort = 34993
-externalPort = 3002
-
-[[ports]]
-localPort = 35673
-externalPort = 4200
-
-[[ports]]
-localPort = 35701
-externalPort = 8000
-
-[[ports]]
-localPort = 36507
-externalPort = 5173
-
-[[ports]]
-localPort = 36891
-externalPort = 3003
-
-[[ports]]
-localPort = 38111
-externalPort = 6000
-
-[[ports]]
-localPort = 41647
-externalPort = 8080
-
-[[ports]]
-localPort = 42669
-externalPort = 3001
-
-[[ports]]
-localPort = 42975
-externalPort = 8008
-
-[[ports]]
-localPort = 43095
-externalPort = 8081
-
-[[ports]]
-localPort = 45035
-externalPort = 3000
-
-[[ports]]
-localPort = 46187
-externalPort = 8099
-
 [workflows]
 runButton = "Project"
 
