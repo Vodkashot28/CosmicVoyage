@@ -43,10 +43,9 @@ router.post("/claim", async (req: Request, res: Response) => {
       const newUser = await db
         .insert(users)
         .values({
+          email: `user_${walletAddress.slice(0, 8)}@tonwallet.local`,
           walletAddress,
           starBalance: 0,
-          username: `user_${walletAddress.slice(0, 8)}`,
-          password: "", // Temporary - TON wallet auth doesn't use password
         })
         .returning();
       
