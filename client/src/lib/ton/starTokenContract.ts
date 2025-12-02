@@ -1,15 +1,14 @@
 // STAR Token Contract Integration
-// This module handles interaction with the STAR token contract on TON blockchain
-// Note: @ton/core is lazy-loaded only when needed to avoid Buffer polyfill issues
+// Handles interaction with the STAR token contract on TON blockchain
+// @ton/core is lazy-loaded only when needed to avoid Buffer polyfill issues
 
 // Function to get testnet address at runtime (avoids process.env access at module load time)
 export function getStarTokenAddress(): string {
-  // Try to get from environment variables (Vite replaces these at build time)
   const envAddress = import.meta.env.VITE_STAR_TOKEN_ADDRESS;
-  if (envAddress) return envAddress;
-  
-  // Fall back to deployed testnet address
-  return "EQ33b0000000000000000000000000000000000000000000000000000000000000";
+  if (!envAddress) {
+    throw new Error("STAR token address not set in environment variables");
+  }
+  return envAddress;
 }
 
 export const STAR_TOKEN_CONFIG = {
@@ -18,17 +17,18 @@ export const STAR_TOKEN_CONFIG = {
   symbol: "STAR",
   decimals: 0,
   totalSupply: 1_000_000_000, // 1 billion
-  
-  // Contract Addresses - use getter function
+
+  // Contract Addresses
   get testnetAddress() {
     return getStarTokenAddress();
   },
   mainnetAddress: "0:STAR_TOKEN_MAINNET_ADDRESS",
-  
+
   // Deployer (same as NFT deployer)
   deployerAddress: "0:fa146529b8e269ffcd7a5eacf9473b641e35389c302d7e8c3df56eb3de9c7f01",
 };
 
+// Interfaces
 export interface TokenBalance {
   address: string;
   amount: number;
@@ -55,13 +55,9 @@ export async function createTokenTransferMessage(
   destination: string,
   amount: number,
   walletAddress: string
-): Promise<{
-  to: string;
-  amount: string;
-  body: any;
-}> {
+) {
   const { Address, beginCell, toNano } = await import("@ton/core");
-  
+
   const body = beginCell()
     .storeUint(0x0f8a7ea5, 32) // op::transfer
     .storeUint(0, 64) // queryId
@@ -76,7 +72,7 @@ export async function createTokenTransferMessage(
   return {
     to: STAR_TOKEN_CONFIG.testnetAddress,
     amount: toNano("0.05").toString(), // gas fee
-    body: body,
+    body,
   };
 }
 
@@ -85,13 +81,9 @@ export async function createTokenBurnMessage(
   amount: number,
   walletAddress: string,
   utility?: string
-): Promise<{
-  to: string;
-  amount: string;
-  body: any;
-}> {
+) {
   const { Address, beginCell, toNano } = await import("@ton/core");
-  
+
   const body = beginCell()
     .storeUint(0x595f07f9, 32) // op::burn
     .storeUint(0, 64) // queryId
@@ -103,32 +95,28 @@ export async function createTokenBurnMessage(
   return {
     to: STAR_TOKEN_CONFIG.testnetAddress,
     amount: toNano("0.05").toString(),
-    body: body,
+    body,
   };
 }
 
 // Cosmic Utility Burn Amounts
 export const COSMIC_UTILITY_COSTS = {
-  "cosmic-boost": 25, // 2x rewards for 24 hours
-  "void-jump": 50, // Skip to next planet
-  "celestial-shield": 30, // Protect tokens
-  "asteroid-mining": 40, // Mine bonus tokens
-  "supernova-mode": 75, // 3x multiplier for 1 hour
-  "wormhole-mode": 100, // Fast travel to any discovered planet
-  "cosmic-forge-mode": 150, // Create custom planet NFTs
-  "dwarf-planet-unlock": 200, // Unlock Pluto
+  "cosmic-boost": 25,
+  "void-jump": 50,
+  "celestial-shield": 30,
+  "asteroid-mining": 40,
+  "supernova-mode": 75,
+  "wormhole-mode": 100,
+  "cosmic-forge-mode": 150,
+  "dwarf-planet-unlock": 200,
 } as const;
 
-// Calculate passive income from NFT ownership
-export function calculatePassiveIncome(
-  nftCount: number,
-  hoursElapsed: number
-): number {
+// Passive income calculations
+export function calculatePassiveIncome(nftCount: number, hoursElapsed: number): number {
   const baseRate = 0.5; // 0.5 STAR per hour per NFT
   return Math.floor(nftCount * baseRate * hoursElapsed);
 }
 
-// Get rarity bonus
 export function getRarityBonus(nftCount: number): number {
   if (nftCount === 4) return 25; // Inner planets
   if (nftCount === 8) return 100; // All planets
@@ -136,21 +124,12 @@ export function getRarityBonus(nftCount: number): number {
   return 0;
 }
 
-// Verify token balance is sufficient for action
-export function canAffordAction(
-  balance: number,
-  actionCost: number
-): boolean {
+export function canAffordAction(balance: number, actionCost: number): boolean {
   return balance >= actionCost;
 }
 
-// Get token info for display
-export function getTokenInfo(): {
-  name: string;
-  symbol: string;
-  decimals: number;
-  totalSupply: number;
-} {
+// Token info
+export function getTokenInfo() {
   return {
     name: STAR_TOKEN_CONFIG.name,
     symbol: STAR_TOKEN_CONFIG.symbol,
@@ -159,17 +138,10 @@ export function getTokenInfo(): {
   };
 }
 
-// Create mint message (admin only)
-export async function createMintMessage(
-  receiver: string,
-  amount: number
-): Promise<{
-  to: string;
-  amount: string;
-  body: any;
-}> {
+// Mint message (admin only)
+export async function createMintMessage(receiver: string, amount: number) {
   const { Address, beginCell, toNano } = await import("@ton/core");
-  
+
   const body = beginCell()
     .storeUint(0x642bda77, 32) // op::mint
     .storeUint(0, 64) // queryId
@@ -182,21 +154,14 @@ export async function createMintMessage(
   return {
     to: STAR_TOKEN_CONFIG.testnetAddress,
     amount: toNano("0.05").toString(),
-    body: body,
+    body,
   };
 }
 
-// Create passive income distribution message (admin only)
-export async function createDistributePassiveIncomeMessage(
-  nftHolder: string,
-  amount: number
-): Promise<{
-  to: string;
-  amount: string;
-  body: any;
-}> {
+// Passive income distribution (admin only)
+export async function createDistributePassiveIncomeMessage(nftHolder: string, amount: number) {
   const { Address, beginCell, toNano } = await import("@ton/core");
-  
+
   const body = beginCell()
     .storeUint(0x50a73359, 32) // op::distributePassiveIncome
     .storeUint(0, 64) // queryId
@@ -207,21 +172,20 @@ export async function createDistributePassiveIncomeMessage(
   return {
     to: STAR_TOKEN_CONFIG.testnetAddress,
     amount: toNano("0.05").toString(),
-    body: body,
+    body,
   };
 }
 
-// Helper: Format token amount for display
+// Helpers
 export function formatTokenAmount(amount: number): string {
   return `${amount.toLocaleString()} ⭐`;
 }
 
-// Helper: Check if amount is valid
 export function isValidTokenAmount(amount: number): boolean {
   return Number.isInteger(amount) && amount > 0 && amount <= STAR_TOKEN_CONFIG.totalSupply;
 }
 
-// Contract ABI for ethers.js / web3.js style calls
+// Contract ABI
 export const STAR_TOKEN_ABI = {
   methods: {
     transfer: ["destination:Address", "amount:Int"],
