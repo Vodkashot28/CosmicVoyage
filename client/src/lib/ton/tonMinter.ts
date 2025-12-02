@@ -1,15 +1,15 @@
-import { CONTRACT_ADDRESS, DEPLOYER_ADDRESS, generatePlanetNFTMetadata } from './nftContract';
+import { CONTRACT_ADDRESS, DEPLOYER_ADDRESS, generatePlanetNFTMetadata } from "./nftContract";
 
 export class PlanetNFTMinter {
-  constructor(endpoint: string = 'https://testnet.toncenter.com/api/v2/') {
+  private endpoint: string;
+
+  constructor(endpoint: string = import.meta.env.VITE_TON_RPC_ENDPOINT || "https://testnet.toncenter.com/api/v2/") {
     this.endpoint = endpoint;
   }
 
-  private endpoint: string;
-
   /**
    * Mint a planet NFT to a wallet address
-   * Note: This requires the contract to be deployed and callable
+   * Note: This requires the contract to be deployed and callable via TON Connect
    */
   async mintPlanetNFT(
     walletAddress: string,
@@ -19,23 +19,21 @@ export class PlanetNFTMinter {
   ): Promise<string> {
     try {
       console.log(`Initiating NFT mint for ${planetName} to ${walletAddress}`);
-      
+
       // Generate metadata
       const metadata = generatePlanetNFTMetadata(planetName, discoveryOrder, planetData);
-      
-      // When contract is deployed, this will:
-      // 1. Call the deployed contract's mint function via TON Connect
-      // 2. Return the transaction hash
-      // For now, we log the intent and return a mock tx hash
-      
+
+      // TODO: integrate with TON Connect / tonweb to send actual mint transaction
+      // For now, return a mock tx hash
       const mockTxHash = `${planetName.toLowerCase()}_nft_${Date.now()}`;
-      console.log(`Planet NFT metadata prepared:`, metadata);
-      console.log(`Ready for minting with tx hash: ${mockTxHash}`);
-      console.log(`Contract address for deployment: ${CONTRACT_ADDRESS}`);
-      
+
+      console.log("Planet NFT metadata prepared:", metadata);
+      console.log("Ready for minting with tx hash:", mockTxHash);
+      console.log("Contract address for deployment:", CONTRACT_ADDRESS);
+
       return mockTxHash;
     } catch (error) {
-      console.error('Failed to mint planet NFT:', error);
+      console.error("Failed to mint planet NFT:", error);
       throw error;
     }
   }
@@ -45,17 +43,17 @@ export class PlanetNFTMinter {
    */
   async getNFTsByAddress(address: string): Promise<any[]> {
     try {
-      // This would query the blockchain for NFTs owned by the address
       console.log(`Fetching NFTs for address: ${address}`);
-      
-      // Would use toncenter API when contract is deployed
-      const response = await fetch(`${this.endpoint}getAccountState?address=${address}`);
+
+      const response = await fetch(`${this.endpoint}/getAccountState?address=${address}`);
       const data = await response.json();
-      
-      console.log(`NFT query result:`, data);
+
+      console.log("NFT query result:", data);
+
+      // TODO: parse NFT items from contract state once deployed
       return [];
     } catch (error) {
-      console.error('Failed to fetch NFTs:', error);
+      console.error("Failed to fetch NFTs:", error);
       return [];
     }
   }
@@ -65,21 +63,18 @@ export class PlanetNFTMinter {
    */
   async verifyContractDeployed(): Promise<boolean> {
     try {
-      // Check if contract exists on testnet
-      const response = await fetch(
-        `${this.endpoint}getContractState?address=${CONTRACT_ADDRESS}`
-      );
+      const response = await fetch(`${this.endpoint}/getContractState?address=${CONTRACT_ADDRESS}`);
       const data = await response.json();
-      
+
       if (!data.ok) {
         console.warn(`Contract ${CONTRACT_ADDRESS} not found on testnet`);
         return false;
       }
-      
+
       console.log(`Contract verification successful for ${CONTRACT_ADDRESS}`);
       return true;
     } catch (error) {
-      console.error('Contract verification failed:', error);
+      console.error("Contract verification failed:", error);
       return false;
     }
   }
