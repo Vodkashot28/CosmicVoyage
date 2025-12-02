@@ -130,7 +130,7 @@ export const useSolarSystem = create<SolarSystemState>()(
       totalStarBurned: 0,
       orbitalOffsets: {},
       
-      discoverPlanet: (planetName: string) => {
+      discoverPlanet: async (planetName: string) => {
         const state = get();
         const planet = planetsData.find(p => p.name === planetName);
         
@@ -150,9 +150,26 @@ export const useSolarSystem = create<SolarSystemState>()(
           nftMinted: false
         };
         
+        // Sync with backend
+        if (state.walletAddress) {
+          try {
+            await fetch('/api/discovery/record', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                walletAddress: state.walletAddress,
+                planetName,
+                discoveryOrder: planet.discoveryOrder,
+                tokensEarned: planet.tokenReward,
+              }),
+            });
+          } catch (error) {
+            console.error('Failed to sync discovery with backend:', error);
+          }
+        }
+        
         set(state => ({
           discoveredPlanets: [...state.discoveredPlanets, discovery]
-          // NOTE: Tokens NOT awarded on discovery - must mint NFT first!
         }));
         
         console.log(`Discovered ${planetName}! Must mint NFT to claim ${planet.tokenReward} STAR tokens`);
@@ -230,7 +247,28 @@ export const useSolarSystem = create<SolarSystemState>()(
         return state.totalTokens + state.bonusTokens + state.passiveTokensGenerated;
       },
       
-      markNFTMinted: (planetName: string, txHash: string) => {
+      markNFTMinted: async (planetName: string, txHash: string) => {
+        const state = get();
+        const planet = planetsData.find(p => p.name === planetName);
+        
+        // Sync with backend
+        if (state.walletAddress && planet) {
+          try {
+            await fetch('/api/nft/mint', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                walletAddress: state.walletAddress,
+                celestialObjectName: planetName,
+                discoveryOrder: planet.discoveryOrder,
+                tokenId: txHash,
+              }),
+            });
+          } catch (error) {
+            console.error('Failed to sync NFT mint with backend:', error);
+          }
+        }
+        
         set(state => {
           const updatedDiscoveries = state.discoveredPlanets.map(d => 
             d.planetName === planetName 

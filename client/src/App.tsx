@@ -17,6 +17,7 @@ import { CollapsibleGameMenu } from "./components/CollapsibleGameMenu";
 import { ReferralInvite } from "./components/ReferralInvite";
 import { initDracoDecoder } from "./lib/draco-setup";
 import { ModelDiagnostics } from "@/components/ModelDiagnostics";
+import { useWalletSync } from "@/hooks/useWalletSync"; // Import useWalletSync hook
 
 function App() {
   const [activeTab, setActiveTab] = useState("game");
@@ -25,6 +26,9 @@ function App() {
   useEffect(() => {
     initDracoDecoder();
   }, []);
+
+  // Auto-sync stores when wallet connects
+  useWalletSync();
 
   // Dynamically construct manifest URL based on environment
   const manifestUrl = useMemo(() => {
