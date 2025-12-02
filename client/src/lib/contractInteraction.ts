@@ -115,31 +115,31 @@ export const DEPLOYMENT_INFO = {
   contracts: {
     starToken: {
       name: "STARToken",
-      address: CONTRACT_ADDRESSES.STAR_TOKEN,
+      address: CONTRACT_ADDRESSES.starToken,
       deployedAt: "2025-12-01",
       status: "active",
     },
     starTokenWallet: {
       name: "STARTokenWallet",
-      address: CONTRACT_ADDRESSES.STAR_TOKEN_WALLET,
+      address: CONTRACT_ADDRESSES.starTokenWallet,
       deployedAt: "2025-12-02T00:59:33Z",
       status: "active",
     },
     planetNFT: {
       name: "PlanetNFT",
-      address: CONTRACT_ADDRESSES.PLANET_NFT,
+      address: CONTRACT_ADDRESSES.planetNFT,
       deployedAt: "2025-12-02T01:00:06Z",
       status: "active",
     },
     planetNFTItem: {
       name: "PlanetNFTItem",
-      address: CONTRACT_ADDRESSES.PLANET_NFT_ITEM,
+      address: CONTRACT_ADDRESSES.planetNFTItem,
       deployedAt: "2025-12-02T01:00:40Z",
       status: "active",
     },
     referralFaucet: {
       name: "ReferralFaucet",
-      address: CONTRACT_ADDRESSES.REFERRAL_FAUCET,
+      address: CONTRACT_ADDRESSES.referralFaucet,
       deployedAt: "2025-12-02T01:01:13Z",
       status: "active",
     },
