@@ -1,4 +1,4 @@
-Import { create } from "zustand";
+import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { planetsData } from "@/data/planets";
 import { analytics, trackDiscovery, trackMint, trackPassiveIncome, trackDailyLogin, trackImmortalityTier } from "@/lib/analytics";
