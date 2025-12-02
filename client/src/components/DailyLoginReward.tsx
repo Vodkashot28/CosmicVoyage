@@ -3,9 +3,11 @@ import { Button } from "./ui/button";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { useTonWallet } from "@tonconnect/ui-react";
+import { useGameBalance } from "@/lib/stores/useGameBalance";
 
 export function DailyLoginReward() {
   const wallet = useTonWallet();
+  const { addStarBalance } = useGameBalance();
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState<any>(null);
@@ -61,8 +63,10 @@ export function DailyLoginReward() {
       setStatus(data);
       setShowModal(false);
 
-      // Refresh page to update balance
-      setTimeout(() => window.location.reload(), 1000);
+      // Update balance store immediately
+      if (data.reward) {
+        addStarBalance(data.reward);
+      }
     } catch (error) {
       console.error("Claim error:", error);
       toast.error("Failed to claim reward");
