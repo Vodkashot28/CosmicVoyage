@@ -9,6 +9,16 @@ export function SolarSystem() {
   const { ownedNFTs, discoveredPlanets } = useSolarSystem();
   const [activeMintsCount, setActiveMintsCount] = useState(0);
   
+  // Debug logging on mount
+  useEffect(() => {
+    console.log('[SolarSystem] 🚀 Mounted', {
+      ownedNFTs: ownedNFTs.length,
+      discoveredPlanets: discoveredPlanets.length,
+      allCelestialObjects: allCelestialObjects.length
+    });
+    return () => console.log('[SolarSystem] 🛑 Unmounting');
+  }, []);
+  
   // Filter to show only minted planets + discovered planets that can be interacted with
   const visiblePlanets = allCelestialObjects.filter(celestialObject => {
     // Always show if minted as NFT
@@ -19,6 +29,13 @@ export function SolarSystem() {
     if (celestialObject.name === "Mercury" && discoveredPlanets.length === 0) return true;
     return false;
   });
+
+  useEffect(() => {
+    console.log('[SolarSystem] 🪐 Visible planets:', {
+      count: visiblePlanets.length,
+      names: visiblePlanets.map(p => p.name)
+    });
+  }, [visiblePlanets]);
 
   // Listen for mint events to trigger dynamic loading
   useEffect(() => {

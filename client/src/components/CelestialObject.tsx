@@ -1,4 +1,4 @@
-import { useRef, useState, useMemo } from "react";
+import { useRef, useState, useMemo, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Text } from "@react-three/drei";
 import * as THREE from "three";
@@ -58,6 +58,16 @@ export function CelestialObject({ data }: CelestialObjectProps) {
   const modelPath = modelConfig?.modelPath || "";
   const modelScale = modelConfig?.scale || data.size;
   const modelRotationSpeed = modelConfig?.rotationSpeed || data.rotationSpeed;
+
+  // Debug logging on mount
+  useEffect(() => {
+    console.log(`[CelestialObject] 🌍 ${data.name} mounted`, {
+      discovered,
+      canDiscover,
+      modelPath,
+      modelScale
+    });
+  }, [data.name, discovered, canDiscover, modelPath, modelScale]);
   
   useFrame((state) => {
     if (inclinationGroupRef.current) {
