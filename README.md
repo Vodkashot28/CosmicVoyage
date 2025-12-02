@@ -94,3 +94,5 @@ npm run dev
 
 # Build for production
 npm run build
+
+This is a test PR to validate CodeRabbit + Sourcery integration.
