@@ -102,3 +102,6 @@ VITE_PLANET_NFT_ITEM_ADDRESS = "EQCxm_x7fTE-_bpyb4yXdSbd3rck6ctxPNV7HhtDc0PA-JRk
 VITE_REFERRAL_FAUCET_ADDRESS = "EQC4EQAmL5WKePiV0zzRXZjraZdlpqJOgQOVaH_PKs_FVF8a"
 VITE_TON_TESTNET_ENDPOINT = "https://testnet.toncenter.com/api/v2/jsonRPC"
 VITE_TON_EXPLORER = "https://testnet.tonscan.org"
+
+[agent]
+expertMode = true
