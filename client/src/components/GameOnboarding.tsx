@@ -142,10 +142,6 @@ export function GameOnboarding() {
             {loading ? "Claiming..." : "✨ Claim 10 STAR"}
           </Button>
         </div>
-
-        <div className="text-xs text-slate-400 text-center mt-3">
-          Connected wallet: {walletAddress?.slice(0, 8)}...{walletAddress?.slice(-4)}
-        </div>
       </DialogContent>
     </Dialog>
   );

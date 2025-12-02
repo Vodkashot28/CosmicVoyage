@@ -31,6 +31,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Claim genesis bonus (10 STAR for new players)
   // Wallet-based claim (one wallet per genesis bonus)
   app.post("/api/player/claim-genesis", async (req, res) => {
+    res.setHeader("Content-Type", "application/json");
     try {
       const { walletAddress } = req.body;
 
@@ -77,6 +78,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Check genesis claim status
   app.get("/api/player/genesis-status/:walletAddress", async (req, res) => {
+    res.setHeader("Content-Type", "application/json");
     try {
       const { walletAddress } = req.params;
       const user = await storage.getUserByWallet(walletAddress);
