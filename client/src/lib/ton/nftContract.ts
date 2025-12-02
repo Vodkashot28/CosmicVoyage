@@ -12,24 +12,17 @@ export function getCollectionAddress(): string {
 }
 
 export const PLANET_NFT_CONFIG = {
-  // Collection Metadata
   name: "Solar System Planets",
   symbol: "PLANET",
   description: "Discover and own planets in the Solar System Explorer game",
 
-  // Contract Addresses
   get collectionAddress() {
     return getCollectionAddress();
   },
   collectionMainnet: "0:PLANET_NFT_MAINNET_ADDRESS",
 
-  // Deployer
   deployerAddress: import.meta.env.VITE_NFT_DEPLOYER,
-
-  // Metadata Base URI
   baseMetadataURI: "https://solarsystemexplorer.com/nft/",
-
-  // Royalty Configuration
   royaltyPercent: 5,
   royaltyDenominator: 100,
 };
@@ -41,7 +34,7 @@ export const TON_CONFIG = {
   },
 };
 
-// Planet NFT Contract Interface
+// Interfaces
 export interface PlanetNFT {
   planetName: string;
   tokenId: number;
@@ -50,13 +43,9 @@ export interface PlanetNFT {
   discoveryOrder: number;
   rarity: "common" | "rare" | "epic" | "legendary";
   glowColor: string;
-  traits: {
-    size: number;
-    orbitRadius: number;
-  };
+  traits: { size: number; orbitRadius: number };
 }
 
-// NFT Mint Parameters
 export interface NFTMintParams {
   planetName: string;
   receiverAddress: string;
@@ -64,7 +53,6 @@ export interface NFTMintParams {
   glowColor: string;
 }
 
-// NFT Transfer Parameters
 export interface NFTTransferParams {
   nftId: number;
   fromAddress: string;
@@ -74,7 +62,7 @@ export interface NFTTransferParams {
 export const DEPLOYER_ADDRESS = import.meta.env.VITE_NFT_DEPLOYER;
 export const CONTRACT_ADDRESS = getCollectionAddress();
 
-// Rarity functions
+// Rarity helpers
 export function getPlanetRarity(discoveryOrder: number): "common" | "rare" | "epic" | "legendary" {
   if (discoveryOrder === 1) return "common";
   if (discoveryOrder <= 3) return "rare";
@@ -213,4 +201,55 @@ export function calculateSetBonuses(ownedPlanets: string[]): SetBonus[] {
   const bonuses: SetBonus[] = [];
 
   if (innerPlanets.every(p => ownedPlanets.includes(p))) {
-    bonuses.push({ name: "Inner Planets Master",
+    bonuses.push({
+      name: "Inner Planets Master",
+      description: "Own all inner planets",
+      nftCount: 4,
+      dailyBonus: 25,
+    });
+  }
+
+  if (outerPlanets.every(p => ownedPlanets.includes(p))) {
+    bonuses.push({
+      name: "Outer Planets Master",
+      description: "Own all outer planets",
+      nftCount: 4,
+      dailyBonus: 50,
+    });
+  }
+
+  if (innerPlanets.every(p => ownedPlanets.includes(p)) && outerPlanets.every(p => ownedPlanets.includes(p))) {
+    bonuses.push({
+      name: "Solar System Explorer",
+      description: "Own all 8 planets",
+      nftCount: 8,
+      dailyBonus: 100,
+    });
+  }
+
+  return bonuses;
+}
+
+// Display formatting
+export function formatNFTName(planetName: string, discoveryOrder: number): string {
+  const rarity = getPlanetRarity(discoveryOrder);
+  const rarityEmoji: Record<string, string> = {
+    common: "⚪",
+    rare: "🔵",
+    epic: "🟣",
+    legendary: "🟡",
+  };
+  return `${rarityEmoji[rarity]} ${planetName} NFT #${discoveryOrder}`;
+}
+
+// Contract ABI
+export const PLANET_NFT_ABI = {
+  methods: {
+    mint: ["planet:String", "receiver:Address", "amount:Int"],
+    transfer: ["nftId:Int", "receiver:Address"],
+    burn: ["nftId:Int"],
+    getNFTOwner: ["nftId:Int", "returns:Address"],
+    getNFTMetadataURI: ["nftId:Int", "returns:String"],
+    getCollectionInfo: ["returns:(String, String, String, Int, Int)"],
+  },
+};
