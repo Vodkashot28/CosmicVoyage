@@ -1,0 +1,76 @@
+import { useGameBalance } from "../stores/useGameBalance";
+import { useReferral } from "../stores/useReferral";
+import { useLeaderboard } from "../stores/useLeaderboard"; // optional
+import { useEffect } from "react";
+
+export const MobileGameUI = ({ wallet }: { wallet: string }) => {
+  const { starBalance, loadBalance } = useGameBalance();
+  const { referralStats, loadReferralStats } = useReferral();
+  const { leaderboard, loadLeaderboard } = useLeaderboard(); // optional
+
+  useEffect(() => {
+    if (wallet) {
+      loadBalance(wallet);
+      loadReferralStats(wallet);
+      loadLeaderboard(); // optional
+    }
+  }, [wallet]);
+
+  return (
+    <div className="flex flex-col items-center justify-between min-h-screen bg-gradient-to-b from-slate-900 to-slate-800 text-white px-4 py-6 space-y-4">
+      {/* Balance Card */}
+      <div className="w-full max-w-sm bg-slate-700 rounded-xl shadow-md p-4">
+        <h2 className="text-lg font-semibold text-yellow-400">BALANCE</h2>
+        <div className="flex justify-between items-center mt-2">
+          <span className="text-white">STAR</span>
+          <span className="text-2xl font-bold">{starBalance}</span>
+        </div>
+      </div>
+
+      {/* Game Card */}
+      <div className="w-full max-w-sm bg-slate-700 rounded-xl shadow-md p-4">
+        <h2 className="text-lg font-semibold text-blue-400">GAME</h2>
+        <p className="text-sm text-blue-200 mt-1">Tap planets to discover • Menu for more</p>
+        <div className="mt-2 flex justify-between items-center">
+          <span className="text-white">Solar System</span>
+          <span className="text-yellow-400">195</span>
+        </div>
+        <div className="text-xs text-gray-300 mt-1">{wallet.slice(0, 4)}...{wallet.slice(-4)}</div>
+      </div>
+
+      {/* Referral Card */}
+      <div className="w-full max-w-sm bg-slate-700 rounded-xl shadow-md p-4">
+        <h2 className="text-lg font-semibold text-red-400">REFERRAL</h2>
+        <div className="mt-2">
+          <p className="text-sm">Total Referrals: {referralStats.total}</p>
+          <p className="text-sm">Claimed: {referralStats.claimed}</p>
+        </div>
+      </div>
+
+      {/* Leaderboard (Optional) */}
+      <div className="w-full max-w-sm bg-slate-700 rounded-xl shadow-md p-4">
+        <h2 className="text-lg font-semibold text-green-400">LEADERBOARD</h2>
+        <ul className="mt-2 space-y-1 text-sm">
+          {leaderboard.slice(0, 5).map((entry, i) => (
+            <li key={i} className="flex justify-between">
+              <span>{entry.username}</span>
+              <span>{entry.points}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Volume Slider */}
+      <div className="w-full max-w-sm flex items-center justify-between mt-4">
+        <span className="text-sm">🔊 Volume</span>
+        <input type="range" min="0" max="100" className="w-3/4 accent-blue-500" />
+      </div>
+
+      {/* Navigation Buttons */}
+      <div className="w-full max-w-sm flex justify-around mt-4">
+        <button className="bg-blue-600 px-4 py-2 rounded-full text-white">Game</button>
+        <button className="bg-red-600 px-4 py-2 rounded-full text-white">Referral</button>
+      </div>
+    </div>
+  );
+};
