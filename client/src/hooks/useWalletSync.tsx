@@ -1,38 +1,25 @@
-import { useEffect } from "react";
-import { useTonConnectUI } from "@tonconnect/ui-react";
-import { useGameBalance } from "@/lib/stores/useGameBalance";
-import { useReferral } from "@/lib/stores/useReferral";
-import { api } from "@/lib/api";
+
+import { useEffect } from 'react';
+import { useGameBalance } from '@/lib/stores/useGameBalance';
+import { useSolarSystem } from '@/lib/stores/useSolarSystem';
+import { useReferral } from '@/lib/stores/useReferral';
 
 export function useWalletSync() {
-  const [tonConnectUI] = useTonConnectUI();
-  const { setStarBalance } = useGameBalance();
-  const { setReferralStats } = useReferral();
-
+  const walletAddress = useGameBalance((state) => state.walletAddress);
+  const loadBalance = useGameBalance((state) => state.loadBalance);
+  const loadReferralStats = useReferral((state) => state.loadReferralStats);
+  
   useEffect(() => {
-    const syncWalletData = async () => {
-      const wallet = tonConnectUI?.wallet;
-      if (!wallet?.account?.address) return;
-
-      const walletAddress = wallet.account.address;
-
-      try {
-        // Sync STAR balance
-        const balanceData = await api.getStarBalance(walletAddress);
-        if (balanceData && typeof balanceData.starBalance === 'number') {
-          setStarBalance(balanceData.starBalance);
-        }
-
-        // Sync referral stats
-        const referralData = await api.getReferralStats(walletAddress);
-        if (referralData) {
-          setReferralStats(referralData);
-        }
-      } catch (error) {
-        console.error("Failed to sync wallet data:", error);
-      }
-    };
-
-    syncWalletData();
-  }, [tonConnectUI?.wallet?.account?.address, setStarBalance, setReferralStats]);
+    if (walletAddress) {
+      // Sync all stores when wallet connects
+      loadBalance(walletAddress);
+      loadReferralStats(walletAddress);
+      
+      // Validate and fix solar system state
+      const validateAndFixState = useSolarSystem.getState().validateAndFixState;
+      validateAndFixState();
+      
+      console.log('[WalletSync] Synced all stores for wallet:', walletAddress);
+    }
+  }, [walletAddress, loadBalance, loadReferralStats]);
 }

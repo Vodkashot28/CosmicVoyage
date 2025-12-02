@@ -47,7 +47,7 @@ export default function PlanetModel({
   // Always call useGLTF unconditionally to follow Rules of Hooks
   let gltf: any = null;
   let loadError = false;
-
+  
   try {
     gltf = useGLTF(modelPath);
     console.log(`[PlanetModel] Loading ${name} from ${modelPath}`);
