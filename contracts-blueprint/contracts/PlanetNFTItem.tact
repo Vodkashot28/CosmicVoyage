@@ -9,7 +9,7 @@ import "@stdlib/deploy";
 */
 
 message Transfer {
-    queryId: UInt64;
+    queryId: Int;
     newOwner: Address;
     responseDestination: Address;
     customPayload: Cell?;
@@ -18,7 +18,21 @@ message Transfer {
 }
 
 message GetStaticData {
-    queryId: UInt64;
+    queryId: Int;
+}
+
+struct NFTData {
+    planetName: String;
+    rarity: String;
+    itemIndex: Int;
+    glowColor: String;
+    imageURI: String;
+}
+
+struct PassiveIncomeData {
+    earnsPassiveIncome: Bool;
+    passiveIncomeRate: Int;
+    discoveredAt: Int;
 }
 
 contract PlanetNFTItem with Deployable {
@@ -85,8 +99,15 @@ contract PlanetNFTItem with Deployable {
     }
     
     // Get NFT metadata
-    fun getNFTData(): (String, String, Int, String, String) {
-        return (self.planetName, self.rarity, self.itemIndex, self.glowColor, self.imageURI);
+    fun getNFTData(): NFTData {
+        let data: NFTData = NFTData{
+            planetName: self.planetName,
+            rarity: self.rarity,
+            itemIndex: self.itemIndex,
+            glowColor: self.glowColor,
+            imageURI: self.imageURI
+        };
+        return data;
     }
     
     // Get owner
@@ -100,8 +121,13 @@ contract PlanetNFTItem with Deployable {
     }
     
     // Get passive income info
-    fun getPassiveIncomeInfo(): (Bool, Int, Int) {
-        return (self.earnsPassiveIncome, self.passiveIncomeRate, self.discoveredAt);
+    fun getPassiveIncomeInfo(): PassiveIncomeData {
+        let data: PassiveIncomeData = PassiveIncomeData{
+            earnsPassiveIncome: self.earnsPassiveIncome,
+            passiveIncomeRate: self.passiveIncomeRate,
+            discoveredAt: self.discoveredAt
+        };
+        return data;
     }
     
     // Transfer ownership
@@ -124,7 +150,12 @@ contract PlanetNFTItem with Deployable {
     
     // Get attribute
     fun getAttribute(key: String): String {
-        return self.attributes.get(key) ?? "";
+        let attr = self.attributes.get(key);
+        if (attr == null) {
+            return "";
+        } else {
+            return attr!!;
+        }
     }
     
     // Enable/disable passive income

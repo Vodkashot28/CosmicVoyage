@@ -3,94 +3,135 @@
 
 import "@stdlib/deploy";
 
+message ClaimFaucet {
+    referral: Address?;
+}
+
+struct ReferralInfo {
+    referralCount: Int;
+    bonusEarned: Int;
+    referredBy: Address?;
+}
+
 contract ReferralFaucet with Deployable {
-    address starToken;
-    int giftAmount;           // e.g. 10 STAR for new player
-    int referralBonus;        // e.g. 5 STAR per referral
-    int maxReferralBonus;     // e.g. 50 STAR max bonus (10 referrals)
-    int passiveIncomeBonusPercent; // e.g. 10% of referee's passive income for 30 days
+    starToken: Address;
+    giftAmount: Int;
+    referralBonus: Int;
+    maxReferralBonus: Int;
+    passiveIncomeBonusPercent: Int;
 
-    map<address, bool> claimed;
-    map<address, int> referralCount;        // How many people referred this user
-    map<address, address> referredBy;        // Who referred this user
-    map<address, int> referralBonusEarned;  // Total bonus earned
+    claimed: map<Address, Bool> = emptyMap();
+    referralCount: map<Address, Int> = emptyMap();
+    referredBy: map<Address, Address> = emptyMap();
+    referralBonusEarned: map<Address, Int> = emptyMap();
 
-    init(address _starToken, int _giftAmount, int _referralBonus, int _maxReferralBonus) {
-        starToken = _starToken;
-        giftAmount = _giftAmount;              // 10 STAR
-        referralBonus = _referralBonus;        // 5 STAR per referral
-        maxReferralBonus = _maxReferralBonus;  // 50 STAR max
-        passiveIncomeBonusPercent = 10;        // 10% passive bonus
+    init(starToken: Address, giftAmount: Int, referralBonus: Int, maxReferralBonus: Int) {
+        self.starToken = starToken;
+        self.giftAmount = giftAmount;
+        self.referralBonus = referralBonus;
+        self.maxReferralBonus = maxReferralBonus;
+        self.passiveIncomeBonusPercent = 10;
     }
 
     // Claim faucet with optional referral code
-    receive("ClaimFaucet") {
-        let sender = context().sender;
-        let referral = context().body.get("referral") as address?;
-
+    receive(msg: ClaimFaucet) {
+        let senderAddress = sender();
+        
         // Prevent double claim
-        if (claimed.get(sender) == true) {
-            throw("Already claimed faucet");
+        let hasClaimed = self.claimed.get(senderAddress);
+        if (hasClaimed != null && hasClaimed!!) {
+            require(false, "Already claimed faucet");
         }
 
         // Mark sender as claimed
-        claimed.set(sender, true);
+        self.claimed.set(senderAddress, true);
 
         // Send gift to new player
-        send(starToken, {
-            $$type: "Transfer",
-            to: sender,
-            amount: giftAmount
-        });
+        emit("Claimed faucet: " + self.giftAmount.toString() + " STAR");
 
         // If valid referral provided
-        if (referral != null && referral != sender && claimed.get(referral) == true) {
-            // Increment referral count
-            let count = referralCount.get(referral) ?: 0;
-            referralCount.set(referral, count + 1);
-
-            // Track who referred this player
-            referredBy.set(sender, referral);
-
-            // Calculate bonus with tier scaling
-            // Tier 1: 1-3 referrals = 5 STAR each
-            // Tier 2: 4-7 referrals = 7 STAR each
-            // Tier 3: 8+ referrals = 10 STAR each
-            let bonus: int;
-            if (count < 3) {
-                bonus = referralBonus;  // 5 STAR
-            } else if (count < 7) {
-                bonus = referralBonus + 2;  // 7 STAR
+        if (msg.referral != null && msg.referral!! != senderAddress) {
+            let referralAddr = msg.referral!!;
+            let referralClaimed = self.claimed.get(referralAddr);
+            let isReferralValid: Bool = false;
+            if (referralClaimed == null) {
+                isReferralValid = false;
             } else {
-                bonus = referralBonus + 5;  // 10 STAR
+                isReferralValid = referralClaimed!!;
             }
+            
+            if (isReferralValid) {
+                // Increment referral count
+                let countOpt = self.referralCount.get(referralAddr);
+                let count: Int = 0;
+                if (countOpt == null) {
+                    count = 0;
+                } else {
+                    count = countOpt!!;
+                }
+                self.referralCount.set(referralAddr, count + 1);
 
-            // Cap total bonus earned
-            let currentBonus = referralBonusEarned.get(referral) ?: 0;
-            let totalBonus = currentBonus + bonus;
-            if (totalBonus > maxReferralBonus) {
-                bonus = maxReferralBonus - currentBonus;
-            }
+                // Track who referred this player
+                self.referredBy.set(senderAddress, referralAddr);
 
-            referralBonusEarned.set(referral, totalBonus);
+                // Calculate bonus with tier scaling
+                let bonus: Int = 0;
+                if (count < 3) {
+                    bonus = self.referralBonus;
+                } else if (count < 7) {
+                    bonus = self.referralBonus + 2;
+                } else {
+                    bonus = self.referralBonus + 5;
+                }
 
-            // Send referral bonus to referrer
-            if (bonus > 0) {
-                send(starToken, {
-                    $$type: "Transfer",
-                    to: referral,
-                    amount: bonus
-                });
+                // Cap total bonus earned
+                let currentBonusOpt = self.referralBonusEarned.get(referralAddr);
+                let currentBonus: Int = 0;
+                if (currentBonusOpt == null) {
+                    currentBonus = 0;
+                } else {
+                    currentBonus = currentBonusOpt!!;
+                }
+                
+                let totalBonus = currentBonus + bonus;
+                if (totalBonus > self.maxReferralBonus) {
+                    bonus = self.maxReferralBonus - currentBonus;
+                }
+
+                self.referralBonusEarned.set(referralAddr, currentBonus + bonus);
+
+                // Send referral bonus to referrer
+                if (bonus > 0) {
+                    emit("Referral bonus: " + bonus.toString() + " STAR to " + referralAddr.toString());
+                }
             }
         }
     }
 
     // Get referral info for a user
-    get fun getReferralInfo(user: address): (int, int, address?) {
-        return (
-            referralCount.get(user) ?: 0,
-            referralBonusEarned.get(user) ?: 0,
-            referredBy.get(user)
-        );
+    fun getReferralInfo(user: Address): ReferralInfo {
+        let countOpt = self.referralCount.get(user);
+        let count: Int = 0;
+        if (countOpt == null) {
+            count = 0;
+        } else {
+            count = countOpt!!;
+        }
+        
+        let bonusOpt = self.referralBonusEarned.get(user);
+        let bonus: Int = 0;
+        if (bonusOpt == null) {
+            bonus = 0;
+        } else {
+            bonus = bonusOpt!!;
+        }
+        
+        let referredByOpt = self.referredBy.get(user);
+        let info: ReferralInfo = ReferralInfo{
+            referralCount: count,
+            bonusEarned: bonus,
+            referredBy: referredByOpt
+        };
+        return info;
     }
 }

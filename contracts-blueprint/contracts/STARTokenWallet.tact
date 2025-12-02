@@ -38,6 +38,12 @@ message BurnCosmicUtility {
     amount: Int;
 }
 
+struct PassiveIncomeInfo {
+    perHour: Int;
+    nftCount: Int;
+    dailyEarned: Int;
+}
+
 contract STARTokenWallet with Deployable {
     // Token contract address
     tokenContract: Address;
@@ -74,21 +80,23 @@ contract STARTokenWallet with Deployable {
     }
     
     // Get passive income info
-    fun getPassiveIncomePerHour(): Int {
-        return self.passiveIncomePerHour;
-    }
-    
-    fun getNFTOwnedCount(): Int {
-        return self.nftOwnedCount;
-    }
-    
-    fun getDailyEarned(): Int {
-        return self.dailyEarned;
+    fun getPassiveIncomeInfo(): PassiveIncomeInfo {
+        let info: PassiveIncomeInfo = PassiveIncomeInfo{ 
+            perHour: self.passiveIncomePerHour, 
+            nftCount: self.nftOwnedCount, 
+            dailyEarned: self.dailyEarned 
+        };
+        return info;
     }
     
     // Get burn history for specific utility
     fun getCosimicBurnHistory(utility: String): Int {
-        return self.cosmicBurns.get(utility) ?? 0;
+        let result = self.cosmicBurns.get(utility);
+        if (result == null) {
+            return 0;
+        } else {
+            return result!!;
+        }
     }
     
     // Get total burned
@@ -124,8 +132,14 @@ contract STARTokenWallet with Deployable {
         self.tokenBalance -= amount;
         self.totalBurned += amount;
         
-        let burnCount = self.cosmicBurns.get(utility) ?? 0;
-        self.cosmicBurns.set(utility, burnCount + amount);
+        let burnCount = self.cosmicBurns.get(utility);
+        let currentCount: Int = 0;
+        if (burnCount == null) {
+            currentCount = 0;
+        } else {
+            currentCount = burnCount!!;
+        }
+        self.cosmicBurns.set(utility, currentCount + amount);
         
         emit("Burned " + amount.toString() + " STAR for " + utility);
     }

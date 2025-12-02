@@ -25,6 +25,25 @@ message SetRoyalty {
     denominator: Int;
 }
 
+message TokenTransfer {
+    nftId: Int;
+    receiver: Address;
+}
+
+struct CollectionInfo {
+    name: String;
+    symbol: String;
+    description: String;
+    nextNFTId: Int;
+    totalMinted: Int;
+}
+
+struct RoyaltyInfo {
+    numerator: Int;
+    denominator: Int;
+    destination: Address;
+}
+
 contract PlanetNFT with Deployable {
     // Collection Metadata
     name: String = "Solar System Planets";
@@ -64,8 +83,15 @@ contract PlanetNFT with Deployable {
     }
     
     // Get collection info
-    fun getCollectionInfo(): (String, String, String, Int, Int) {
-        return (self.name, self.symbol, self.description, self.nextNFTId, self.totalMinted);
+    fun getCollectionInfo(): CollectionInfo {
+        let info: CollectionInfo = CollectionInfo{
+            name: self.name,
+            symbol: self.symbol,
+            description: self.description,
+            nextNFTId: self.nextNFTId,
+            totalMinted: self.totalMinted
+        };
+        return info;
     }
     
     // Get metadata URI for specific NFT
@@ -75,12 +101,22 @@ contract PlanetNFT with Deployable {
     
     // Get owner of NFT
     fun getNFTOwner(nftId: Int): Address {
-        return self.nftOwners.get(nftId) ?? sender();
+        let owner = self.nftOwners.get(nftId);
+        if (owner == null) {
+            return sender();
+        } else {
+            return owner!!;
+        }
     }
     
     // Get planet mint count
     fun getPlanetMintCount(planet: String): Int {
-        return self.planetMintCount.get(planet) ?? 0;
+        let count = self.planetMintCount.get(planet);
+        if (count == null) {
+            return 0;
+        } else {
+            return count!!;
+        }
     }
     
     // Get total supply
@@ -90,7 +126,15 @@ contract PlanetNFT with Deployable {
     
     // Mint new planet NFT (only allowed minters)
     receive(msg: Mint) {
-        require(self.allowedMinters.get(sender()) ?? false || sender() == self.owner, "Not authorized to mint");
+        let isAllowed = self.allowedMinters.get(sender());
+        let allowed: Bool = false;
+        if (isAllowed == null) {
+            allowed = false;
+        } else {
+            allowed = isAllowed!!;
+        }
+        
+        require(allowed || sender() == self.owner, "Not authorized to mint");
         require(msg.amount == 1, "Can only mint 1 NFT at a time");
         
         // Increment IDs
@@ -99,7 +143,13 @@ contract PlanetNFT with Deployable {
         self.totalMinted += 1;
         
         // Track planet mint count
-        let planetCount = self.planetMintCount.get(msg.planet) ?? 0;
+        let planetCountOpt = self.planetMintCount.get(msg.planet);
+        let planetCount: Int = 0;
+        if (planetCountOpt == null) {
+            planetCount = 0;
+        } else {
+            planetCount = planetCountOpt!!;
+        }
         self.planetMintCount.set(msg.planet, planetCount + 1);
         
         // Store owner and metadata
@@ -112,7 +162,14 @@ contract PlanetNFT with Deployable {
     
     // Transfer NFT to new owner
     receive(msg: TokenTransfer) {
-        require(self.nftOwners.get(msg.nftId) ?? sender() == msg.receiver, "Not NFT owner");
+        let owner = self.nftOwners.get(msg.nftId);
+        let nftOwner: Address = sender();
+        if (owner == null) {
+            nftOwner = sender();
+        } else {
+            nftOwner = owner!!;
+        }
+        require(nftOwner == msg.receiver, "Not NFT owner");
         self.nftOwners.set(msg.nftId, msg.receiver);
         emit("NFT transferred: ID " + msg.nftId.toString() + " to " + msg.receiver.toString());
     }
@@ -143,17 +200,17 @@ contract PlanetNFT with Deployable {
     }
     
     // Get royalty info
-    fun getRoyaltyInfo(): (Int, Int, Address) {
-        return (self.royaltyNumerator, self.royaltyDenominator, self.royaltyDestination);
+    fun getRoyaltyInfo(): RoyaltyInfo {
+        let info: RoyaltyInfo = RoyaltyInfo{
+            numerator: self.royaltyNumerator,
+            denominator: self.royaltyDenominator,
+            destination: self.royaltyDestination
+        };
+        return info;
     }
     
     // Emergency: Allow contract to receive TON
     receive() {
         emit("Collection received TON");
     }
-}
-
-message TokenTransfer {
-    nftId: Int;
-    receiver: Address;
 }
