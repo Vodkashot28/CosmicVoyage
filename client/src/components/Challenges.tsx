@@ -3,7 +3,7 @@ import { Zap, Target, Star } from "lucide-react";
 import { useSolarSystem } from "@/lib/stores/useSolarSystem";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 interface Challenge {
   id: string;

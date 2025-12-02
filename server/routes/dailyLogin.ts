@@ -17,6 +17,7 @@ function getRewardForDay(day: number): number {
  * Claim daily login reward
  */
 router.post("/claim", async (req: Request, res: Response) => {
+  res.setHeader("Content-Type", "application/json");
   try {
     const { walletAddress } = req.body;
 
@@ -146,6 +147,7 @@ router.post("/claim", async (req: Request, res: Response) => {
  * Get daily login status
  */
 router.get("/status/:walletAddress", async (req: Request, res: Response) => {
+  res.setHeader("Content-Type", "application/json");
   try {
     const { walletAddress } = req.params;
 

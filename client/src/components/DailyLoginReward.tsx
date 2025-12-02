@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "./ui/dialog";
 import { Button } from "./ui/button";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
@@ -78,6 +78,9 @@ export function DailyLoginReward() {
           <DialogTitle className="text-center text-2xl">
             <span className="text-3xl">📅</span> Daily Login Bonus
           </DialogTitle>
+          <DialogDescription className="text-center text-slate-300">
+            Claim your daily reward and build your login streak!
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 text-center">
