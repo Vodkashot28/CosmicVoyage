@@ -1,0 +1,31 @@
+{
+  "network": "testnet",
+  "deploymentDate": "2025-12-02T01:01:13Z",
+  "contracts": {
+    "STARToken": {
+      "address": "EQAIYlrr3UiMJ9fqI-B4j2nJdiiD7WzyaNL1MX_wiONc4OUi",
+      "name": "STAR Token",
+      "status": "active"
+    },
+    "STARTokenWallet": {
+      "address": "EQDy43am74uRimAbuKFthYO4PJY95wzNOpsfOAfBhkwwnC9c",
+      "name": "STAR Token Wallet",
+      "status": "active"
+    },
+    "PlanetNFT": {
+      "address": "EQBuZlqecX7qIEHlakYKEqPVtQ5An3XwqDg4DoAh3dNHlHqS",
+      "name": "Planet NFT Collection",
+      "status": "active"
+    },
+    "PlanetNFTItem": {
+      "address": "EQCxm_x7fTE-_bpyb4yXdSbd3rck6ctxPNV7HhtDc0PA-JRk",
+      "name": "Planet NFT Item",
+      "status": "active"
+    },
+    "ReferralFaucet": {
+      "address": "EQC4EQAmL5WKePiV0zzRXZjraZdlpqJOgQOVaH_PKs_FVF8a",
+      "name": "Referral Faucet",
+      "status": "active"
+    }
+  }
+}
