@@ -84,7 +84,7 @@ Solar System Explorer provides:
 
 #### StarToken (STAR) - Utility Token
 
-**Contract Address (Testnet):** `0:fa146529b8e269ffcd7a5eacf9473b641e35389c302d7e8c3df56eb3de9c7f01`  
+**Contract Address (Testnet):** See `contracts-blueprint/deployments/testnet-deployment.json` for current addresses  
 **Network:** TON Blockchain  
 **Type:** In-game utility token for rewards, cosmetics, and gameplay
 

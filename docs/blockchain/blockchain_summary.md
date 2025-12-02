@@ -166,7 +166,7 @@ client/src/lib/ton/
 
 ## Next Steps: Deploy Contracts to TON Testnet
 
-**📖 See [BLOCKCHAIN_DEPLOYMENT_GUIDE.md](./BLOCKCHAIN_DEPLOYMENT_GUIDE.md) for detailed instructions**
+**📖 See [smart_contract_deployment.md](./smart_contract_deployment.md) for detailed instructions**
 
 ### Quick Start
 ```bash
