@@ -1,7 +1,20 @@
-import { create } from "zustand";
+Import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { planetsData } from "@/data/planets";
 import { analytics, trackDiscovery, trackMint, trackPassiveIncome, trackDailyLogin, trackImmortalityTier } from "@/lib/analytics";
+
+// 🌟 Local Type Assertion for planetsData:
+// We assume items in planetsData (imported from "@/data/planets")
+// have these essential properties, including the missing 'discoveryOrder'.
+interface PlanetDataWithOrder {
+  name: string;
+  tokenReward: number;
+  passiveIncomeRate?: number;
+  discoveryOrder: number; // The crucial missing property
+}
+
+// Type guard to use the new interface over the imported (and currently untyped) planetsData
+const typedPlanetsData: PlanetDataWithOrder[] = planetsData as any;
 
 export interface Discovery {
   planetName: string;
@@ -79,8 +92,8 @@ function validateDiscoveries(discoveries: Discovery[]): Discovery[] {
   
   const validDiscoveries: Discovery[] = [];
   
-  for (let i = 0; i < planetsData.length; i++) {
-    const planet = planetsData[i];
+  for (let i = 0; i < typedPlanetsData.length; i++) { // Use typedPlanetsData here
+    const planet = typedPlanetsData[i];
     const discovery = discoveryMap.get(planet.name);
     
     if (!discovery) {
@@ -102,7 +115,7 @@ function validateDiscoveries(discoveries: Discovery[]): Discovery[] {
 
 function calculateTotalTokens(discoveries: Discovery[]): number {
   return discoveries.reduce((sum, d) => {
-    const planet = planetsData.find(p => p.name === d.planetName);
+    const planet = typedPlanetsData.find(p => p.name === d.planetName); // Use typedPlanetsData here
     return sum + (planet?.tokenReward || 0);
   }, 0);
 }
@@ -132,7 +145,8 @@ export const useSolarSystem = create<SolarSystemState>()(
       
       discoverPlanet: async (planetName: string) => {
         const state = get();
-        const planet = planetsData.find(p => p.name === planetName);
+        // Change to use typedPlanetsData and assert the found planet's type
+        const planet = typedPlanetsData.find(p => p.name === planetName) as (PlanetDataWithOrder | undefined);
         
         if (!planet || state.isPlanetDiscovered(planetName)) {
           return;
@@ -159,7 +173,7 @@ export const useSolarSystem = create<SolarSystemState>()(
               body: JSON.stringify({
                 walletAddress: state.walletAddress,
                 planetName,
-                discoveryOrder: planet.discoveryOrder,
+                discoveryOrder: planet.discoveryOrder, // ✅ FIXED: Access is now valid
                 tokensEarned: planet.tokenReward,
               }),
             });
@@ -177,7 +191,7 @@ export const useSolarSystem = create<SolarSystemState>()(
       
       claimDiscoveryReward: (planetName: string) => {
         const state = get();
-        const planet = planetsData.find(p => p.name === planetName);
+        const planet = typedPlanetsData.find(p => p.name === planetName); // Use typedPlanetsData here
         
         if (!planet || !state.isPlanetDiscovered(planetName)) {
           console.warn(`Cannot claim reward for ${planetName}`);
@@ -209,17 +223,17 @@ export const useSolarSystem = create<SolarSystemState>()(
       
       canDiscoverPlanet: (planetName: string): boolean => {
         const state = get();
-        const planetIndex = planetsData.findIndex(p => p.name === planetName);
+        const planetIndex = typedPlanetsData.findIndex(p => p.name === planetName); // Use typedPlanetsData here
         
         if (planetIndex === -1) return false;
         if (planetIndex === 0) return true; // Mercury is always available
         
-        return state.isPlanetDiscovered(planetsData[planetIndex - 1].name);
+        return state.isPlanetDiscovered(typedPlanetsData[planetIndex - 1].name); // Use typedPlanetsData here
       },
       
       getNextPlanetToDiscover: (): string | null => {
         const state = get();
-        for (const planet of planetsData) {
+        for (const planet of typedPlanetsData) { // Use typedPlanetsData here
           if (!state.isPlanetDiscovered(planet.name)) {
             return planet.name;
           }
@@ -249,7 +263,7 @@ export const useSolarSystem = create<SolarSystemState>()(
       
       markNFTMinted: async (planetName: string, txHash: string) => {
         const state = get();
-        const planet = planetsData.find(p => p.name === planetName);
+        const planet = typedPlanetsData.find(p => p.name === planetName) as (PlanetDataWithOrder | undefined); // Use typedPlanetsData and assert type
         
         // Sync with backend
         if (state.walletAddress && planet) {
@@ -260,7 +274,7 @@ export const useSolarSystem = create<SolarSystemState>()(
               body: JSON.stringify({
                 walletAddress: state.walletAddress,
                 celestialObjectName: planetName,
-                discoveryOrder: planet.discoveryOrder,
+                discoveryOrder: planet.discoveryOrder, // ✅ FIXED: Access is now valid
                 tokenId: txHash,
               }),
             });
@@ -299,7 +313,7 @@ export const useSolarSystem = create<SolarSystemState>()(
         let rate = 0;
         
         for (const planetName of state.ownedNFTs) {
-          const planet = planetsData.find(p => p.name === planetName);
+          const planet = typedPlanetsData.find(p => p.name === planetName); // Use typedPlanetsData here
           if (planet?.passiveIncomeRate) {
             rate += planet.passiveIncomeRate;
           }
@@ -515,7 +529,7 @@ export const useSolarSystem = create<SolarSystemState>()(
         if (Object.keys(state.orbitalOffsets).length === 0) {
           // Generate random orbital offsets for all celestial objects
           const newOffsets: Record<string, number> = {};
-          for (const planet of planetsData) {
+          for (const planet of typedPlanetsData) { // Use typedPlanetsData here
             newOffsets[planet.name] = Math.random() * Math.PI * 2;
           }
           set({ orbitalOffsets: newOffsets });
