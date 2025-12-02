@@ -3,9 +3,11 @@ import { CelestialObject } from "./CelestialObject";
 import { SunModel } from "./3d/SunModel";
 import { allCelestialObjects } from "@/data/planets";
 import { useSolarSystem } from "@/lib/stores/useSolarSystem";
+import { useEffect, useState } from "react";
 
 export function SolarSystem() {
   const { ownedNFTs, discoveredPlanets } = useSolarSystem();
+  const [activeMintsCount, setActiveMintsCount] = useState(0);
   
   // Filter to show only minted planets + discovered planets that can be interacted with
   const visiblePlanets = allCelestialObjects.filter(celestialObject => {
@@ -17,6 +19,21 @@ export function SolarSystem() {
     if (celestialObject.name === "Mercury" && discoveredPlanets.length === 0) return true;
     return false;
   });
+
+  // Listen for mint events to trigger dynamic loading
+  useEffect(() => {
+    const handleMint = (event: Event) => {
+      const customEvent = event as CustomEvent;
+      const planetName = customEvent.detail?.planetName;
+      if (planetName) {
+        console.log(`🪐 Mint event received: ${planetName}`);
+        setActiveMintsCount(prev => prev + 1);
+      }
+    };
+
+    window.addEventListener('celestialMinted', handleMint as EventListener);
+    return () => window.removeEventListener('celestialMinted', handleMint as EventListener);
+  }, []);
 
   return (
     <>

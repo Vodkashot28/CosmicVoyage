@@ -1,0 +1,330 @@
+// Metadata for all celestial objects - used for dynamic on-demand GLB loading
+export interface CelestialMeta {
+  id: string;
+  name: string;
+  category: 'planet' | 'dwarfPlanet' | 'asteroid' | 'sun';
+  modelPath: string; // public/models/<id>.glb
+  orbitRadius: number; // scene units
+  orbitSpeed: number; // radians per second
+  rotationSpeed: number; // radians per second
+  targetDiameter: number; // desired visual diameter in scene units
+}
+
+const modelManager: Record<string, CelestialMeta> = {
+  // Sun
+  sun: {
+    id: 'sun',
+    name: 'Sun',
+    category: 'sun',
+    modelPath: '/models/sun.glb',
+    orbitRadius: 0,
+    orbitSpeed: 0,
+    rotationSpeed: 0.05,
+    targetDiameter: 6,
+  },
+
+  // Main Planets (8)
+  mercury: {
+    id: 'mercury',
+    name: 'Mercury',
+    category: 'planet',
+    modelPath: '/models/mercury.glb',
+    orbitRadius: 8,
+    orbitSpeed: 1.4,
+    rotationSpeed: 0.01,
+    targetDiameter: 0.38,
+  },
+  venus: {
+    id: 'venus',
+    name: 'Venus',
+    category: 'planet',
+    modelPath: '/models/venus.glb',
+    orbitRadius: 12,
+    orbitSpeed: 0.9,
+    rotationSpeed: 0.008,
+    targetDiameter: 0.95,
+  },
+  earth: {
+    id: 'earth',
+    name: 'Earth',
+    category: 'planet',
+    modelPath: '/models/earth.glb',
+    orbitRadius: 16,
+    orbitSpeed: 0.5,
+    rotationSpeed: 0.02,
+    targetDiameter: 1.0,
+  },
+  mars: {
+    id: 'mars',
+    name: 'Mars',
+    category: 'planet',
+    modelPath: '/models/mars.glb',
+    orbitRadius: 20,
+    orbitSpeed: 0.35,
+    rotationSpeed: 0.018,
+    targetDiameter: 0.53,
+  },
+  jupiter: {
+    id: 'jupiter',
+    name: 'Jupiter',
+    category: 'planet',
+    modelPath: '/models/jupiter.glb',
+    orbitRadius: 28,
+    orbitSpeed: 0.15,
+    rotationSpeed: 0.04,
+    targetDiameter: 2.5,
+  },
+  saturn: {
+    id: 'saturn',
+    name: 'Saturn',
+    category: 'planet',
+    modelPath: '/models/saturn.glb',
+    orbitRadius: 36,
+    orbitSpeed: 0.1,
+    rotationSpeed: 0.038,
+    targetDiameter: 2.2,
+  },
+  uranus: {
+    id: 'uranus',
+    name: 'Uranus',
+    category: 'planet',
+    modelPath: '/models/uranus.glb',
+    orbitRadius: 44,
+    orbitSpeed: 0.07,
+    rotationSpeed: 0.03,
+    targetDiameter: 1.8,
+  },
+  neptune: {
+    id: 'neptune',
+    name: 'Neptune',
+    category: 'planet',
+    modelPath: '/models/neptune.glb',
+    orbitRadius: 52,
+    orbitSpeed: 0.05,
+    rotationSpeed: 0.032,
+    targetDiameter: 1.7,
+  },
+
+  // Dwarf Planets (7)
+  pluto: {
+    id: 'pluto',
+    name: 'Pluto',
+    category: 'dwarfPlanet',
+    modelPath: '/models/pluto.glb',
+    orbitRadius: 60,
+    orbitSpeed: 0.05,
+    rotationSpeed: 0.015,
+    targetDiameter: 0.2,
+  },
+  ceres: {
+    id: 'ceres',
+    name: 'Ceres',
+    category: 'dwarfPlanet',
+    modelPath: '/models/ceres.glb',
+    orbitRadius: 62,
+    orbitSpeed: 0.048,
+    rotationSpeed: 0.025,
+    targetDiameter: 0.25,
+  },
+  eris: {
+    id: 'eris',
+    name: 'Eris',
+    category: 'dwarfPlanet',
+    modelPath: '/models/eris.glb',
+    orbitRadius: 64,
+    orbitSpeed: 0.046,
+    rotationSpeed: 0.012,
+    targetDiameter: 0.19,
+  },
+  haumea: {
+    id: 'haumea',
+    name: 'Haumea',
+    category: 'dwarfPlanet',
+    modelPath: '/models/haumea.glb',
+    orbitRadius: 66,
+    orbitSpeed: 0.044,
+    rotationSpeed: 0.08,
+    targetDiameter: 0.22,
+  },
+  makemake: {
+    id: 'makemake',
+    name: 'Makemake',
+    category: 'dwarfPlanet',
+    modelPath: '/models/makemake.glb',
+    orbitRadius: 68,
+    orbitSpeed: 0.042,
+    rotationSpeed: 0.018,
+    targetDiameter: 0.21,
+  },
+  gonggong: {
+    id: 'gonggong',
+    name: 'Gonggong',
+    category: 'dwarfPlanet',
+    modelPath: '/models/gonggong.glb',
+    orbitRadius: 70,
+    orbitSpeed: 0.04,
+    rotationSpeed: 0.016,
+    targetDiameter: 0.18,
+  },
+  orcus: {
+    id: 'orcus',
+    name: 'Orcus',
+    category: 'dwarfPlanet',
+    modelPath: '/models/orcus.glb',
+    orbitRadius: 72,
+    orbitSpeed: 0.038,
+    rotationSpeed: 0.014,
+    targetDiameter: 0.17,
+  },
+
+  // Asteroids (13)
+  vesta: {
+    id: 'vesta',
+    name: 'Vesta',
+    category: 'asteroid',
+    modelPath: '/models/vesta.glb',
+    orbitRadius: 24,
+    orbitSpeed: 0.4,
+    rotationSpeed: 0.025,
+    targetDiameter: 0.12,
+  },
+  pallas: {
+    id: 'pallas',
+    name: 'Pallas',
+    category: 'asteroid',
+    modelPath: '/models/pallas.glb',
+    orbitRadius: 25,
+    orbitSpeed: 0.38,
+    rotationSpeed: 0.018,
+    targetDiameter: 0.13,
+  },
+  juno: {
+    id: 'juno',
+    name: 'Juno',
+    category: 'asteroid',
+    modelPath: '/models/juno.glb',
+    orbitRadius: 26,
+    orbitSpeed: 0.36,
+    rotationSpeed: 0.022,
+    targetDiameter: 0.11,
+  },
+  hygiea: {
+    id: 'hygiea',
+    name: 'Hygiea',
+    category: 'asteroid',
+    modelPath: '/models/hygiea.glb',
+    orbitRadius: 27,
+    orbitSpeed: 0.34,
+    rotationSpeed: 0.02,
+    targetDiameter: 0.15,
+  },
+  astraea: {
+    id: 'astraea',
+    name: 'Astraea',
+    category: 'asteroid',
+    modelPath: '/models/astraea.glb',
+    orbitRadius: 29,
+    orbitSpeed: 0.32,
+    rotationSpeed: 0.019,
+    targetDiameter: 0.09,
+  },
+  apophis: {
+    id: 'apophis',
+    name: 'Apophis',
+    category: 'asteroid',
+    modelPath: '/models/apophis.glb',
+    orbitRadius: 30,
+    orbitSpeed: 0.3,
+    rotationSpeed: 0.021,
+    targetDiameter: 0.08,
+  },
+  bennu: {
+    id: 'bennu',
+    name: 'Bennu',
+    category: 'asteroid',
+    modelPath: '/models/bennu.glb',
+    orbitRadius: 31,
+    orbitSpeed: 0.28,
+    rotationSpeed: 0.024,
+    targetDiameter: 0.07,
+  },
+  itokawa: {
+    id: 'itokawa',
+    name: 'Itokawa',
+    category: 'asteroid',
+    modelPath: '/models/itokawa.glb',
+    orbitRadius: 32,
+    orbitSpeed: 0.26,
+    rotationSpeed: 0.026,
+    targetDiameter: 0.06,
+  },
+  eros: {
+    id: 'eros',
+    name: 'Eros',
+    category: 'asteroid',
+    modelPath: '/models/eros.glb',
+    orbitRadius: 33,
+    orbitSpeed: 0.24,
+    rotationSpeed: 0.023,
+    targetDiameter: 0.09,
+  },
+  psyche: {
+    id: 'psyche',
+    name: 'Psyche',
+    category: 'asteroid',
+    modelPath: '/models/psyche.glb',
+    orbitRadius: 34,
+    orbitSpeed: 0.22,
+    rotationSpeed: 0.02,
+    targetDiameter: 0.14,
+  },
+  varda: {
+    id: 'varda',
+    name: 'Varda',
+    category: 'asteroid',
+    modelPath: '/models/varda.glb',
+    orbitRadius: 35,
+    orbitSpeed: 0.2,
+    rotationSpeed: 0.018,
+    targetDiameter: 0.1,
+  },
+  oumuamua: {
+    id: 'oumuamua',
+    name: 'Oumuamua',
+    category: 'asteroid',
+    modelPath: '/models/oumuamua.glb',
+    orbitRadius: 37,
+    orbitSpeed: 0.18,
+    rotationSpeed: 0.035,
+    targetDiameter: 0.08,
+  },
+  halley: {
+    id: 'halley',
+    name: 'Halley',
+    category: 'asteroid',
+    modelPath: '/models/halley.glb',
+    orbitRadius: 38,
+    orbitSpeed: 0.16,
+    rotationSpeed: 0.025,
+    targetDiameter: 0.1,
+  },
+};
+
+export const modelManagerAPI = {
+  get(id: string) {
+    return modelManager[id.toLowerCase()];
+  },
+  getByName(name: string) {
+    return modelManager[name.toLowerCase()];
+  },
+  getAll() {
+    return Object.values(modelManager);
+  },
+  getMintedList(mintedNames: string[]): CelestialMeta[] {
+    return mintedNames
+      .map(name => this.getByName(name))
+      .filter((meta): meta is CelestialMeta => meta !== undefined);
+  },
+};
+
+export default modelManagerAPI;

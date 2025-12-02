@@ -1,0 +1,297 @@
+Nice — let’s make the scene dynamic so the app only loads and displays the .glb for a celestial body when it’s minted. Below is a compact, copy‑ready plan plus TypeScript/React + Three.js code you can drop into your project. It covers:
+
+- metadata-driven model manager  
+- on‑demand GLB loading with Draco  
+- automatic scaling and recentering  
+- orbit animation  
+- mint event listener (hookable to your minting flow)  
+- safe fallbacks and performance notes
+
+---
+
+Dynamic Solar System Architecture
+- ModelManager: metadata for each object (id, path, category, visual target size).  
+- SolarSystemScene: Three.js scene that keeps a set of active bodies and only loads models when requested.  
+- Mint event: an event (or callback) triggers addCelestialById(id) to load and spawn that .glb.  
+- Orbiting: each spawned object has orbit parameters and is updated in the animation loop.  
+- Fallback: if a model fails, create a procedural sphere so the system remains usable.
+
+---
+
+modelManager.ts
+Create a central metadata file for all possible objects. Add targetDiameter values to control visual scale.
+
+`ts
+// src/lib/modelManager.ts
+export type CelestialMeta = {
+  id: string;
+  name: string;
+  category: 'planet' | 'dwarf' | 'asteroid' | 'sun';
+  path: string; // public/models/<id>.glb
+  thumbnail?: string;
+  orbitRadius: number; // scene units
+  orbitSpeed: number; // radians per second
+  rotationSpeed: number; // radians per second
+  targetDiameter: number; // desired visual diameter in scene units
+};
+
+const modelManager: Record<string, CelestialMeta> = {
+  sun: {
+    id: 'sun',
+    name: 'Sun',
+    category: 'sun',
+    path: '/models/sun.glb',
+    orbitRadius: 0,
+    orbitSpeed: 0,
+    rotationSpeed: 0.05,
+    targetDiameter: 6
+  },
+  mercury: {
+    id: 'mercury',
+    name: 'Mercury',
+    category: 'planet',
+    path: '/models/mercury.glb',
+    orbitRadius: 8,
+    orbitSpeed: 0.8,
+    rotationSpeed: 0.02,
+    targetDiameter: 0.38
+  },
+  // add other objects similarly...
+};
+
+export default {
+  get(id: string) {
+    return modelManager[id];
+  },
+  getAll() {
+    return Object.values(modelManager);
+  }
+};
+`
+
+---
+
+SolarSystemScene.tsx
+This component listens for mint events and loads only the requested .glb. It uses bounding box scaling to normalize sizes and animates orbits.
+
+`tsx
+// src/components/SolarSystemScene.tsx
+import React, { useEffect, useRef, useState } from 'react';
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
+import modelManager from '../lib/modelManager';
+
+type ActiveBody = {
+  id: string;
+  mesh: THREE.Object3D;
+  meta: any;
+  orbitAngle: number;
+};
+
+export default function SolarSystemScene() {
+  const mountRef = useRef<HTMLDivElement | null>(null);
+  const sceneRef = useRef<THREE.Scene | null>(null);
+  const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
+  const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
+  const activeRef = useRef<Record<string, ActiveBody>>({});
+  const [tick, setTick] = useState(0); // small state to trigger re-render if needed
+
+  useEffect(() => {
+    // Basic scene setup
+    const scene = new THREE.Scene();
+    sceneRef.current = scene;
+    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 20, 40);
+    cameraRef.current = camera;
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    rendererRef.current = renderer;
+
+    mountRef.current!.appendChild(renderer.domElement);
+
+    // Lighting
+    const hemi = new THREE.HemisphereLight(0xffffff, 0x222222, 0.6);
+    scene.add(hemi);
+    const dir = new THREE.DirectionalLight(0xffffff, 1.0);
+    dir.position.set(10, 10, 10);
+    scene.add(dir);
+
+    // Draco + GLTF loader setup
+    const dracoLoader = new DRACOLoader();
+    dracoLoader.setDecoderPath('/draco/'); // ensure draco decoder files are served
+    const loader = new GLTFLoader();
+    loader.setDRACOLoader(dracoLoader);
+
+    // Animation loop
+    let rafId = 0;
+    const clock = new THREE.Clock();
+
+    const animate = () => {
+      const dt = clock.getDelta();
+      // update orbits
+      Object.values(activeRef.current).forEach((body) => {
+        body.orbitAngle += body.meta.orbitSpeed * dt;
+        const r = body.meta.orbitRadius;
+        // position relative to origin (sun at 0,0,0)
+        body.mesh.position.set(Math.cos(body.orbitAngle)  r, 0, Math.sin(body.orbitAngle)  r);
+        // rotation on own axis
+        body.mesh.rotation.y += body.meta.rotationSpeed * dt;
+      });
+
+      renderer.render(scene, camera);
+      rafId = requestAnimationFrame(animate);
+    };
+    animate();
+
+    // cleanup
+    return () => {
+      cancelAnimationFrame(rafId);
+      renderer.dispose();
+      mountRef.current!.removeChild(renderer.domElement);
+    };
+  }, []);
+
+  // Helper: scale and center model to target diameter
+  function scaleAndCenter(obj: THREE.Object3D, targetDiameter: number) {
+    const box = new THREE.Box3().setFromObject(obj);
+    const size = new THREE.Vector3();
+    box.getSize(size);
+    const current = Math.max(size.x, size.y, size.z);
+    const scale = current > 0 ? targetDiameter / current : 1;
+    obj.scale.setScalar(scale);
+    // recenter after scaling
+    const center = new THREE.Vector3();
+    box.getCenter(center);
+    obj.position.sub(center.multiplyScalar(scale));
+  }
+
+  // Add a celestial body by id (called when minted)
+  async function addCelestialById(id: string) {
+    if (activeRef.current[id]) return; // already added
+    const meta = modelManager.get(id);
+    if (!meta) {
+      console.warn('Unknown celestial id', id);
+      return;
+    }
+
+    const loader = new GLTFLoader();
+    // set up draco if needed (repeat or reuse global loader)
+    try {
+      const gltf = await new Promise<any>((resolve, reject) =>
+        loader.load(meta.path, resolve, undefined, reject)
+      );
+      const obj = gltf.scene || gltf.scenes?.[0] || new THREE.Group();
+      // scale and center
+      scaleAndCenter(obj, meta.targetDiameter);
+
+      // create a parent so we can offset for orbit easily
+      const parent = new THREE.Object3D();
+      parent.add(obj);
+      parent.position.set(Math.cos(0)  meta.orbitRadius, 0, Math.sin(0)  meta.orbitRadius);
+
+      // add to scene
+      sceneRef.current!.add(parent);
+
+      // store active
+      activeRef.current[id] = {
+        id,
+        mesh: parent,
+        meta,
+        orbitAngle: Math.random()  Math.PI  2 // random start angle
+      };
+
+      // optional: if this is the sun, ensure it's at origin and camera target
+      if (meta.category === 'sun') {
+        parent.position.set(0, 0, 0);
+      }
+
+      // trigger a small state update if UI needs to reflect active list
+      setTick((t) => t + 1);
+    } catch (err) {
+      console.error('Failed to load glb', meta.path, err);
+      // fallback sphere
+      const geo = new THREE.SphereGeometry(meta.targetDiameter / 2, 32, 32);
+      const mat = new THREE.MeshStandardMaterial({ color: 0x888888 });
+      const mesh = new THREE.Mesh(geo, mat);
+      const parent = new THREE.Object3D();
+      parent.add(mesh);
+      parent.position.set(Math.cos(0)  meta.orbitRadius, 0, Math.sin(0)  meta.orbitRadius);
+      sceneRef.current!.add(parent);
+      activeRef.current[id] = { id, mesh: parent, meta, orbitAngle: 0 };
+      setTick((t) => t + 1);
+    }
+  }
+
+  // Remove a celestial body by id
+  function removeCelestialById(id: string) {
+    const active = activeRef.current[id];
+    if (!active) return;
+    sceneRef.current!.remove(active.mesh);
+    // dispose geometry/materials if possible
+    active.mesh.traverse((c) => {
+      const m = c as THREE.Mesh;
+      if (m.geometry) m.geometry.dispose();
+      if (Array.isArray(m.material)) m.material.forEach((mat) => mat.dispose());
+      else if (m.material) m.material.dispose();
+    });
+    delete activeRef.current[id];
+    setTick((t) => t + 1);
+  }
+
+  // Mint event listener example
+  useEffect(() => {
+    const onMint = (e: any) => {
+      const id = e.detail?.id;
+      if (id) addCelestialById(id);
+    };
+    window.addEventListener('mint', onMint as EventListener);
+    return () => window.removeEventListener('mint', onMint as EventListener);
+  }, []);
+
+  // Example UI controls for testing
+  return (
+    <div style={{ width: '100%', height: '100vh', position: 'relative' }}>
+      <div ref={mountRef} style={{ width: '100%', height: '100%' }} />
+      <div style={{ position: 'absolute', left: 12, top: 12, color: '#fff' }}>
+        <button onClick={() => addCelestialById('sun')}>Add Sun</button>
+        <button onClick={() => addCelestialById('mercury')}>Mint Mercury</button>
+        <button onClick={() => addCelestialById('venus')}>Mint Venus</button>
+        <button onClick={() => removeCelestialById('mercury')}>Remove Mercury</button>
+      </div>
+    </div>
+  );
+}
+`
+
+---
+
+How to trigger minting from your mint flow
+When a user mints a planet (on-chain or off-chain), emit an event or call the addCelestialById function. Example using a browser event:
+
+`ts
+// after successful mint
+window.dispatchEvent(new CustomEvent('mint', { detail: { id: 'mercury' } }));
+`
+
+Or, if your minting backend can call a REST/websocket, forward the event to the client and call addCelestialById with the minted id.
+
+---
+
+Performance and UX tips
+- Progressive loading: load low‑poly or placeholder first, then swap in the high‑res .glb when ready.  
+- Limit concurrent loads: queue loads if many mints happen at once.  
+- Instancing: for many asteroids, use InstancedMesh instead of individual GLBs.  
+- LOD: keep targetDiameter metadata so you can generate LODs or impostors automatically.  
+- Camera: when a new body is minted, optionally tween the camera to focus on it for a satisfying reveal.  
+- Persistence: store minted IDs in user profile or contract metadata so clients can rehydrate the scene on reconnect.
+
+---
+
+Next steps I can provide
+- A starter repo scaffold with this component wired into Vite + React + Three.js and a small public/models sample.  
+- A mint queue implementation that throttles loads and shows progress thumbnails.  
+- A camera focus tween snippet (GSAP or tween.js) to animate to newly minted bodies.
+

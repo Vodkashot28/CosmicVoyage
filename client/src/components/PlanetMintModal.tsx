@@ -120,6 +120,11 @@ export function PlanetMintModal({
       const txHash = `tx_${Date.now()}`;
       markNFTMinted(planet.name, txHash);
 
+      // Dispatch mint event for dynamic loading
+      window.dispatchEvent(new CustomEvent('celestialMinted', {
+        detail: { planetName: planet.name, txHash }
+      }));
+
       // Sync NFT mint to backend
       if (walletAddress && planet) {
         const discoveryOrder = discoveredPlanets.findIndex(d => d.planetName === planet.name) + 1;
