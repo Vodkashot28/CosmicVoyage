@@ -1,0 +1,108 @@
+$ npm run check
+
+> rest-express@1.0.0 check
+> tsc
+
+client/src/lib/contractInteraction.ts:118:35 - error TS2551: Property 'STAR_TOKEN' does not exist on type '{ readonly starToken: string; readonly starTokenWallet: string; readonly planetNFT: string; readonly planetNFTItem: string; readonly referralFaucet: string; }'. Did you mean 'starToken'?
+
+118       address: CONTRACT_ADDRESSES.STAR_TOKEN,
+                                      ~~~~~~~~~~
+
+  client/src/lib/contracts.ts:16:3
+    16   starToken: validateAddress(
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    17     import.meta.env.VITE_STARTOKEN_ADDRESS || "EQAIYlrr3UiMJ9fqI-B4j2nJdiiD7WzyaNL1MX_wiONc4OUi",
+       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    18     "STARToken"
+       ~~~~~~~~~~~~~~~
+    19   ),
+       ~~~
+    'starToken' is declared here.
+
+client/src/lib/contractInteraction.ts:124:35 - error TS2551: Property 'STAR_TOKEN_WALLET' does not exist on type '{ readonly starToken: string; readonly starTokenWallet: string; readonly planetNFT: string; readonly planetNFTItem: string; readonly referralFaucet: string; }'. Did you mean 'starTokenWallet'?
+
+124       address: CONTRACT_ADDRESSES.STAR_TOKEN_WALLET,
+                                      ~~~~~~~~~~~~~~~~~
+
+  client/src/lib/contracts.ts:20:3
+    20   starTokenWallet: validateAddress(
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    21     import.meta.env.VITE_STARTOKEN_WALLET_ADDRESS || "EQDy43am74uRimAbuKFthYO4PJY95wzNOpsfOAfBhkwwnC9c",
+       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    22     "STARTokenWallet"
+       ~~~~~~~~~~~~~~~~~~~~~
+    23   ),
+       ~~~
+    'starTokenWallet' is declared here.
+
+client/src/lib/contractInteraction.ts:130:35 - error TS2551: Property 'PLANET_NFT' does not exist on type '{ readonly starToken: string; readonly starTokenWallet: string; readonly planetNFT: string; readonly planetNFTItem: string; readonly referralFaucet: string; }'. Did you mean 'planetNFT'?
+
+130       address: CONTRACT_ADDRESSES.PLANET_NFT,
+                                      ~~~~~~~~~~
+
+  client/src/lib/contracts.ts:24:3
+    24   planetNFT: validateAddress(
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    25     import.meta.env.VITE_PLANET_NFT_ADDRESS || "EQBuZlqecX7qIEHlakYKEqPVtQ5An3XwqDg4DoAh3dNHlHqS",
+       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    26     "PlanetNFT"
+       ~~~~~~~~~~~~~~~
+    27   ),
+       ~~~
+    'planetNFT' is declared here.
+
+client/src/lib/contractInteraction.ts:136:35 - error TS2551: Property 'PLANET_NFT_ITEM' does not exist on type '{ readonly starToken: string; readonly starTokenWallet: string; readonly planetNFT: string; readonly planetNFTItem: string; readonly referralFaucet: string; }'. Did you mean 'planetNFTItem'?
+
+136       address: CONTRACT_ADDRESSES.PLANET_NFT_ITEM,
+                                      ~~~~~~~~~~~~~~~
+
+  client/src/lib/contracts.ts:28:3
+    28   planetNFTItem: validateAddress(
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    29     import.meta.env.VITE_PLANET_NFT_ITEM_ADDRESS || "EQCxm_x7fTE-_bpyb4yXdSbd3rck6ctxPNV7HhtDc0PA-JRk",
+       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    30     "PlanetNFTItem"
+       ~~~~~~~~~~~~~~~~~~~
+    31   ),
+       ~~~
+    'planetNFTItem' is declared here.
+
+client/src/lib/contractInteraction.ts:142:35 - error TS2551: Property 'REFERRAL_FAUCET' does not exist on type '{ readonly starToken: string; readonly starTokenWallet: string; readonly planetNFT: string; readonly planetNFTItem: string; readonly referralFaucet: string; }'. Did you mean 'referralFaucet'?
+
+142       address: CONTRACT_ADDRESSES.REFERRAL_FAUCET,
+                                      ~~~~~~~~~~~~~~~
+
+  client/src/lib/contracts.ts:32:3
+    32   referralFaucet: validateAddress(
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    33     import.meta.env.VITE_REFERRAL_FAUCET_ADDRESS || "EQC4EQAmL5WKePiV0zzRXZjraZdlpqJOgQOVaH_PKs_FVF8a",
+       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    34     "ReferralFaucet"
+       ~~~~~~~~~~~~~~~~~~~~
+    35   ),
+       ~~~
+    'referralFaucet' is declared here.
+
+client/src/lib/draco-setup.ts:1:29 - error TS2307: Cannot find module 'three/examples/jsm/loaders/DRACOLoader' or its corresponding type declarations.
+
+1 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
+                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+client/src/lib/useContractStore.ts:25:5 - error TS2561: Object literal may only specify known properties, but 'STAR_TOKEN' does not exist in type 'Record<"starToken" | "starTokenWallet" | "planetNFT" | "planetNFTItem" | "referralFaucet", boolean>'. Did you mean to write 'starToken'?
+
+25     STAR_TOKEN: false,
+       ~~~~~~~~~~
+
+  client/src/lib/useContractStore.ts:14:3
+    14   isContractReady: Record<keyof typeof CONTRACT_ADDRESSES, boolean>;
+         ~~~~~~~~~~~~~~~
+    The expected type comes from property 'isContractReady' which is declared here on type 'ContractStore'
+
+
+Found 7 errors in 3 files.
+
+Errors  Files
+     5  client/src/lib/contractInteraction.ts:118
+     1  client/src/lib/draco-setup.ts:1
+     1  client/src/lib/useContractStore.ts:25
+vodkashot28 $
