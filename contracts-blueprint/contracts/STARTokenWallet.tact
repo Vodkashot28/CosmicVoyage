@@ -74,8 +74,16 @@ contract STARTokenWallet with Deployable {
     }
     
     // Get passive income info
-    fun getPassiveIncomeInfo(): (Int, Int, Int) {
-        return (self.passiveIncomePerHour, self.nftOwnedCount, self.dailyEarned);
+    fun getPassiveIncomePerHour(): Int {
+        return self.passiveIncomePerHour;
+    }
+    
+    fun getNFTOwnedCount(): Int {
+        return self.nftOwnedCount;
+    }
+    
+    fun getDailyEarned(): Int {
+        return self.dailyEarned;
     }
     
     // Get burn history for specific utility
@@ -117,7 +125,7 @@ contract STARTokenWallet with Deployable {
         self.totalBurned += amount;
         
         let burnCount = self.cosmicBurns.get(utility) ?? 0;
-        self.cosmicBurns[utility] = burnCount + amount;
+        self.cosmicBurns.set(utility, burnCount + amount);
         
         emit("Burned " + amount.toString() + " STAR for " + utility);
     }

@@ -60,7 +60,7 @@ contract PlanetNFT with Deployable {
     init(owner: Address, royaltyDestination: Address) {
         self.owner = owner;
         self.royaltyDestination = royaltyDestination;
-        self.allowedMinters[owner] = true;
+        self.allowedMinters.set(owner, true);
     }
     
     // Get collection info
@@ -100,12 +100,12 @@ contract PlanetNFT with Deployable {
         
         // Track planet mint count
         let planetCount = self.planetMintCount.get(msg.planet) ?? 0;
-        self.planetMintCount[msg.planet] = planetCount + 1;
+        self.planetMintCount.set(msg.planet, planetCount + 1);
         
         // Store owner and metadata
-        self.nftOwners[newNFTId] = msg.receiver;
-        self.nftMetadata[newNFTId] = msg.planet;
-        self.discoveryOrder[newNFTId] = msg.planet;
+        self.nftOwners.set(newNFTId, msg.receiver);
+        self.nftMetadata.set(newNFTId, msg.planet);
+        self.discoveryOrder.set(newNFTId, msg.planet);
         
         emit("Planet NFT minted: " + msg.planet + " (ID: " + newNFTId.toString() + ") for " + msg.receiver.toString());
     }
@@ -113,20 +113,20 @@ contract PlanetNFT with Deployable {
     // Transfer NFT to new owner
     receive(msg: TokenTransfer) {
         require(self.nftOwners.get(msg.nftId) ?? sender() == msg.receiver, "Not NFT owner");
-        self.nftOwners[msg.nftId] = msg.receiver;
+        self.nftOwners.set(msg.nftId, msg.receiver);
         emit("NFT transferred: ID " + msg.nftId.toString() + " to " + msg.receiver.toString());
     }
     
     // Add minter address (only owner)
     fun addMinter(minter: Address) {
         require(sender() == self.owner, "Only owner can add minters");
-        self.allowedMinters[minter] = true;
+        self.allowedMinters.set(minter, true);
     }
     
     // Remove minter (only owner)
     fun removeMinter(minter: Address) {
         require(sender() == self.owner, "Only owner can remove minters");
-        self.allowedMinters[minter] = false;
+        self.allowedMinters.set(minter, false);
     }
     
     // Set new base URI (only owner)

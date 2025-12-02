@@ -77,11 +77,11 @@ contract PlanetNFTItem with Deployable {
         self.imageURI = "https://solarsystemexplorer.com/nft/" + itemIndex.toString() + ".json";
         
         // Initialize attributes
-        self.attributes["planet"] = planetName;
-        self.attributes["rarity"] = self.rarity;
-        self.attributes["glowColor"] = glowColor;
-        self.attributes["discoveryOrder"] = discoveryOrder.toString();
-        self.attributes["discoveredAt"] = now().toString();
+        self.attributes.set("planet", planetName);
+        self.attributes.set("rarity", self.rarity);
+        self.attributes.set("glowColor", glowColor);
+        self.attributes.set("discoveryOrder", discoveryOrder.toString());
+        self.attributes.set("discoveredAt", now().toString());
     }
     
     // Get NFT metadata
@@ -119,7 +119,7 @@ contract PlanetNFTItem with Deployable {
     // Set custom attribute
     fun setAttribute(key: String, value: String) {
         require(sender() == self.owner || sender() == self.collectionAddress, "Unauthorized");
-        self.attributes[key] = value;
+        self.attributes.set(key, value);
     }
     
     // Get attribute

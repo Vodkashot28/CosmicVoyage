@@ -1,9 +1,9 @@
 // Enhanced Referral Faucet Contract
 // Rewards both new players and referrers with tiered bonuses
 
-import "@ton/core";
+import "@stdlib/deploy";
 
-contract ReferralFaucet {
+contract ReferralFaucet with Deployable {
     address starToken;
     int giftAmount;           // e.g. 10 STAR for new player
     int referralBonus;        // e.g. 5 STAR per referral

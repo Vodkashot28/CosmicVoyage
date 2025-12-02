@@ -50,46 +50,6 @@
         "external": false
       },
       "mode": "full"
-    },
-    {
-      "name": "CosmicRefinement",
-      "path": "contracts-blueprint/contracts/CosmicRefinement.tact",
-      "output": "contracts-blueprint/build/CosmicRefinement",
-      "options": {
-        "debug": false,
-        "external": false
-      },
-      "mode": "full"
-    },
-    {
-      "name": "StellarMapUnification",
-      "path": "contracts-blueprint/contracts/StellarMapUnification.tact",
-      "output": "contracts-blueprint/build/StellarMapUnification",
-      "options": {
-        "debug": false,
-        "external": false
-      },
-      "mode": "full"
-    },
-    {
-      "name": "SatelliteModuleBlueprint",
-      "path": "contracts-blueprint/contracts/SatelliteModuleBlueprint.tact",
-      "output": "contracts-blueprint/build/SatelliteModuleBlueprint",
-      "options": {
-        "debug": false,
-        "external": false
-      },
-      "mode": "full"
-    },
-    {
-      "name": "StellarImmortalityLedger",
-      "path": "contracts-blueprint/contracts/StellarImmortalityLedger.tact",
-      "output": "contracts-blueprint/build/StellarImmortalityLedger",
-      "options": {
-        "debug": false,
-        "external": false
-      },
-      "mode": "full"
     }
   ]
 }
