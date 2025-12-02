@@ -5,21 +5,34 @@ import { Address } from "@ton/core";
  * ✅ PRODUCTION ADDRESSES - Deployed to TON Testnet Dec 2, 2025
  */
 
+function validateAddress(address: string, name: string): string {
+  if (!address || address.length < 48) {
+    console.warn(`⚠️ Invalid ${name} address: ${address}. Using testnet default.`);
+  }
+  return address;
+}
+
 export const CONTRACT_ADDRESSES = {
-  // STAR Token - Main token contract (1B supply)
-  STAR_TOKEN: "EQAIYlrr3UiMJ9fqI-B4j2nJdiiD7WzyaNL1MX_wiONc4OUi",
-
-  // STAR Token Wallet - User token wallets  
-  STAR_TOKEN_WALLET: "EQDy43am74uRimAbuKFthYO4PJY95wzNOpsfOAfBhkwwnC9c",
-
-  // Planet NFT - NFT collection contract (SEQ Standard)
-  PLANET_NFT: "EQBuZlqecX7qIEHlakYKEqPVtQ5An3XwqDg4DoAh3dNHlHqS",
-
-  // Planet NFT Item - Individual NFT items
-  PLANET_NFT_ITEM: "EQCxm_x7fTE-_bpyb4yXdSbd3rck6ctxPNV7HhtDc0PA-JRk",
-
-  // Referral Faucet - Referral reward system
-  REFERRAL_FAUCET: "EQC4EQAmL5WKePiV0zzRXZjraZdlpqJOgQOVaH_PKs_FVF8a",
+  starToken: validateAddress(
+    import.meta.env.VITE_STARTOKEN_ADDRESS || "EQAIYlrr3UiMJ9fqI-B4j2nJdiiD7WzyaNL1MX_wiONc4OUi",
+    "STARToken"
+  ),
+  starTokenWallet: validateAddress(
+    import.meta.env.VITE_STARTOKEN_WALLET_ADDRESS || "EQDy43am74uRimAbuKFthYO4PJY95wzNOpsfOAfBhkwwnC9c",
+    "STARTokenWallet"
+  ),
+  planetNFT: validateAddress(
+    import.meta.env.VITE_PLANET_NFT_ADDRESS || "EQBuZlqecX7qIEHlakYKEqPVtQ5An3XwqDg4DoAh3dNHlHqS",
+    "PlanetNFT"
+  ),
+  planetNFTItem: validateAddress(
+    import.meta.env.VITE_PLANET_NFT_ITEM_ADDRESS || "EQCxm_x7fTE-_bpyb4yXdSbd3rck6ctxPNV7HhtDc0PA-JRk",
+    "PlanetNFTItem"
+  ),
+  referralFaucet: validateAddress(
+    import.meta.env.VITE_REFERRAL_FAUCET_ADDRESS || "EQC4EQAmL5WKePiV0zzRXZjraZdlpqJOgQOVaH_PKs_FVF8a",
+    "ReferralFaucet"
+  ),
 } as const;
 
 export const NETWORK = {

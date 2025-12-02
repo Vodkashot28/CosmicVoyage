@@ -54,33 +54,33 @@ export default function PlanetModel({
 
   useEffect(() => {
     if (!groupRef.current || !gltf?.scene) return;
-    
+
     try {
       const clonedScene = gltf.scene.clone();
-      
+
       // Compute bounding box and auto-scale model to match expected size
       const box = new THREE.Box3().setFromObject(clonedScene);
       const size = new THREE.Vector3();
       box.getSize(size);
       const currentDiameter = Math.max(size.x, size.y, size.z);
-      
+
       // Target diameter in scene units (2 = default size for most planets)
       const desiredDiameter = 2;
       const scaleFactor = currentDiameter > 0.01 ? (desiredDiameter / currentDiameter) : 1;
-      
+
       // Apply scale
       clonedScene.scale.setScalar(scaleFactor);
-      
+
       // Center the model at origin
       const center = new THREE.Vector3();
       box.getCenter(center);
       clonedScene.position.sub(center.multiplyScalar(scaleFactor));
-      
+
       clonedScene.traverse((child: any) => {
         if (child instanceof THREE.Mesh) {
           child.castShadow = true;
           child.receiveShadow = true;
-          
+
           if (child.material) {
             child.material.side = THREE.FrontSide;
           }
@@ -112,13 +112,13 @@ export default function PlanetModel({
 
   // Fallback: colored sphere with planet-specific color
   const planetColor = color ? parseInt(color.replace('#', '0x')) : (PLANET_COLORS[name] || 0x4a9eff);
-  
+
   return (
     <mesh position={position} scale={scale}>
       <sphereGeometry args={[1, 32, 32]} />
-      <meshStandardMaterial 
-        color={planetColor} 
-        metalness={0.3} 
+      <meshStandardMaterial
+        color={planetColor}
+        metalness={0.3}
         roughness={0.7}
         emissive={planetColor}
         emissiveIntensity={0.2}

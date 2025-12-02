@@ -5,13 +5,19 @@
 
 // Polyfill Buffer for @ton/core compatibility
 if (typeof window !== "undefined" && !globalThis.Buffer) {
-  // Use a simple polyfill buffer - @ton/core only needs the existence of Buffer
-  // For actual buffer operations, this would use a real polyfill library
-  globalThis.Buffer = {
-    isBuffer: () => false,
-    alloc: () => null,
-    from: () => null,
-  } as any;
+  // @ton/core requires a real Buffer implementation
+  // Using buffer package which is already in dependencies
+  import('buffer').then(({ Buffer }) => {
+    globalThis.Buffer = Buffer;
+  }).catch((err) => {
+    console.warn("Failed to load Buffer polyfill:", err);
+    // Fallback minimal implementation
+    globalThis.Buffer = {
+      isBuffer: () => false,
+      alloc: (size: number) => new Uint8Array(size),
+      from: (data: any) => new Uint8Array(data),
+    } as any;
+  });
 }
 
 // Polyfill global if it doesn't exist

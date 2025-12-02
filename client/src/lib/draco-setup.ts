@@ -1,12 +1,17 @@
-import { useGLTF } from '@react-three/drei';
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
 
-/**
- * Initialize Draco decompression for .glb models
- * Currently disabled - models will load uncompressed for MVP
- * Can be re-enabled after models are regenerated with proper compression
- */
+let dracoLoader: DRACOLoader | null = null;
+
 export function initDracoDecoder() {
-  // Draco disabled temporarily - models load uncompressed
-  // useGLTF.setDecoderPath('/draco/');
-  console.log('[Draco] Disabled for MVP - loading uncompressed models');
+  if (dracoLoader) return dracoLoader;
+
+  try {
+    dracoLoader = new DRACOLoader();
+    dracoLoader.setDecoderPath('/draco/');
+    console.log("[Draco] Decoder initialized successfully");
+    return dracoLoader;
+  } catch (error) {
+    console.warn("[Draco] Failed to initialize, falling back to uncompressed models", error);
+    return null;
+  }
 }
