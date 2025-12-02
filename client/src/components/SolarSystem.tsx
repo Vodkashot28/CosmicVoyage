@@ -56,35 +56,55 @@ export function SolarSystem() {
 
   return (
     <>
-      <color attach="background" args={["#0a0e27"]} />
-
-      <ambientLight intensity={0.15} />
+      {/* Deep space gradient background */}
+      <color attach="background" args={["#050815"]} />
       
+      {/* Cinematic lighting setup */}
+      <ambientLight intensity={0.08} color="#4a5a8a" />
+      
+      {/* Main sun light - warm golden */}
+      <pointLight position={[0, 0, 0]} intensity={2.5} color="#FDB813" distance={200} decay={1.5} />
+      
+      {/* Key light - soft fill from top */}
       <directionalLight 
-        position={[30, 20, 30]} 
-        intensity={1.2} 
+        position={[50, 40, 30]} 
+        intensity={0.6}
+        color="#ffffff"
         castShadow 
+        shadow-mapSize-width={2048}
+        shadow-mapSize-height={2048}
+        shadow-camera-far={200}
+        shadow-camera-left={-50}
+        shadow-camera-right={50}
+        shadow-camera-top={50}
+        shadow-camera-bottom={-50}
       />
+      
+      {/* Rim light - purple/blue accent */}
+      <directionalLight 
+        position={[-30, 10, -30]} 
+        intensity={0.4}
+        color="#8b5cf6"
+      />
+      
+      {/* Volumetric back light - nebula glow */}
+      <pointLight position={[0, 50, -100]} intensity={1.2} color="#6366f1" distance={300} />
 
+      {/* Enhanced starfield with depth */}
       <Stars
-        radius={500}
-        depth={80}
-        count={8000}
-        factor={8}
-        saturation={0.15}
+        radius={400}
+        depth={100}
+        count={12000}
+        factor={6}
+        saturation={0.2}
         fade
-        speed={0.3}
+        speed={0.2}
       />
 
+      {/* Sun with enhanced glow */}
       <SunModel />
 
-      {/* DIAGNOSTIC: Show a test sphere to confirm rendering works */}
-      <mesh position={[0, 0, 0]}>
-        <sphereGeometry args={[0.5, 32, 32]} />
-        <meshStandardMaterial color="#ff0000" emissive="#ff0000" emissiveIntensity={0.5} wireframe={true} />
-      </mesh>
-
-      {/* Render only minted planets (with .glb models) + discovered planets for interaction */}
+      {/* Render visible celestial objects */}
       {visiblePlanets.length > 0 ? (
         visiblePlanets.map((celestialObject) => (
           <CelestialObject key={celestialObject.name} data={celestialObject} />
@@ -92,18 +112,26 @@ export function SolarSystem() {
       ) : (
         <mesh position={[16, 0, 0]}>
           <sphereGeometry args={[1, 32, 32]} />
-          <meshStandardMaterial color="#8B7D6B" />
+          <meshStandardMaterial 
+            color="#8B7D6B"
+            metalness={0.4}
+            roughness={0.6}
+          />
         </mesh>
       )}
 
+      {/* Smooth camera controls */}
       <OrbitControls
         enablePan={true}
         enableZoom={true}
         enableRotate={true}
-        minDistance={10}
-        maxDistance={100}
-        zoomSpeed={0.8}
-        rotateSpeed={0.5}
+        minDistance={8}
+        maxDistance={120}
+        zoomSpeed={0.6}
+        rotateSpeed={0.4}
+        panSpeed={0.5}
+        enableDamping={true}
+        dampingFactor={0.05}
         target={[0, 0, 0]}
       />
     </>

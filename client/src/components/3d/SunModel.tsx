@@ -66,62 +66,101 @@ export function SunModel() {
   if (modelLoaded && gltf?.scene) {
     return (
       <>
-        <pointLight position={[0, 0, 0]} intensity={3} color="#FDB813" castShadow />
-        <pointLight position={[5, 5, 5]} intensity={1} color="#FF6B00" />
+        <pointLight position={[0, 0, 0]} intensity={3.5} color="#FDB813" castShadow distance={150} decay={1.5} />
+        <pointLight position={[3, 3, 3]} intensity={1.2} color="#FF6B00" distance={80} />
         <group ref={groupRef} position={[0, 0, 0]} />
         
-        {/* Glow halo */}
+        {/* Volumetric corona - inner */}
         <mesh ref={glowRef} position={[0, 0, 0]}>
-          <sphereGeometry args={[4.5, 32, 32]} />
+          <sphereGeometry args={[5.2, 32, 32]} />
+          <meshBasicMaterial 
+            color="#FFB347" 
+            transparent 
+            opacity={0.18}
+            side={THREE.BackSide}
+            depthWrite={false}
+          />
+        </mesh>
+        
+        {/* Corona - middle layer */}
+        <mesh position={[0, 0, 0]}>
+          <sphereGeometry args={[6.0, 32, 32]} />
+          <meshBasicMaterial 
+            color="#FF8C42" 
+            transparent 
+            opacity={0.12}
+            side={THREE.BackSide}
+            depthWrite={false}
+          />
+        </mesh>
+        
+        {/* Corona - outer layer */}
+        <mesh position={[0, 0, 0]}>
+          <sphereGeometry args={[7.5, 32, 32]} />
           <meshBasicMaterial 
             color="#FFA500" 
             transparent 
-            opacity={0.15}
+            opacity={0.06}
             side={THREE.BackSide}
+            depthWrite={false}
           />
         </mesh>
       </>
     );
   }
 
-  // Fallback: gorgeous golden glowing sphere
+  // Fallback: cinematic golden glowing sphere
   return (
     <>
-      <pointLight position={[0, 0, 0]} intensity={3} color="#FDB813" castShadow />
-      <pointLight position={[5, 5, 5]} intensity={1} color="#FF6B00" />
+      <pointLight position={[0, 0, 0]} intensity={3.5} color="#FDB813" castShadow distance={150} decay={1.5} />
+      <pointLight position={[3, 3, 3]} intensity={1.2} color="#FF6B00" distance={80} />
       
-      {/* Main sun sphere */}
+      {/* Main sun sphere with enhanced materials */}
       <mesh position={[0, 0, 0]}>
-        <sphereGeometry args={[4, 64, 64]} />
+        <sphereGeometry args={[4.2, 64, 64]} />
         <meshStandardMaterial
-          color="#FF8C00"
+          color="#FFB347"
           emissive="#FF6B00"
-          emissiveIntensity={1.8}
+          emissiveIntensity={2.2}
           toneMapped={false}
-          metalness={0.2}
-          roughness={0.7}
+          metalness={0.1}
+          roughness={0.8}
         />
       </mesh>
       
-      {/* Glow layer 1 */}
+      {/* Volumetric corona - inner pulsing layer */}
       <mesh position={[0, 0, 0]} ref={glowRef}>
-        <sphereGeometry args={[4.5, 32, 32]} />
+        <sphereGeometry args={[5.2, 32, 32]} />
+        <meshBasicMaterial 
+          color="#FFB347" 
+          transparent 
+          opacity={0.18}
+          side={THREE.BackSide}
+          depthWrite={false}
+        />
+      </mesh>
+      
+      {/* Corona - middle layer */}
+      <mesh position={[0, 0, 0]}>
+        <sphereGeometry args={[6.0, 32, 32]} />
+        <meshBasicMaterial 
+          color="#FF8C42" 
+          transparent 
+          opacity={0.12}
+          side={THREE.BackSide}
+          depthWrite={false}
+        />
+      </mesh>
+      
+      {/* Corona - outer atmospheric layer */}
+      <mesh position={[0, 0, 0]}>
+        <sphereGeometry args={[7.5, 32, 32]} />
         <meshBasicMaterial 
           color="#FFA500" 
           transparent 
-          opacity={0.2}
+          opacity={0.06}
           side={THREE.BackSide}
-        />
-      </mesh>
-      
-      {/* Glow layer 2 - outer halo */}
-      <mesh position={[0, 0, 0]}>
-        <sphereGeometry args={[5.5, 32, 32]} />
-        <meshBasicMaterial 
-          color="#FF6B00" 
-          transparent 
-          opacity={0.08}
-          side={THREE.BackSide}
+          depthWrite={false}
         />
       </mesh>
     </>

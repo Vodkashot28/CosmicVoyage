@@ -117,18 +117,19 @@ export default function PlanetModel({
     );
   }
 
-  // Fallback: colored sphere with planet-specific color
+  // Fallback: colored sphere with planet-specific color and enhanced PBR
   const planetColor = color ? parseInt(color.replace('#', '0x')) : (PLANET_COLORS[name] || 0x4a9eff);
 
   return (
-    <mesh position={position} scale={scale}>
-      <sphereGeometry args={[1, 32, 32]} />
+    <mesh position={position} scale={scale} castShadow receiveShadow>
+      <sphereGeometry args={[1, 48, 48]} />
       <meshStandardMaterial
         color={planetColor}
-        metalness={0.3}
-        roughness={0.7}
+        metalness={0.2}
+        roughness={0.65}
         emissive={planetColor}
-        emissiveIntensity={0.2}
+        emissiveIntensity={0.15}
+        envMapIntensity={1.2}
       />
     </mesh>
   );

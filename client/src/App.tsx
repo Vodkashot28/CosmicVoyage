@@ -61,6 +61,8 @@ function App() {
                 antialias: true,
                 powerPreference: "high-performance",
                 alpha: true,
+                toneMapping: THREE.ACESFilmicToneMapping,
+                toneMappingExposure: 1.2,
               }}
             >
               <Suspense fallback={null}>
