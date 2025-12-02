@@ -52,6 +52,8 @@ export function SolarSystem() {
     return () => window.removeEventListener('celestialMinted', handleMint as EventListener);
   }, []);
 
+  console.log('[SolarSystem] 🎨 Rendering with', { visiblePlanetsCount: visiblePlanets.length });
+
   return (
     <>
       <color attach="background" args={["#0a0e27"]} />
@@ -76,10 +78,23 @@ export function SolarSystem() {
 
       <SunModel />
 
+      {/* DIAGNOSTIC: Show a test sphere to confirm rendering works */}
+      <mesh position={[0, 0, 0]}>
+        <sphereGeometry args={[0.5, 32, 32]} />
+        <meshStandardMaterial color="#ff0000" emissive="#ff0000" emissiveIntensity={0.5} wireframe={true} />
+      </mesh>
+
       {/* Render only minted planets (with .glb models) + discovered planets for interaction */}
-      {visiblePlanets.map((celestialObject) => (
-        <CelestialObject key={celestialObject.name} data={celestialObject} />
-      ))}
+      {visiblePlanets.length > 0 ? (
+        visiblePlanets.map((celestialObject) => (
+          <CelestialObject key={celestialObject.name} data={celestialObject} />
+        ))
+      ) : (
+        <mesh position={[16, 0, 0]}>
+          <sphereGeometry args={[1, 32, 32]} />
+          <meshStandardMaterial color="#8B7D6B" />
+        </mesh>
+      )}
 
       <OrbitControls
         enablePan={true}
