@@ -50,6 +50,7 @@ function App() {
         {activeTab === "game" ? (
           <>
             <Canvas
+              style={{ width: "100%", height: "100%", display: "block" }}
               camera={{
                 position: [0, 30, 60],
                 fov: 60,
@@ -59,6 +60,7 @@ function App() {
               gl={{
                 antialias: true,
                 powerPreference: "high-performance",
+                alpha: true,
               }}
             >
               <Suspense fallback={null}>
