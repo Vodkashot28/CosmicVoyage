@@ -2,7 +2,7 @@ import { Router } from "express";
 import type { Request, Response } from "express";
 import { getDb } from "../db";
 import { users, dailyLoginRewards } from "@shared/schema";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 
 const router = Router();
 
@@ -30,15 +30,27 @@ router.post("/claim", async (req: Request, res: Response) => {
       return res.status(500).json({ error: "Database unavailable" });
     }
 
-    // Get user
-    const user = await db
+    // Get or create user
+    let user = await db
       .select()
       .from(users)
       .where(eq(users.walletAddress, walletAddress))
       .limit(1);
 
     if (user.length === 0) {
-      return res.status(404).json({ error: "User not found" });
+      // Auto-create user on first login
+      console.log(`[Daily Login] Creating new user for wallet: ${walletAddress}`);
+      const newUser = await db
+        .insert(users)
+        .values({
+          walletAddress,
+          starBalance: 0,
+          username: `user_${walletAddress.slice(0, 8)}`,
+          password: "", // Temporary - TON wallet auth doesn't use password
+        })
+        .returning();
+      
+      user = newUser;
     }
 
     const userId = user[0].id;
