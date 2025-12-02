@@ -8,6 +8,13 @@
       "when": 1763959041307,
       "tag": "0000_talented_lizard",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1764670258944,
+      "tag": "0001_pretty_caretaker",
+      "breakpoints": true
     }
   ]
 }
