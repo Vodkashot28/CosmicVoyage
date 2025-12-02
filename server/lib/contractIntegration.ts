@@ -13,7 +13,9 @@ export const CONTRACT_ADDRESSES = {
 
 export const BLOCKCHAIN_CONFIG = {
   network: "testnet",
-  endpoint: "https://testnet.toncenter.com/api/v2/jsonRPC",
+  endpoint: process.env.TONCENTER_API_KEY 
+    ? `https://testnet.toncenter.com/api/v2/jsonRPC?api_key=${process.env.TONCENTER_API_KEY}`
+    : "https://testnet.toncenter.com/api/v2/jsonRPC",
   explorer: "https://testnet.tonscan.org",
 };
 

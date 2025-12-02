@@ -10,8 +10,13 @@ export class ContractInteraction {
   private client: TonClient;
 
   constructor() {
+    const apiKey = import.meta.env.VITE_TONCENTER_API_KEY;
+    const endpoint = apiKey 
+      ? `${NETWORK.endpoint}?api_key=${apiKey}`
+      : NETWORK.endpoint;
+    
     this.client = new TonClient({
-      endpoint: NETWORK.endpoint,
+      endpoint: endpoint,
     });
   }
 

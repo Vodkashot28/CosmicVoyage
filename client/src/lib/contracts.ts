@@ -36,8 +36,10 @@ export const CONTRACT_ADDRESSES = {
 } as const;
 
 export const NETWORK = {
-  type: "testnet",
-  endpoint: "https://testnet.toncenter.com/api/v2/jsonRPC",
+  type: "testnet" as const,
+  endpoint: import.meta.env.VITE_TONCENTER_API_KEY
+    ? `https://testnet.toncenter.com/api/v2/jsonRPC?api_key=${import.meta.env.VITE_TONCENTER_API_KEY}`
+    : "https://testnet.toncenter.com/api/v2/jsonRPC",
   explorer: "https://testnet.tonscan.org",
 };
 
