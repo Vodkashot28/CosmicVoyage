@@ -77,7 +77,7 @@ export function DailyLoginReward() {
 
   return (
     <Dialog open={showModal} onOpenChange={setShowModal}>
-      <DialogContent className="sm:max-w-md bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 border border-purple-500/30">
+      <DialogContent className="sm:max-w-md mx-2 max-h-[90vh] overflow-y-auto bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 border border-purple-500/30">
         <DialogHeader>
           <DialogTitle className="text-center text-2xl">
             <span className="text-3xl">📅</span> Daily Login Bonus

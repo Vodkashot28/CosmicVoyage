@@ -58,20 +58,20 @@ export function GameUI() {
   
   return (
     <>
-      <div className="fixed inset-0 pointer-events-none">
+      <div className="fixed inset-0 pointer-events-none touch-none">
         {/* Top Bar - Always Visible */}
-        <div className="absolute top-0 left-0 right-0 bg-gradient-to-b from-slate-900/90 to-slate-900/50 backdrop-blur-md border-b border-purple-500/30 pointer-events-auto">
-          <div className="p-4 flex items-center justify-between">
+        <div className="absolute top-0 left-0 right-0 bg-gradient-to-b from-slate-900/95 to-slate-900/60 backdrop-blur-sm border-b border-purple-500/30 pointer-events-auto touch-auto">
+          <div className="p-2 sm:p-4 flex items-center justify-between gap-1 sm:gap-2">
             <div className="flex items-center gap-2 flex-1">
               <Sparkles className="w-5 h-5 text-yellow-400" />
               <span className="text-white font-bold text-base md:text-lg truncate">Solar System</span>
               <span className="hidden sm:inline text-white/60 text-sm">Explorer</span>
             </div>
             
-            <div className="flex items-center gap-2 md:gap-4">
-              <div className="flex items-center gap-1 bg-black/40 px-2 md:px-3 py-1 rounded">
-                <Coins className="w-4 h-4 text-yellow-400" />
-                <span className="text-yellow-400 font-bold text-sm md:text-base">{totalTokens}</span>
+            <div className="flex items-center gap-1 sm:gap-2 md:gap-4">
+              <div className="flex items-center gap-1 bg-black/40 px-1.5 sm:px-2 md:px-3 py-1 rounded text-xs sm:text-sm">
+                <Coins className="w-3 h-3 sm:w-4 sm:h-4 text-yellow-400 flex-shrink-0" />
+                <span className="text-yellow-400 font-bold whitespace-nowrap">{totalTokens}</span>
               </div>
 
               {ownedNFTs.length > 0 && (
@@ -85,15 +85,15 @@ export function GameUI() {
                 variant="ghost"
                 size="icon"
                 onClick={toggleMute}
-                className="text-white hover:bg-white/10"
+                className="text-white hover:bg-white/10 min-w-[32px] h-8 w-8 sm:h-10 sm:w-10"
                 aria-label={isMuted ? "Unmute audio" : "Mute audio"}
                 aria-pressed={isMuted}
               >
-                {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+                {isMuted ? <VolumeX className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : <Volume2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
               </Button>
 
-              {/* TON Wallet Button - Visible on all devices */}
-              <div className="block">
+              {/* TON Wallet Button - Compact on mobile */}
+              <div className="block scale-90 sm:scale-100">
                 <WalletConnectButton />
               </div>
 
@@ -101,79 +101,74 @@ export function GameUI() {
                 variant="ghost"
                 size="icon"
                 onClick={() => setShowMenu(!showMenu)}
-                className="text-white hover:bg-white/10 md:hidden"
+                className="text-white hover:bg-white/10 md:hidden min-w-[32px] h-8 w-8"
                 aria-label="Toggle menu"
                 aria-expanded={showMenu}
               >
-                {showMenu ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+                {showMenu ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
               </Button>
             </div>
           </div>
 
           {/* Mobile Menu */}
           {showMenu && (
-            <div className="md:hidden border-t border-purple-500/30 p-3 space-y-2 bg-slate-900/80 backdrop-blur-sm">
-              {/* Wallet Button - Mobile only */}
-              <div className="bg-slate-800/50 border border-purple-500/40 rounded p-2 mb-2">
-                <WalletConnectButton />
-              </div>
-
-              {/* Music Toggle Button - Icon Only */}
-              <Button
-                onClick={toggleMute}
-                size="icon"
-                className="w-10 h-10 bg-slate-700 hover:bg-slate-600 text-white mb-2"
-                title={isMuted ? "Unmute" : "Mute"}
-              >
-                {isMuted ? (
-                  <VolumeX className="w-4 h-4" />
-                ) : (
-                  <Volume2 className="w-4 h-4" />
+            <div className="md:hidden border-t border-purple-500/30 p-2 space-y-2 bg-slate-900/90 backdrop-blur-sm">
+              {/* Stats Summary - Mobile */}
+              <div className="grid grid-cols-2 gap-2 mb-2">
+                <div className="bg-black/40 rounded p-2 flex items-center gap-1">
+                  <Coins className="w-3 h-3 text-yellow-400" />
+                  <span className="text-yellow-400 font-bold text-xs">{totalTokens}</span>
+                </div>
+                {ownedNFTs.length > 0 && (
+                  <div className="bg-black/40 rounded p-2 flex items-center gap-1">
+                    <Gem className="w-3 h-3 text-purple-400" />
+                    <span className="text-purple-400 font-bold text-xs">{ownedNFTs.length}/8</span>
+                  </div>
                 )}
-              </Button>
+              </div>
               
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-3 gap-1.5">
                 <Button
                   onClick={() => { setActiveTab("game"); setShowMenu(false); }}
-                  className={`text-xs ${activeTab === "game" ? "bg-blue-600" : "bg-white/10"}`}
+                  className={`text-xs h-9 ${activeTab === "game" ? "bg-blue-600" : "bg-white/10"}`}
                 >
                   Game
                 </Button>
                 {ownedNFTs.length > 0 && (
                   <Button
                     onClick={() => { setActiveTab("collection"); setShowMenu(false); }}
-                    className={`text-xs ${activeTab === "collection" ? "bg-purple-600" : "bg-white/10"}`}
+                    className={`text-xs h-9 ${activeTab === "collection" ? "bg-purple-600" : "bg-white/10"}`}
                   >
-                    Collection
+                    NFTs
                   </Button>
                 )}
                 <Button
                   onClick={() => { setActiveTab("transfer"); setShowMenu(false); }}
-                  className={`text-xs ${activeTab === "transfer" ? "bg-emerald-600" : "bg-white/10"}`}
+                  className={`text-xs h-9 ${activeTab === "transfer" ? "bg-emerald-600" : "bg-white/10"}`}
                 >
-                  Transfer
+                  Send
                 </Button>
                 <Button
                   onClick={() => { setActiveTab("challenges"); setShowMenu(false); }}
-                  className={`text-xs ${activeTab === "challenges" ? "bg-orange-600" : "bg-white/10"}`}
+                  className={`text-xs h-9 ${activeTab === "challenges" ? "bg-orange-600" : "bg-white/10"}`}
                 >
-                  Challenges
+                  Quests
                 </Button>
                 <Button
                   onClick={() => { setActiveTab("economy"); setShowMenu(false); }}
-                  className={`text-xs ${activeTab === "economy" ? "bg-yellow-600" : "bg-white/10"}`}
+                  className={`text-xs h-9 ${activeTab === "economy" ? "bg-yellow-600" : "bg-white/10"}`}
                 >
                   Economy
                 </Button>
                 <Button
                   onClick={() => { setActiveTab("earn"); setShowMenu(false); }}
-                  className={`text-xs ${activeTab === "earn" ? "bg-green-600" : "bg-white/10"}`}
+                  className={`text-xs h-9 ${activeTab === "earn" ? "bg-green-600" : "bg-white/10"}`}
                 >
-                  Earn Guide
+                  Earn
                 </Button>
                 <Button
                   onClick={() => { setActiveTab("burn"); setShowMenu(false); }}
-                  className={`text-xs ${activeTab === "burn" ? "bg-red-600" : "bg-white/10"}`}
+                  className={`text-xs h-9 ${activeTab === "burn" ? "bg-red-600" : "bg-white/10"}`}
                 >
                   Burn
                 </Button>
@@ -253,10 +248,10 @@ export function GameUI() {
 
         {/* Mobile Bottom Panels */}
         {showMenu && (
-          <div className="fixed top-16 left-4 right-4 bottom-4 md:hidden overflow-y-auto pointer-events-auto z-40">
+          <div className="fixed top-[120px] left-2 right-2 bottom-2 md:hidden overflow-y-auto pointer-events-auto z-40 overscroll-contain">
             {/* Game Status Panel */}
             {activeTab === "game" && (
-              <Card className="bg-gradient-to-br from-slate-900/95 to-slate-900/80 backdrop-blur-md border-purple-500/40 p-4 space-y-3">
+              <Card className="bg-gradient-to-br from-slate-900/98 to-slate-900/90 backdrop-blur-md border-purple-500/40 p-3 space-y-2">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-white font-bold text-lg flex items-center gap-2">
                     <Sparkles className="w-5 h-5 text-yellow-400" />
@@ -475,11 +470,13 @@ export function GameUI() {
       </div>
 
       {/* Mobile Instructions */}
-      <div className="md:hidden fixed bottom-4 left-4 right-4 pointer-events-auto">
-        <Card className="bg-slate-900/80 backdrop-blur-md border-purple-500/40 p-2 text-white/70 text-xs text-center">
-          <div>Tap planets to discover • Use menu for economy & challenges</div>
-        </Card>
-      </div>
+      {!showMenu && (
+        <div className="md:hidden fixed bottom-2 left-2 right-2 pointer-events-auto z-10">
+          <Card className="bg-slate-900/90 backdrop-blur-sm border-purple-500/40 p-1.5 text-white/70 text-[10px] text-center">
+            <div>Tap planets to discover • Menu for more</div>
+          </Card>
+        </div>
+      )}
     </>
   );
 }
