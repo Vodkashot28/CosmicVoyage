@@ -19,11 +19,13 @@ export function SolarSystem() {
     return () => console.log('[SolarSystem] 🛑 Unmounting');
   }, []);
 
-  // TEMPORARY: Show all celestial objects to test .glb models
-  // Filter to show only planets and dwarf planets (exclude asteroids for now)
-  const visiblePlanets = allCelestialObjects.filter(celestialObject => {
-    return celestialObject.type === "planet" || celestialObject.type === "dwarfPlanet";
-  });
+  // TEMPRARY: Show all planets with actual .glb models
+  // Available models: Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, Neptune
+  const AVAILABLE_MODELS = ["Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune"];
+
+  const visiblePlanets = allCelestialObjects.filter(celestialObject => 
+    AVAILABLE_MODELS.includes(celestialObject.name)
+  );
 
   useEffect(() => {
     console.log('[SolarSystem] 🪐 Visible planets:', {

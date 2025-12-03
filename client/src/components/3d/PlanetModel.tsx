@@ -49,14 +49,16 @@ export default function PlanetModel({
   let loadError = false;
   
   try {
+    console.log(`[PlanetModel] 🔄 Attempting to load ${name} from ${modelPath}`);
     gltf = useGLTF(modelPath);
-    console.log(`[PlanetModel] Loading ${name} from ${modelPath}`);
     if (gltf?.scene) {
-      console.log(`[PlanetModel] ✅ Loaded ${name} successfully`);
+      console.log(`[PlanetModel] ✅ Successfully loaded ${name} model`);
+    } else {
+      console.warn(`[PlanetModel] ⚠️ Model loaded but no scene found for ${name}`);
     }
   } catch (err) {
     loadError = true;
-    console.log(`[PlanetModel] ⚠️ Failed to load ${name}, using fallback sphere`);
+    console.error(`[PlanetModel] ❌ Failed to load ${name}:`, err);
   }
 
   useEffect(() => {

@@ -205,6 +205,21 @@ export function hasModelConfigured(objectName: string): boolean {
 }
 
 /**
+ * List of celestial objects with actual .glb files in client/public/models/
+ * Only these 8 planets have models currently available
+ */
+export const AVAILABLE_MODEL_NAMES = [
+  "Mercury",
+  "Venus", 
+  "Earth",
+  "Mars",
+  "Jupiter",
+  "Saturn",
+  "Uranus",
+  "Neptune"
+] as const;
+
+/**
  * Get all configured models
  * @returns Array of all model configurations
  */
