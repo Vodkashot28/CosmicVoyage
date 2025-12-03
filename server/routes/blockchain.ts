@@ -8,6 +8,9 @@ import ContractManager, { CONTRACT_ADDRESSES } from "../lib/contractIntegration"
 
 const router = Router();
 
+// FIX: Get deployment date from an environment variable or use the current date as a fallback.
+const DEPLOYMENT_DATE = process.env.CONTRACT_DEPLOYMENT_DATE || new Date().toISOString();
+
 /**
  * GET /api/blockchain/contracts
  * Get all deployed contract addresses and info
@@ -19,7 +22,8 @@ router.get("/contracts", (req, res) => {
       success: true,
       network: "testnet",
       contracts,
-      deploymentDate: "2025-12-02T01:01:13Z",
+      // FIX: Using the dynamic or configured deployment date
+      deploymentDate: DEPLOYMENT_DATE,
     });
   } catch (error) {
     console.error("Failed to get contracts:", error);
