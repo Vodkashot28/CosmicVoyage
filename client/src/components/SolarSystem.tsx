@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 
 export function SolarSystem() {
   const { ownedNFTs, discoveredPlanets } = useSolarSystem();
-  const [activeMintsCount, setActiveMintsCount] = useState(0);
 
   // Debug logging on mount
   useEffect(() => {
@@ -41,7 +40,6 @@ export function SolarSystem() {
       const planetName = customEvent.detail?.planetName;
       if (planetName) {
         console.log(`🪐 Mint event received: ${planetName}`);
-        setActiveMintsCount(prev => prev + 1);
       }
     };
 

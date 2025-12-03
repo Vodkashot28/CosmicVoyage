@@ -37,12 +37,14 @@ export async function initializeDatabase() {
   const database = await getDb();
   if (!database) {
     console.warn("⚠️  Database not available, analytics will use fallback mode");
-    return;
+    return null;
   }
 
   try {
     console.log("✅ Database initialized (tables created by drizzle-kit migrations)");
+    return database;
   } catch (error) {
     console.error("❌ Database initialization error:", error);
+    return null;
   }
 }

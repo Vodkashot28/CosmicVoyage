@@ -11,6 +11,20 @@ export function GameOnboarding() {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const checkGenesisStatus = async (address: string) => {
+    try {
+      const response = await fetch(`/api/balance/${address}`);
+      if (response.ok) {
+        const data = await response.json();
+        if (data.genesisClaimedAt) {
+          setGenesisClaimedAt(new Date(data.genesisClaimedAt));
+        }
+      }
+    } catch (error) {
+      console.error("Failed to check genesis status:", error);
+    }
+  };
+
   useEffect(() => {
     // When wallet connects, update the game balance store
     if (wallet?.account.address && wallet.account.address !== walletAddress) {
