@@ -31,31 +31,31 @@ const planetModelsConfig: Record<string, PlanetModelConfig> = {
   Mars: {
     name: "Mars",
     modelPath: "/models/mars.glb",
-    scale: 0.6,
+    scale: 0.53,
     rotationSpeed: 0.018,
   },
   Jupiter: {
     name: "Jupiter",
     modelPath: "/models/jupiter.glb",
-    scale: 2.8,
+    scale: 2.5,
     rotationSpeed: 0.04,
   },
   Saturn: {
     name: "Saturn",
     modelPath: "/models/saturn.glb",
-    scale: 2.5,
+    scale: 2.2,
     rotationSpeed: 0.038,
   },
   Uranus: {
     name: "Uranus",
     modelPath: "/models/uranus.glb",
-    scale: 2.0,
+    scale: 1.8,
     rotationSpeed: 0.03,
   },
   Neptune: {
     name: "Neptune",
     modelPath: "/models/neptune.glb",
-    scale: 1.9,
+    scale: 1.7,
     rotationSpeed: 0.032,
   },
 
@@ -203,21 +203,6 @@ export function getPlanetModelConfig(
 export function hasModelConfigured(objectName: string): boolean {
   return objectName in planetModelsConfig;
 }
-
-/**
- * List of celestial objects with actual .glb files in client/public/models/
- * Only these 8 planets have models currently available
- */
-export const AVAILABLE_MODEL_NAMES = [
-  "Mercury",
-  "Venus", 
-  "Earth",
-  "Mars",
-  "Jupiter",
-  "Saturn",
-  "Uranus",
-  "Neptune"
-] as const;
 
 /**
  * Get all configured models

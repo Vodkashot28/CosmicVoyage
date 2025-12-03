@@ -109,10 +109,8 @@ export function Challenges() {
 
             {bonusTokens > 0 && (
               <Card className="bg-green-900/20 border-green-500/50 p-4 mt-4">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="text-green-400 font-semibold">Unclaimed Rewards: {bonusTokens} tokens</div>
-                </div>
-                <p className="text-white/70 text-sm">Visit the main menu to claim your bonus tokens!</p>
+                <div className="text-green-400 font-semibold mb-2">Unclaimed Rewards: {bonusTokens} tokens</div>
+                <p className="text-white/70 text-sm">Complete challenges to earn bonus tokens and claim them in the rewards section!</p>
               </Card>
             )}
           </div>

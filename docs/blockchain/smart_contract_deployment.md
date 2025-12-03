@@ -1,21 +1,6 @@
 
 # Smart Contract Deployment
 
-## Prerequisites
-
-Before deploying, ensure you have the required secrets configured in Replit:
-
-### Required Secrets (Add via Secrets Tool)
-
-Navigate to **Tools > Secrets** and add:
-
-| Secret Key | Description | Example Value |
-|------------|-------------|---------------|
-| `TON_MNEMONIC` | TON wallet mnemonic (24 words) | `word1 word2 word3...` |
-| `DATABASE_URL` | PostgreSQL connection string | `postgresql://user:pass@host/db` |
-
-**Never commit these values to version control!**
-
 ## Quick Deploy
 
 ```bash
@@ -40,17 +25,13 @@ npm run deploy:mainnet
 cat .env.deployment
 ```
 
-### 2. Update Environment Variables
-
-The deployment script automatically updates contract addresses. To add custom environment variables:
-
-**For Development (Replit Secrets):**
-- Open **Tools > Secrets**
-- Add your environment variables (e.g., `VITE_TON_TESTNET_ENDPOINT`)
-- Variables are automatically loaded via `process.env`
-
-**For Production:**
-Variables are set in Replit's deployment configuration.
+### 2. Update Environment
+Create `.env`:
+```env
+VITE_STARTOKEN_ADDRESS=EQ...
+VITE_PLANET_NFT_ADDRESS=EQ...
+VITE_REFERRAL_FAUCET_ADDRESS=EQ...
+```
 
 ### 3. Update Contract Config
 Edit `client/src/lib/contracts.ts`:

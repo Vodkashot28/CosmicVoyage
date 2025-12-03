@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 
 export function SolarSystem() {
   const { ownedNFTs, discoveredPlanets } = useSolarSystem();
+  const [activeMintsCount, setActiveMintsCount] = useState(0);
 
   // Debug logging on mount
   useEffect(() => {
@@ -18,13 +19,16 @@ export function SolarSystem() {
     return () => console.log('[SolarSystem] 🛑 Unmounting');
   }, []);
 
-  // TEMPRARY: Show all planets with actual .glb models
-  // Available models: Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, Neptune
-  const AVAILABLE_MODELS = ["Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune"];
-
-  const visiblePlanets = allCelestialObjects.filter(celestialObject => 
-    AVAILABLE_MODELS.includes(celestialObject.name)
-  );
+  // Filter to show only minted planets + discovered planets that can be interacted with
+  const visiblePlanets = allCelestialObjects.filter(celestialObject => {
+    // Always show if minted as NFT
+    if (ownedNFTs.includes(celestialObject.name)) return true;
+    // Also show discovered planets for interaction
+    if (discoveredPlanets.some(d => d.planetName === celestialObject.name)) return true;
+    // Show first planet (Mercury) to start discovery
+    if (celestialObject.name === "Mercury" && discoveredPlanets.length === 0) return true;
+    return false;
+  });
 
   useEffect(() => {
     console.log('[SolarSystem] 🪐 Visible planets:', {
@@ -40,6 +44,7 @@ export function SolarSystem() {
       const planetName = customEvent.detail?.planetName;
       if (planetName) {
         console.log(`🪐 Mint event received: ${planetName}`);
+        setActiveMintsCount(prev => prev + 1);
       }
     };
 
@@ -70,10 +75,23 @@ export function SolarSystem() {
 
       <SunModel />
 
-      {/* Render all planets and dwarf planets with .glb models */}
-      {visiblePlanets.map((celestialObject) => (
-        <CelestialObject key={celestialObject.name} data={celestialObject} />
-      ))}
+      {/* DIAGNOSTIC: Show a test sphere to confirm rendering works */}
+      <mesh position={[0, 0, 0]}>
+        <sphereGeometry args={[0.5, 32, 32]} />
+        <meshStandardMaterial color="#ff0000" emissive="#ff0000" emissiveIntensity={0.5} wireframe={true} />
+      </mesh>
+
+      {/* Render only minted planets (with .glb models) + discovered planets for interaction */}
+      {visiblePlanets.length > 0 ? (
+        visiblePlanets.map((celestialObject) => (
+          <CelestialObject key={celestialObject.name} data={celestialObject} />
+        ))
+      ) : (
+        <mesh position={[16, 0, 0]}>
+          <sphereGeometry args={[1, 32, 32]} />
+          <meshStandardMaterial color="#8B7D6B" />
+        </mesh>
+      )}
 
       <OrbitControls
         enablePan={true}
