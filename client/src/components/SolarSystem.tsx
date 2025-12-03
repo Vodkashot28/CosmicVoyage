@@ -19,15 +19,10 @@ export function SolarSystem() {
     return () => console.log('[SolarSystem] 🛑 Unmounting');
   }, []);
 
-  // Filter to show only minted planets + discovered planets that can be interacted with
+  // TEMPORARY: Show all celestial objects to test .glb models
+  // Filter to show only planets and dwarf planets (exclude asteroids for now)
   const visiblePlanets = allCelestialObjects.filter(celestialObject => {
-    // Always show if minted as NFT
-    if (ownedNFTs.includes(celestialObject.name)) return true;
-    // Also show discovered planets for interaction
-    if (discoveredPlanets.some(d => d.planetName === celestialObject.name)) return true;
-    // Show first planet (Mercury) to start discovery
-    if (celestialObject.name === "Mercury" && discoveredPlanets.length === 0) return true;
-    return false;
+    return celestialObject.type === "planet" || celestialObject.type === "dwarfPlanet";
   });
 
   useEffect(() => {
@@ -75,23 +70,10 @@ export function SolarSystem() {
 
       <SunModel />
 
-      {/* DIAGNOSTIC: Show a test sphere to confirm rendering works */}
-      <mesh position={[0, 0, 0]}>
-        <sphereGeometry args={[0.5, 32, 32]} />
-        <meshStandardMaterial color="#ff0000" emissive="#ff0000" emissiveIntensity={0.5} wireframe={true} />
-      </mesh>
-
-      {/* Render only minted planets (with .glb models) + discovered planets for interaction */}
-      {visiblePlanets.length > 0 ? (
-        visiblePlanets.map((celestialObject) => (
-          <CelestialObject key={celestialObject.name} data={celestialObject} />
-        ))
-      ) : (
-        <mesh position={[16, 0, 0]}>
-          <sphereGeometry args={[1, 32, 32]} />
-          <meshStandardMaterial color="#8B7D6B" />
-        </mesh>
-      )}
+      {/* Render all planets and dwarf planets with .glb models */}
+      {visiblePlanets.map((celestialObject) => (
+        <CelestialObject key={celestialObject.name} data={celestialObject} />
+      ))}
 
       <OrbitControls
         enablePan={true}
