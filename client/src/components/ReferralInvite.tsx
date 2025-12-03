@@ -1,48 +1,29 @@
-import { Card } from "./ui/card";
-import { Button } from "./ui/button";
-import { useGameBalance } from "@/lib/stores/useGameBalance";
+
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Copy, Share2, Twitter } from "lucide-react";
 import { toast } from "sonner";
-import { useEffect, useState } from "react";
+import { useReferral } from "@/lib/stores/useReferral";
+import { useGameBalance } from "@/lib/stores/useGameBalance";
+import { useEffect } from "react";
 
 export function ReferralInvite() {
   const { walletAddress } = useGameBalance();
-  const [referralCode, setReferralCode] = useState<string>("");
-  const [referralLink, setReferralLink] = useState<string>("");
-  const [referralStats, setReferralStats] = useState({
-    count: 0,
-    bonus: 0,
-  });
+  const { referralStats, loadReferralStats } = useReferral();
 
   useEffect(() => {
     if (walletAddress) {
-      generateReferralCode(walletAddress);
-      fetchReferralStats(walletAddress);
+      loadReferralStats(walletAddress);
     }
-  }, [walletAddress]);
+  }, [walletAddress, loadReferralStats]);
 
-  const generateReferralCode = (wallet: string) => {
-    // Create a shorter, readable referral code
-    const code = wallet.slice(0, 4).toUpperCase() + Math.random().toString(36).substring(2, 8).toUpperCase();
-    setReferralCode(code);
-    const link = `${window.location.origin}?ref=${code}`;
-    setReferralLink(link);
-  };
-
-  const fetchReferralStats = async (wallet: string) => {
-    try {
-      const response = await fetch(`/api/player/referral-stats/${wallet}`);
-      if (response.ok) {
-        const data = await response.json();
-        setReferralStats(data);
-      }
-    } catch (error) {
-      console.error("Failed to fetch referral stats:", error);
-    }
-  };
+  const referralCode = walletAddress ? walletAddress.slice(0, 8).toUpperCase() : "CONNECT_WALLET";
+  const referralLink = `${window.location.origin}?ref=${referralCode}`;
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(referralLink);
-    toast.success("✓ Referral link copied!");
+    toast.success("Referral link copied!");
   };
 
   const shareOnTwitter = () => {
@@ -70,43 +51,45 @@ export function ReferralInvite() {
           </div>
           <div className="bg-slate-800/50 border border-purple-500/20 rounded p-3">
             <div className="text-xs text-slate-400">Bonus Earned</div>
-            <div className="text-2xl font-bold text-cyan-400">+{referralStats.bonus}</div>
+            <div className="text-2xl font-bold text-cyan-400">+{referralStats.bonus} STAR</div>
           </div>
         </div>
 
-        {/* Referral Code */}
-        <div className="bg-slate-800/50 border border-purple-500/20 rounded p-3">
-          <div className="text-xs text-slate-400 mb-2">Your Referral Code</div>
+        {/* Referral Link */}
+        <div className="space-y-2">
+          <label className="text-sm text-slate-300 font-medium">Your Referral Link</label>
           <div className="flex gap-2">
-            <div className="flex-1 bg-slate-900 rounded px-3 py-2 border border-slate-700">
-              <code className="text-purple-300 font-mono font-bold text-sm">{referralCode}</code>
-            </div>
+            <Input
+              value={referralLink}
+              readOnly
+              className="bg-slate-800 border-purple-500/30 text-white font-mono text-xs"
+            />
             <Button
-              onClick={() => {
-                navigator.clipboard.writeText(referralCode);
-                toast.success("✓ Code copied!");
-              }}
-              size="sm"
+              onClick={copyToClipboard}
               className="bg-purple-600 hover:bg-purple-700"
+              size="icon"
             >
-              Copy
+              <Copy className="w-4 h-4" />
             </Button>
           </div>
         </div>
 
         {/* Share Buttons */}
-        <div className="space-y-2">
-          <Button
-            onClick={copyToClipboard}
-            className="w-full bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white font-semibold"
-          >
-            📋 Copy Referral Link
-          </Button>
+        <div className="flex gap-2">
           <Button
             onClick={shareOnTwitter}
-            className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold"
+            className="flex-1 bg-blue-600 hover:bg-blue-700"
           >
-            𝕏 Share on Twitter
+            <Twitter className="w-4 h-4 mr-2" />
+            Share on Twitter
+          </Button>
+          <Button
+            onClick={copyToClipboard}
+            variant="outline"
+            className="flex-1 border-purple-500/30 hover:bg-purple-500/10"
+          >
+            <Share2 className="w-4 h-4 mr-2" />
+            Copy Link
           </Button>
         </div>
 

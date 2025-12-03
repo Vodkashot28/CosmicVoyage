@@ -1,6 +1,34 @@
 
 # API Integration Guide
 
+## Environment Setup
+
+### Required Environment Variables
+
+Set these in **Replit Secrets** (Tools > Secrets):
+
+```bash
+DATABASE_URL=postgresql://...          # Database connection
+TON_MNEMONIC=word1 word2 word3...      # Wallet mnemonic
+VITE_TON_TESTNET_ENDPOINT=https://...  # TON RPC endpoint
+```
+
+### Contract Addresses (Auto-configured)
+
+After deployment, these are automatically set:
+- `VITE_STAR_TOKEN_ADDRESS`
+- `VITE_PLANET_NFT_ADDRESS`
+- `VITE_REFERRAL_FAUCET_ADDRESS`
+
+Access in code:
+```typescript
+// Frontend
+const tokenAddress = import.meta.env.VITE_STAR_TOKEN_ADDRESS;
+
+// Backend
+const dbUrl = process.env.DATABASE_URL;
+```
+
 ## Quick Reference
 
 ### Balance Management

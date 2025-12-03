@@ -1,16 +1,14 @@
-[project]
-name = "spaceAI"
+
+[tool.poetry]
+name = "spaceai"
 version = "0.1.0"
 description = "Educational AI system for celestial classification and orbital prediction"
-authors = [
-    { name="JNx", email="jnalair28@gmail.com" }
-]
+authors = ["JNx <jnalair28@gmail.com>"]
 readme = "README.md"
-requires-python = ">=3.7"
-license = { text = "MIT" }
+license = "MIT"
 
 [tool.poetry.dependencies]
-python = ">=3.7,<3.12"
+python = "^3.10"
 scikit-learn = "^1.2.2"
 pandas = "^1.3.5"
 matplotlib = "^3.5.1"
