@@ -19,20 +19,26 @@ export function SolarSystem() {
     return () => console.log('[SolarSystem] 🛑 Unmounting');
   }, []);
 
-  // TEMPRARY: Show all planets with actual .glb models
+  // TEMPORARY: Show only the 8 planets with actual .glb models in client/public/models/
   // Available models: Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, Neptune
-  const AVAILABLE_MODELS = ["Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune"];
-
-  const visiblePlanets = allCelestialObjects.filter(celestialObject => 
-    AVAILABLE_MODELS.includes(celestialObject.name)
-  );
+  const visiblePlanets = allCelestialObjects.filter(celestialObject => {
+    const hasModel = ["Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune"].includes(celestialObject.name);
+    const isPlanet = celestialObject.type === "planet";
+    return hasModel && isPlanet;
+  });
 
   useEffect(() => {
     console.log('[SolarSystem] 🪐 Visible planets:', {
       count: visiblePlanets.length,
-      names: visiblePlanets.map(p => p.name)
+      names: visiblePlanets.map(p => p.name),
+      types: visiblePlanets.map(p => p.type)
     });
-  }, [visiblePlanets]);
+    console.log('[SolarSystem] 📂 All celestial objects:', {
+      total: allCelestialObjects.length,
+      planets: allCelestialObjects.filter(o => o.type === "planet").map(o => o.name),
+      dwarfPlanets: allCelestialObjects.filter(o => o.type === "dwarfPlanet").map(o => o.name)
+    });
+  }, [visiblePlanets, allCelestialObjects]);
 
   // Listen for mint events to trigger dynamic loading
   useEffect(() => {
