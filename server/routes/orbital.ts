@@ -58,7 +58,15 @@ orbitalRouter.get("/load/:walletAddress", async (req, res) => {
       return res.json({ orbitalOffsets: {} });
     }
 
-    const orbitalOffsets = JSON.parse(user[0].orbitalOffsets);
+    let orbitalOffsets = {};
+    // FIX: Added try...catch around JSON.parse for safety against corrupted data
+    try {
+      orbitalOffsets = JSON.parse(user[0].orbitalOffsets);
+    } catch (e) {
+      console.error("[ORBITAL] Error parsing orbital offsets JSON for user:", walletAddress, e);
+      // Fallback to empty object if data is corrupted
+    }
+
     res.json({ orbitalOffsets });
   } catch (error) {
     console.error("[ORBITAL] Error loading orbital offsets:", error);
