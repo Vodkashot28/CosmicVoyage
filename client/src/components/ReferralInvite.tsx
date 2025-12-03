@@ -1,48 +1,21 @@
-import { Card } from "./ui/card";
-import { Button } from "./ui/button";
-import { useGameBalance } from "@/lib/stores/useGameBalance";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Copy, Share2, Twitter } from "lucide-react";
 import { toast } from "sonner";
-import { useEffect, useState } from "react";
+import { useReferral } from "@/lib/stores/useReferral";
+import { useGameBalance } from "@/lib/stores/useGameBalance";
 
 export function ReferralInvite() {
   const { walletAddress } = useGameBalance();
-  const [referralCode, setReferralCode] = useState<string>("");
-  const [referralLink, setReferralLink] = useState<string>("");
-  const [referralStats, setReferralStats] = useState({
-    count: 0,
-    bonus: 0,
-  });
+  const { referralStats } = useReferral();
 
-  useEffect(() => {
-    if (walletAddress) {
-      generateReferralCode(walletAddress);
-      fetchReferralStats(walletAddress);
-    }
-  }, [walletAddress]);
-
-  const generateReferralCode = (wallet: string) => {
-    // Create a shorter, readable referral code
-    const code = wallet.slice(0, 4).toUpperCase() + Math.random().toString(36).substring(2, 8).toUpperCase();
-    setReferralCode(code);
-    const link = `${window.location.origin}?ref=${code}`;
-    setReferralLink(link);
-  };
-
-  const fetchReferralStats = async (wallet: string) => {
-    try {
-      const response = await fetch(`/api/player/referral-stats/${wallet}`);
-      if (response.ok) {
-        const data = await response.json();
-        setReferralStats(data);
-      }
-    } catch (error) {
-      console.error("Failed to fetch referral stats:", error);
-    }
-  };
+  const referralCode = walletAddress ? walletAddress.slice(0, 8) : "CONNECT_WALLET";
+  const referralLink = `https://solar-system.xyz?ref=${referralCode}`;
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(referralLink);
-    toast.success("✓ Referral link copied!");
+    toast.success("Referral link copied!");
   };
 
   const shareOnTwitter = () => {
@@ -74,72 +47,52 @@ export function ReferralInvite() {
           </div>
         </div>
 
-        {/* Referral Code */}
-        <div className="bg-slate-800/50 border border-purple-500/20 rounded p-3">
-          <div className="text-xs text-slate-400 mb-2">Your Referral Code</div>
+        {/* Referral Link */}
+        <div className="space-y-2">
+          <label className="text-sm text-slate-300">Your Referral Link</label>
           <div className="flex gap-2">
-            <div className="flex-1 bg-slate-900 rounded px-3 py-2 border border-slate-700">
-              <code className="text-purple-300 font-mono font-bold text-sm">{referralCode}</code>
-            </div>
+            <Input
+              value={referralLink}
+              readOnly
+              className="bg-slate-800 border-purple-500/30 text-white"
+            />
             <Button
-              onClick={() => {
-                navigator.clipboard.writeText(referralCode);
-                toast.success("✓ Code copied!");
-              }}
-              size="sm"
+              onClick={copyToClipboard}
               className="bg-purple-600 hover:bg-purple-700"
             >
-              Copy
+              <Copy className="w-4 h-4" />
             </Button>
           </div>
         </div>
 
         {/* Share Buttons */}
-        <div className="space-y-2">
-          <Button
-            onClick={copyToClipboard}
-            className="w-full bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white font-semibold"
-          >
-            📋 Copy Referral Link
-          </Button>
+        <div className="flex gap-2">
           <Button
             onClick={shareOnTwitter}
-            className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold"
+            className="flex-1 bg-blue-600 hover:bg-blue-700"
           >
-            𝕏 Share on Twitter
+            <Twitter className="w-4 h-4 mr-2" />
+            Share on Twitter
+          </Button>
+          <Button
+            onClick={copyToClipboard}
+            variant="outline"
+            className="flex-1 border-purple-500/30"
+          >
+            <Share2 className="w-4 h-4 mr-2" />
+            Share Link
           </Button>
         </div>
 
-        {/* Reward Tiers */}
+        {/* Rewards Info */}
         <div className="bg-slate-800/50 border border-purple-500/20 rounded p-3">
-          <div className="text-xs font-semibold text-purple-300 mb-2">💎 Reward Tiers</div>
-          <div className="space-y-1 text-xs text-slate-400">
-            <div className="flex justify-between">
-              <span>1-3 friends:</span>
-              <span className="text-purple-400 font-semibold">5 STAR each</span>
-            </div>
-            <div className="flex justify-between">
-              <span>4-7 friends:</span>
-              <span className="text-purple-400 font-semibold">7 STAR each</span>
-            </div>
-            <div className="flex justify-between">
-              <span>8+ friends:</span>
-              <span className="text-purple-400 font-semibold">10 STAR each</span>
-            </div>
-          </div>
-          <div className="mt-2 pt-2 border-t border-slate-700">
-            <div className="flex justify-between text-xs">
-              <span>Cap:</span>
-              <span className="text-cyan-400 font-semibold">50 STAR max</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Bonus Info */}
-        <div className="bg-gradient-to-r from-purple-500/10 to-blue-500/10 border border-purple-400/30 rounded p-3">
-          <div className="text-xs text-purple-300">
-            <strong>🌟 Plus:</strong> Get 10% of each friend's passive income for 30 days!
-          </div>
+          <h4 className="font-semibold text-purple-300 mb-2">How it works:</h4>
+          <ul className="text-sm text-slate-400 space-y-1">
+            <li>• Share your referral link with friends</li>
+            <li>• They get 10 STAR when they sign up</li>
+            <li>• You get 5 STAR for each referral</li>
+            <li>• Both earn bonus rewards from their activity</li>
+          </ul>
         </div>
       </div>
     </Card>

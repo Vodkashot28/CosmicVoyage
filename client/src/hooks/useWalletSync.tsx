@@ -17,7 +17,9 @@ export function useWalletSync() {
       
       // Validate and fix solar system state
       const validateAndFixState = useSolarSystem.getState().validateAndFixState;
-      validateAndFixState();
+      if (validateAndFixState) {
+        validateAndFixState();
+      }
       
       console.log('[WalletSync] Synced all stores for wallet:', walletAddress);
     }
