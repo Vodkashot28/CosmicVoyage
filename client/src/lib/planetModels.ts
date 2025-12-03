@@ -103,6 +103,38 @@ const planetModelsConfig: Record<string, PlanetModelConfig> = {
     rotationSpeed: 0.014,
   },
 
+  // Main Planets (remaining)
+  Mars: {
+    name: "Mars",
+    modelPath: "/models/mars.glb",
+    scale: 0.53,
+    rotationSpeed: 0.018,
+  },
+  Jupiter: {
+    name: "Jupiter",
+    modelPath: "/models/jupiter.glb",
+    scale: 2.5,
+    rotationSpeed: 0.04,
+  },
+  Saturn: {
+    name: "Saturn",
+    modelPath: "/models/saturn.glb",
+    scale: 2.2,
+    rotationSpeed: 0.038,
+  },
+  Uranus: {
+    name: "Uranus",
+    modelPath: "/models/uranus.glb",
+    scale: 1.8,
+    rotationSpeed: 0.03,
+  },
+  Neptune: {
+    name: "Neptune",
+    modelPath: "/models/neptune.glb",
+    scale: 1.7,
+    rotationSpeed: 0.032,
+  },
+
   // Asteroids (13)
   Vesta: {
     name: "Vesta",
