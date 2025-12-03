@@ -153,13 +153,14 @@ export const useSolarSystem = create<SolarSystemState>()(
         // Sync with backend
         if (state.walletAddress) {
           try {
+            const discoveryOrder = planetsData.findIndex(p => p.name === planetName);
             await fetch('/api/discovery/record', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 walletAddress: state.walletAddress,
                 planetName,
-                discoveryOrder: planet.discoveryOrder,
+                discoveryOrder: discoveryOrder,
                 tokensEarned: planet.tokenReward,
               }),
             });
@@ -254,13 +255,14 @@ export const useSolarSystem = create<SolarSystemState>()(
         // Sync with backend
         if (state.walletAddress && planet) {
           try {
+            const discoveryOrder = planetsData.findIndex(p => p.name === planetName);
             await fetch('/api/nft/mint', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 walletAddress: state.walletAddress,
                 celestialObjectName: planetName,
-                discoveryOrder: planet.discoveryOrder,
+                discoveryOrder: discoveryOrder,
                 tokenId: txHash,
               }),
             });
