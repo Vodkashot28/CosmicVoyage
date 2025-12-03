@@ -1,0 +1,64 @@
+# Creating GLB 3D model of the Solar System with scaled planets, orbits, and emissive Sun
+import numpy as np
+import trimesh
+import pyrender
+import os
+
+# Output path
+output_path = "/mnt/data/solar_system.glb"
+
+# Planet data: name, radius (km), distance from Sun (10^6 km), color (approximate RGB)
+planet_data = [
+    ("Mercury", 2.44, 57.9, [0.5, 0.5, 0.5]),
+    ("Venus", 6.05, 108.2, [0.9, 0.7, 0.3]),
+    ("Earth", 6.37, 149.6, [0.2, 0.5, 1.0]),
+    ("Mars", 3.39, 227.9, [1.0, 0.3, 0.2]),
+    ("Jupiter", 69.9, 778.5, [0.9, 0.6, 0.4]),
+    ("Saturn", 58.2, 1433.5, [0.9, 0.8, 0.5]),
+    ("Uranus", 25.4, 2872.5, [0.5, 0.8, 0.9]),
+    ("Neptune", 24.6, 4495.1, [0.3, 0.5, 0.9])
+]
+
+# Scaling factors
+radius_scale = 0.01  # To reduce planet sizes
+distance_scale = 0.0001  # To reduce orbital distances
+
+# Create scene
+scene = pyrender.Scene(bg_color=[0, 0, 0, 1])
+
+# Add Sun at origin
+sun_radius = 696.34 * radius_scale  # Sun radius in km scaled
+sun_mesh = trimesh.creation.uv_sphere(radius=sun_radius)
+sun_color = np.array([1.0, 0.6, 0.0, 1.0])  # Emissive orange
+sun_mesh.visual.vertex_colors = (sun_color * 255).astype(np.uint8)
+sun_node = pyrender.Node(mesh=pyrender.Mesh.from_trimesh(sun_mesh, smooth=True), name="Sun")
+scene.add_node(sun_node)
+
+# Add planets and orbits
+for name, radius, distance, color in planet_data:
+    # Planet sphere
+    planet_radius = radius * radius_scale
+    planet_distance = distance * distance_scale
+    mesh = trimesh.creation.uv_sphere(radius=planet_radius)
+    mesh.visual.vertex_colors = (np.append(color, 1.0) * 255).astype(np.uint8)
+    planet_trimesh = pyrender.Mesh.from_trimesh(mesh, smooth=True)
+    planet_node = pyrender.Node(mesh=planet_trimesh, translation=[planet_distance, 0, 0], name=name)
+    scene.add_node(planet_node)
+
+    # Orbit ring (XY-plane)
+    theta = np.linspace(0, 2 * np.pi, 100)
+    x = planet_distance * np.cos(theta)
+    y = planet_distance * np.sin(theta)
+    z = np.zeros_like(theta)
+    orbit_points = np.vstack((x, y, z)).T
+    orbit = trimesh.load_path(orbit_points)
+    orbit_color = np.array([0.2, 0.6, 1.0, 1.0])  # Blue orbit
+    orbit.visual.vertex_colors = (orbit_color * 255).astype(np.uint8)
+    orbit_node = pyrender.Node(mesh=pyrender.Mesh.from_trimesh(orbit), name=f"{name}_Orbit")
+    scene.add_node(orbit_node)
+
+# Export scene to GLB
+scene_mesh = pyrender.Scene.to_trimesh_scene(scene)
+scene_mesh.export(output_path)
+
+print("Created solar_system.glb with Sun, 8 planets, scaled sizes/distances, and orbital rings.")
