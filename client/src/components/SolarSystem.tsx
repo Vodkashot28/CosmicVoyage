@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 export function SolarSystem() {
   const { ownedNFTs, discoveredPlanets } = useSolarSystem();
   const [activeMintsCount, setActiveMintsCount] = useState(0);
-  
+
   // Debug logging on mount
   useEffect(() => {
     console.log('[SolarSystem] 🚀 Mounted', {
@@ -18,7 +18,7 @@ export function SolarSystem() {
     });
     return () => console.log('[SolarSystem] 🛑 Unmounting');
   }, []);
-  
+
   // Filter to show only minted planets + discovered planets that can be interacted with
   const visiblePlanets = allCelestialObjects.filter(celestialObject => {
     // Always show if minted as NFT
@@ -58,13 +58,10 @@ export function SolarSystem() {
     <>
       <color attach="background" args={["#0a0e27"]} />
 
-      <ambientLight intensity={0.15} />
-      
-      <directionalLight 
-        position={[30, 20, 30]} 
-        intensity={1.2} 
-        castShadow 
-      />
+      {/* Essential lighting for visibility */}
+      <ambientLight intensity={0.3} />
+      <pointLight position={[0, 0, 0]} intensity={2} distance={300} />
+      <directionalLight position={[10, 10, 10]} intensity={0.5} />
 
       <Stars
         radius={500}
@@ -101,7 +98,7 @@ export function SolarSystem() {
         enableZoom={true}
         enableRotate={true}
         minDistance={10}
-        maxDistance={100}
+        maxDistance={200}
         zoomSpeed={0.8}
         rotateSpeed={0.5}
         target={[0, 0, 0]}
