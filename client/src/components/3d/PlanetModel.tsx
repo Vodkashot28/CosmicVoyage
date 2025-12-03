@@ -10,6 +10,8 @@ interface PlanetModelProps {
   rotationSpeed: number;
   position: [number, number, number];
   color?: string;
+  // --- VISUAL ENHANCEMENT 1: AXIAL TILT ---
+  tiltAngle?: number; 
 }
 
 const PLANET_COLORS: Record<string, number> = {
@@ -26,9 +28,9 @@ const PLANET_COLORS: Record<string, number> = {
 
 // Preload existing models
 try {
-  useGLTF.preload('/models/mercury.glb');
-  useGLTF.preload('/models/venus.glb');
-  useGLTF.preload('/models/earth.glb');
+  useGLTF.preload('/assets/models/mercury.glb');
+  useGLTF.preload('/assets/models/venus.glb');
+  useGLTF.preload('/assets/models/earth.glb');
 } catch (e) {
   // Preload may fail - that's ok
 }
@@ -40,23 +42,23 @@ export default function PlanetModel({
   rotationSpeed,
   position,
   color,
+  tiltAngle = 0, // Default tilt to 0 if not provided
 }: PlanetModelProps) {
   const groupRef = useRef<THREE.Group>(null);
   const [modelLoaded, setModelLoaded] = useState(false);
 
-  // Always call useGLTF unconditionally to follow Rules of Hooks
+  // Always call useGLTF unconditionally
   let gltf: any = null;
   let loadError = false;
-  
+
   try {
     gltf = useGLTF(modelPath);
-    console.log(`[PlanetModel] Loading ${name} from ${modelPath}`);
     if (gltf?.scene) {
-      console.log(`[PlanetModel] ✅ Loaded ${name} successfully`);
+      // console.log(`[PlanetModel] ✅ Loaded ${name} successfully`);
     }
   } catch (err) {
     loadError = true;
-    console.log(`[PlanetModel] ⚠️ Failed to load ${name}, using fallback sphere`);
+    // console.log(`[PlanetModel] ⚠️ Failed to load ${name}, using fallback sphere`);
   }
 
   useEffect(() => {
@@ -71,7 +73,7 @@ export default function PlanetModel({
       box.getSize(size);
       const currentDiameter = Math.max(size.x, size.y, size.z);
 
-      // Target diameter in scene units (2 = default size for most planets)
+      // Target diameter in scene units
       const desiredDiameter = 2;
       const scaleFactor = currentDiameter > 0.01 ? (desiredDiameter / currentDiameter) : 1;
 
@@ -85,6 +87,7 @@ export default function PlanetModel({
 
       clonedScene.traverse((child: any) => {
         if (child instanceof THREE.Mesh) {
+          // VISUAL ENHANCEMENT: Ensure shadows are enabled on the mesh
           child.castShadow = true;
           child.receiveShadow = true;
 
@@ -93,31 +96,52 @@ export default function PlanetModel({
           }
         }
       });
-
+      
+      // Clear previous children and add the new, processed scene
       groupRef.current.clear();
       groupRef.current.add(clonedScene);
+      
+      // VISUAL ENHANCEMENT 1: Apply the fixed axial tilt to the group
+      // The useFrame rotation will now spin the entire tilted group
+      groupRef.current.rotation.x = tiltAngle; 
+
       setModelLoaded(true);
-      console.log(`✅ [Model] Loaded ${name} (scale: ${scaleFactor.toFixed(2)}x)`);
+      // console.log(`✅ [Model] Loaded ${name} (scale: ${scaleFactor.toFixed(2)}x)`);
     } catch (err) {
-      console.warn(`[Model] Failed to load ${name}:`, err);
+      console.warn(`[Model] Failed to process ${name}:`, err);
       setModelLoaded(false);
     }
-  }, [gltf?.scene, name]);
+  }, [gltf?.scene, name, tiltAngle]); // Added tiltAngle dependency
 
   useFrame(() => {
     if (groupRef.current && rotationSpeed !== 0) {
-      groupRef.current.rotation.y += rotationSpeed;
+      // Continuous rotation around the now-tilted Y-axis
+      groupRef.current.rotation.y += rotationSpeed; 
     }
   });
 
   // If model loaded successfully, render it
   if (modelLoaded && gltf?.scene) {
     return (
-      <group ref={groupRef} position={position} scale={scale} />
+      <group ref={groupRef} position={position} scale={scale}>
+        {/* VISUAL ENHANCEMENT 2: Atmosphere Glow for Earth */}
+        {name === 'Earth' && (
+          <mesh scale={[1.05, 1.05, 1.05]}>
+            <sphereGeometry args={[1, 32, 32]} />
+            <meshPhongMaterial
+              color={0x3B82F6} // A blue color matching the Earth's blue
+              transparent={true}
+              opacity={0.15} // Low opacity for a subtle glow
+              side={THREE.BackSide} // Render from the inside out (halo effect)
+              depthWrite={false} // Prevents rendering artifacts
+            />
+          </mesh>
+        )}
+      </group>
     );
   }
 
-  // Fallback: colored sphere with planet-specific color
+  // Fallback: colored sphere with planet-specific color (unchanged)
   const planetColor = color ? parseInt(color.replace('#', '0x')) : (PLANET_COLORS[name] || 0x4a9eff);
 
   return (
