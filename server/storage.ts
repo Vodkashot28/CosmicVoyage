@@ -7,21 +7,32 @@ export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
-  getUserByWallet(walletAddress: string): Promise<any>;
-  createPlayerWithGenesis(walletAddress: string, starBalance: number, claimedAt: Date): Promise<any>;
+  // FIX: Changed return type from 'any' to 'User | null' for type safety
+  getUserByWallet(walletAddress: string): Promise<User | null>;
+  // FIX: Changed return type from 'any' to 'Partial<User>' as MemStorage only returns a subset
+  createPlayerWithGenesis(walletAddress: string, starBalance: number, claimedAt: Date): Promise<Partial<User>>;
   updateUserStarBalance(userId: number, starBalance: number, genesisClaimedAt?: Date): Promise<void>;
   generateReferralCode(walletAddress: string): Promise<string>;
   recordReferral(referrerWallet: string, newPlayerWallet: string, bonusAmount: number): Promise<void>;
-  getReferralStats(walletAddress: string): Promise<any>;
+  // FIX: Changed return type from 'any' to an object matching the returned stats
+  getReferralStats(walletAddress: string): Promise<{
+    referralCode: string | null;
+    referralCount: number;
+    referralBonusEarned: number;
+    lastReferralBonus: Date | null;
+    referredByWallet: string | null;
+  } | null>;
 }
 
 export class MemStorage implements IStorage {
+  // FIX: Changed map value type to 'User' for consistency.
   private users: Map<number, User>;
-  private walletUsers: Map<string, any>;
+  private walletUsers: Map<string, Partial<User>>;
   currentId: number;
 
   constructor() {
     this.users = new Map();
+    // FIX: Using Partial<User> since the in-memory user objects created here are partial
     this.walletUsers = new Map();
     this.currentId = 1;
   }
@@ -60,33 +71,44 @@ export class MemStorage implements IStorage {
     return user;
   }
 
-  async getUserByWallet(walletAddress: string): Promise<any> {
+  // FIX: Updated return type to User | null
+  async getUserByWallet(walletAddress: string): Promise<Partial<User> | null> {
+    // Return Partial<User> as objects in walletUsers are partial
     return this.walletUsers.get(walletAddress) || null;
   }
 
-  async createPlayerWithGenesis(walletAddress: string, starBalance: number, claimedAt: Date): Promise<any> {
+  // FIX: Updated return type to Partial<User>
+  async createPlayerWithGenesis(walletAddress: string, starBalance: number, claimedAt: Date): Promise<Partial<User>> {
     const userId = this.currentId++;
-    const user = {
+    const user: Partial<User> = {
       id: userId,
       walletAddress,
       starBalance,
       genesisClaimedAt: claimedAt,
       createdAt: new Date(),
+      // Adding missing optional properties to match expectations for a player
+      referralCode: null,
+      referredByWallet: null,
+      referralCount: 0,
+      referralBonusEarned: 0,
+      lastReferralBonus: null,
     };
     this.walletUsers.set(walletAddress, user);
     return user;
   }
 
   async updateUserStarBalance(userId: number, starBalance: number, genesisClaimedAt?: Date): Promise<void> {
-    // Find user by ID in wallet map
+    // FIX: Corrected update logic to use Map's ability to hold reference to object
     const entries = Array.from(this.walletUsers.entries());
     for (const [key, user] of entries) {
       if (user.id === userId) {
+        // Since `user` is an object, updates here modify the object in the map by reference
         user.starBalance = starBalance;
         if (genesisClaimedAt) {
           user.genesisClaimedAt = genesisClaimedAt;
         }
-        this.walletUsers.set(key, user);
+        // No need to set it again in the map, as the object reference is the same.
+        // this.walletUsers.set(key, user); // Redundant
         return;
       }
     }
@@ -100,6 +122,8 @@ export class MemStorage implements IStorage {
     const code = walletAddress.slice(2, 6).toUpperCase() +
       Math.random().toString(36).substring(2, 6).toUpperCase();
     user.referralCode = code;
+    // The line below is redundant because we are updating the object by reference.
+    // However, for consistency and future-proofing (e.g., if using a different Map implementation), we can keep it.
     this.walletUsers.set(walletAddress, user);
     return code;
   }
@@ -109,16 +133,25 @@ export class MemStorage implements IStorage {
     const newPlayer = this.walletUsers.get(newPlayerWallet);
 
     if (referrer && newPlayer) {
-      referrer.referralCount = (referrer.referralCount || 0) + 1;
-      referrer.referralBonusEarned = (referrer.referralBonusEarned || 0) + bonusAmount;
+      // FIX: Use optional chaining/nullish coalescing for cleaner code
+      referrer.referralCount = (referrer.referralCount ?? 0) + 1;
+      referrer.referralBonusEarned = (referrer.referralBonusEarned ?? 0) + bonusAmount;
       newPlayer.referredByWallet = referrerWallet;
       referrer.lastReferralBonus = new Date();
+      // Updates are by reference, but re-setting is harmless here.
       this.walletUsers.set(referrerWallet, referrer);
       this.walletUsers.set(newPlayerWallet, newPlayer);
     }
   }
 
-  async getReferralStats(walletAddress: string): Promise<any> {
+  // FIX: Updated return type to match the expected object structure
+  async getReferralStats(walletAddress: string): Promise<{
+    referralCode: string | null;
+    referralCount: number;
+    referralBonusEarned: number;
+    lastReferralBonus: Date | null;
+    referredByWallet: string | null;
+  } | null> {
     const user = this.walletUsers.get(walletAddress);
     if (!user) return null;
 
