@@ -1,3 +1,4 @@
+
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -5,13 +6,20 @@ import { Copy, Share2, Twitter } from "lucide-react";
 import { toast } from "sonner";
 import { useReferral } from "@/lib/stores/useReferral";
 import { useGameBalance } from "@/lib/stores/useGameBalance";
+import { useEffect } from "react";
 
 export function ReferralInvite() {
   const { walletAddress } = useGameBalance();
-  const { referralStats } = useReferral();
+  const { referralStats, loadReferralStats } = useReferral();
 
-  const referralCode = walletAddress ? walletAddress.slice(0, 8) : "CONNECT_WALLET";
-  const referralLink = `https://solar-system.xyz?ref=${referralCode}`;
+  useEffect(() => {
+    if (walletAddress) {
+      loadReferralStats(walletAddress);
+    }
+  }, [walletAddress, loadReferralStats]);
+
+  const referralCode = walletAddress ? walletAddress.slice(0, 8).toUpperCase() : "CONNECT_WALLET";
+  const referralLink = `${window.location.origin}?ref=${referralCode}`;
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(referralLink);
@@ -43,22 +51,23 @@ export function ReferralInvite() {
           </div>
           <div className="bg-slate-800/50 border border-purple-500/20 rounded p-3">
             <div className="text-xs text-slate-400">Bonus Earned</div>
-            <div className="text-2xl font-bold text-cyan-400">+{referralStats.bonus}</div>
+            <div className="text-2xl font-bold text-cyan-400">+{referralStats.bonus} STAR</div>
           </div>
         </div>
 
         {/* Referral Link */}
         <div className="space-y-2">
-          <label className="text-sm text-slate-300">Your Referral Link</label>
+          <label className="text-sm text-slate-300 font-medium">Your Referral Link</label>
           <div className="flex gap-2">
             <Input
               value={referralLink}
               readOnly
-              className="bg-slate-800 border-purple-500/30 text-white"
+              className="bg-slate-800 border-purple-500/30 text-white font-mono text-xs"
             />
             <Button
               onClick={copyToClipboard}
               className="bg-purple-600 hover:bg-purple-700"
+              size="icon"
             >
               <Copy className="w-4 h-4" />
             </Button>
@@ -77,22 +86,43 @@ export function ReferralInvite() {
           <Button
             onClick={copyToClipboard}
             variant="outline"
-            className="flex-1 border-purple-500/30"
+            className="flex-1 border-purple-500/30 hover:bg-purple-500/10"
           >
             <Share2 className="w-4 h-4 mr-2" />
-            Share Link
+            Copy Link
           </Button>
         </div>
 
-        {/* Rewards Info */}
+        {/* Reward Tiers */}
         <div className="bg-slate-800/50 border border-purple-500/20 rounded p-3">
-          <h4 className="font-semibold text-purple-300 mb-2">How it works:</h4>
-          <ul className="text-sm text-slate-400 space-y-1">
-            <li>• Share your referral link with friends</li>
-            <li>• They get 10 STAR when they sign up</li>
-            <li>• You get 5 STAR for each referral</li>
-            <li>• Both earn bonus rewards from their activity</li>
-          </ul>
+          <div className="text-xs font-semibold text-purple-300 mb-2">💎 Reward Tiers</div>
+          <div className="space-y-1 text-xs text-slate-400">
+            <div className="flex justify-between">
+              <span>1-3 friends:</span>
+              <span className="text-purple-400 font-semibold">5 STAR each</span>
+            </div>
+            <div className="flex justify-between">
+              <span>4-7 friends:</span>
+              <span className="text-purple-400 font-semibold">7 STAR each</span>
+            </div>
+            <div className="flex justify-between">
+              <span>8+ friends:</span>
+              <span className="text-purple-400 font-semibold">10 STAR each</span>
+            </div>
+          </div>
+          <div className="mt-2 pt-2 border-t border-slate-700">
+            <div className="flex justify-between text-xs">
+              <span>Cap:</span>
+              <span className="text-cyan-400 font-semibold">50 STAR max</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Bonus Info */}
+        <div className="bg-gradient-to-r from-purple-500/10 to-blue-500/10 border border-purple-400/30 rounded p-3">
+          <div className="text-xs text-purple-300">
+            <strong>🌟 Plus:</strong> Get 10% of each friend's passive income for 30 days!
+          </div>
         </div>
       </div>
     </Card>
