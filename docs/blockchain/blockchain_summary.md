@@ -89,20 +89,29 @@ getGlowColorForPlanet()
 
 ## Deployment Configuration
 
+### Required Secrets
+
+Before deployment, set these in **Replit Secrets**:
+- `TON_MNEMONIC`: 24-word wallet mnemonic for deployment
+- `DATABASE_URL`: PostgreSQL connection string
+
+See [Secrets Setup Guide](../SECRETS_SETUP.md) for details.
+
 ### Testnet
 ```
 Network: TON Testnet
 RPC Endpoint: https://testnet.toncenter.com/api/v2/
-API Key: 0deab23d2ec1a0c2c7fa5987423d357b022e2028f6aa4836aca8a50894730d50
 Deployer: 0:fa146529b8e269ffcd7a5eacf9473b641e35389c302d7e8c3df56eb3de9c7f01
 ```
 
 ### Post-Deployment Setup
 1. Deploy STARToken contract → Get token address
 2. Deploy PlanetNFT collection → Get NFT address
-3. Update `.env.local` with contract addresses
+3. Contract addresses auto-saved to environment
 4. Authorize game contract as minter for both
 5. Deploy on mainnet with same configuration
+
+**Note**: Never commit wallet mnemonics or private keys to git!
 
 ## Integration Flow
 

@@ -9,6 +9,22 @@
 - **Building features?** Check [API Guide](api/api_guide.md)
 - **Understanding tokenomics?** Read [Tokenomics Overview](strategy/tokenomics.md)
 
+## Configuration & Secrets
+
+### Essential Setup
+
+All sensitive data is managed via **Replit Secrets** (Tools > Secrets):
+
+1. **Database**: `DATABASE_URL` - PostgreSQL connection string
+2. **Blockchain**: `TON_MNEMONIC` - Wallet deployment mnemonic
+3. **Contracts**: Auto-configured after deployment
+
+**Never commit secrets to git!** Use Replit's encrypted secrets storage.
+
+For detailed environment variable setup, see:
+- [Smart Contract Deployment](blockchain/smart_contract_deployment.md#prerequisites)
+- [API Guide](api/api_guide.md#environment-setup)
+
 ## Documentation Structure
 
 ### 📚 Mechanics
