@@ -8,16 +8,28 @@ const API_BASE = "/api";
 // ============ GENESIS FAUCET ENDPOINTS ============
 
 export async function claimGenesis(walletAddress: string) {
-  const response = await fetch(`${API_BASE}/player/claim-genesis`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ walletAddress }),
-  });
-  return response.json();
+  try {
+    const response = await fetch(`${API_BASE}/player/claim-genesis`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ walletAddress }),
+    });
+    
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || `HTTP ${response.status}`);
+    }
+    
+    return response.json();
+  } catch (error) {
+    console.error("Genesis claim failed:", error);
+    throw error;
+  }
 }
 
 export async function getGenesisStatus(walletAddress: string) {
   const response = await fetch(`${API_BASE}/player/genesis-status/${walletAddress}`);
+  if (!response.ok) throw new Error(`HTTP ${response.status}`);
   return response.json();
 }
 
@@ -25,6 +37,7 @@ export async function getGenesisStatus(walletAddress: string) {
 
 export async function getPlayerProfile(walletAddress: string) {
   const response = await fetch(`${API_BASE}/player/profile/${walletAddress}`);
+  if (!response.ok) throw new Error(`HTTP ${response.status}`);
   return response.json();
 }
 
@@ -32,6 +45,7 @@ export async function getPlayerProfile(walletAddress: string) {
 
 export async function getStarBalance(walletAddress: string) {
   const response = await fetch(`${API_BASE}/player/star-balance/${walletAddress}`);
+  if (!response.ok) throw new Error(`HTTP ${response.status}`);
   return response.json();
 }
 
@@ -41,6 +55,10 @@ export async function updateStarBalance(walletAddress: string, amount: number) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ walletAddress, amount }),
   });
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || `HTTP ${response.status}`);
+  }
   return response.json();
 }
 
