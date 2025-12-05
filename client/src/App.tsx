@@ -17,6 +17,7 @@ import { CollapsibleGameMenu } from "./components/CollapsibleGameMenu";
 import { ReferralInvite } from "./components/ReferralInvite";
 import { initDracoDecoder } from "./lib/draco-setup";
 import { ModelDiagnostics } from "@/components/ModelDiagnostics";
+import { APIHealthCheck } from "@/components/APIHealthCheck";
 import { useWalletSync } from "@/hooks/useWalletSync"; // Import useWalletSync hook
 
 function App() {
@@ -114,6 +115,7 @@ function App() {
         <TokenParticles />
         <TokenTutorial />
         <ModelDiagnostics />
+        <APIHealthCheck />
         <Toaster />
         <Analytics />
       </div>
