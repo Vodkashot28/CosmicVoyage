@@ -39,12 +39,41 @@ canvas {
   * {
     -webkit-tap-highlight-color: transparent;
   }
-  
+
   button {
     min-height: 32px;
     min-width: 32px;
   }
 }
+
+/* === ACCESSIBILITY FIX: Screen Reader Only Utilities === */
+/* These ensure the 'Skip to Content' link is hidden but appears on focus */
+@layer utilities {
+    /* sr-only: Visually hide the element, keep accessible to screen readers */
+    .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border-width: 0;
+    }
+
+    /* focus:not-sr-only: Make the element visible on keyboard focus */
+    .focus\:not-sr-only:focus {
+        position: static;
+        width: auto;
+        height: auto;
+        margin: 0;
+        overflow: visible;
+        clip: auto;
+        white-space: normal;
+    }
+}
+
 
 /* TonConnect Button Styles - Ensure Visibility */
 .tonconnect-wrapper {

@@ -53,38 +53,52 @@ function App() {
           overflow: "hidden",
         }}
       >
+        {/* === ACCESSIBILITY FIX: 1. SKIP TO CONTENT LINK === */}
+        {/* The link is hidden but becomes visible on focus (Tab press) */}
+        <a 
+          href="#main-content" 
+          className="sr-only focus:not-sr-only fixed top-4 left-4 z-[9999] bg-cyan-600 p-2 text-white rounded-md"
+        >
+          Skip to Main Content
+        </a>
+
         {activeTab === "game" ? (
           <>
-            <Canvas
-              style={{ width: "100%", height: "100%", display: "block" }}
-              camera={{
-                position: [0, 30, 60],
-                fov: 60,
-                near: 0.1,
-                far: 1000,
-              }}
-              gl={{
-                antialias: true,
-                powerPreference: "high-performance",
-                alpha: true,
-              }}
-            >
-              <Suspense fallback={null}>
-                <SolarSystem />
-              </Suspense>
-            </Canvas>
+            {/* ACCESSIBILITY FIX: 2. MAIN CONTENT TARGET (Game View) */}
+            <main id="main-content" tabIndex={-1}>
+              <Canvas
+                style={{ width: "100%", height: "100%", display: "block" }}
+                camera={{
+                  position: [0, 30, 60],
+                  fov: 60,
+                  near: 0.1,
+                  far: 1000,
+                }}
+                gl={{
+                  antialias: true,
+                  powerPreference: "high-performance",
+                  alpha: true,
+                }}
+              >
+                <Suspense fallback={null}>
+                  <SolarSystem />
+                </Suspense>
+              </Canvas>
+            </main>
 
             <CollapsibleGameMenu position="right" />
             <PlanetCard />
           </>
         ) : (
-          <div className="w-full h-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-auto p-4">
+          /* ACCESSIBILITY FIX: 2. MAIN CONTENT TARGET (Referral View) */
+          <main id="main-content" tabIndex={-1} className="w-full h-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-auto p-4">
             <div className="max-w-2xl mx-auto">
               <ReferralInvite />
             </div>
-          </div>
+          </main>
         )}
 
+        {/* This is your main navigation block (Tabs) */}
         <div className="fixed bottom-4 left-4 z-50">
           <Tabs
             value={activeTab}
