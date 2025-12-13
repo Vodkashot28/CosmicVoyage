@@ -11,14 +11,26 @@ export function GameOnboarding() {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  /**
+   * @description Checks the player's genesis claim status on the backend
+   * and updates the local state if claimed. This uses the more comprehensive
+   * endpoint (`/api/player/genesis-status`).
+   * @param address The wallet address to check.
+   */
   const checkGenesisStatus = async (address: string) => {
     try {
-      const response = await fetch(`/api/balance/${address}`);
-      if (response.ok) {
-        const data = await response.json();
-        if (data.genesisClaimedAt) {
-          setGenesisClaimedAt(new Date(data.genesisClaimedAt));
-        }
+      const response = await fetch(`/api/player/genesis-status/${address}`);
+      
+      // If the player doesn't exist or we get a non-OK status, we can exit.
+      if (!response.ok) {
+          return;
+      }
+      
+      const data = await response.json();
+
+      if (data.claimed) {
+        setStarBalance(data.starBalance);
+        setGenesisClaimedAt(data.claimedAt ? new Date(data.claimedAt) : new Date());
       }
     } catch (error) {
       console.error("Failed to check genesis status:", error);
@@ -36,24 +48,11 @@ export function GameOnboarding() {
 
   useEffect(() => {
     // Show onboarding if wallet connected but no genesis bonus claimed
+    // Also include showOnboarding in dependencies to prevent unnecessary re-renders
     if (walletAddress && !genesisClaimedAt && showOnboarding === false) {
       setShowOnboarding(true);
     }
-  }, [walletAddress, genesisClaimedAt]);
-
-  const checkGenesisStatus = async (address: string) => {
-    try {
-      const response = await fetch(`/api/player/genesis-status/${address}`);
-      const data = await response.json();
-      
-      if (data.claimed) {
-        setStarBalance(data.starBalance);
-        setGenesisClaimedAt(data.claimedAt ? new Date(data.claimedAt) : new Date());
-      }
-    } catch (error) {
-      console.error("Failed to check genesis status:", error);
-    }
-  };
+  }, [walletAddress, genesisClaimedAt, showOnboarding]);
 
   const handleClaimGenesis = async () => {
     if (!walletAddress) {
@@ -109,7 +108,7 @@ export function GameOnboarding() {
             <div className="text-lg font-semibold text-cyan-300 mb-3">
               Claim Your Genesis Bootstrap
             </div>
-            
+
             <div className="bg-slate-800/50 border border-cyan-500/20 rounded-lg p-4 text-left space-y-3">
               <div className="flex items-center gap-3 mb-4">
                 <span className="text-4xl">⭐</span>
