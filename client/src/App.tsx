@@ -1,6 +1,7 @@
 import { Canvas } from "@react-three/fiber";
 import { Suspense, useState, useMemo, useEffect } from "react";
-import { TonConnectUIProvider } from "@tonconnect/ui-react";
+// Import CHAIN for explicit network configuration
+import { TonConnectUIProvider, CHAIN } from "@tonconnect/ui-react"; 
 import { Analytics } from "@vercel/analytics/react";
 import "@fontsource/inter";
 import { SolarSystem } from "./components/SolarSystem";
@@ -21,120 +22,124 @@ import { APIHealthCheck } from "@/components/APIHealthCheck";
 import { useWalletSync } from "@/hooks/useWalletSync"; // Import useWalletSync hook
 
 function App() {
-  const [activeTab, setActiveTab] = useState("game");
+  const [activeTab, setActiveTab] = useState("game");
 
-  // Initialize Draco decoder for compressed .glb models
-  useEffect(() => {
-    initDracoDecoder();
-  }, []);
+  // Initialize Draco decoder for compressed .glb models
+  useEffect(() => {
+    initDracoDecoder();
+  }, []);
 
-  // Auto-sync stores when wallet connects
-  useWalletSync();
+  // Auto-sync stores when wallet connects
+  useWalletSync();
 
-  // Dynamically construct manifest URL based on environment
-  const manifestUrl = useMemo(() => {
-    // Use current origin for development, production domain in production
-    if (typeof window !== 'undefined') {
-      const isDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-      return isDev
-        ? `${window.location.origin}/tonconnect-manifest.json`
-        : "https://solar-system.xyz/tonconnect-manifest.json";
-    }
-    return "/tonconnect-manifest.json";
-  }, []);
+  // Hardcode manifest URL to avoid dynamic issues in production,
+  // and retain dynamic logic for local development testing.
+  const manifestUrl = useMemo(() => {
+    if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+      return `${window.location.origin}/tonconnect-manifest.json`;
+    }
+    // PRODUCTION HARDCODE: This is safer for deployment to prevent wallet errors.
+    return "https://solar-system.xyz/tonconnect-manifest.json"; 
+  }, []);
 
-  return (
-    <TonConnectUIProvider manifestUrl={manifestUrl}>
-      <div
-        style={{
-          width: "100vw",
-          height: "100vh",
-          position: "relative",
-          overflow: "hidden",
+  return (
+    <TonConnectUIProvider 
+        manifestUrl={manifestUrl}
+        // Explicitly set the target network to Mainnet for production.
+        // If you intend to use Testnet, change CHAIN.MAINNET to CHAIN.TESTNET.
+        actionsConfiguration={{
+            customNetwork: CHAIN.MAINNET 
         }}
-      >
-        {/* === ACCESSIBILITY FIX: 1. SKIP TO CONTENT LINK === */}
-        {/* The link is hidden but becomes visible on focus (Tab press) */}
-        <a 
-          href="#main-content" 
-          className="sr-only focus:not-sr-only fixed top-4 left-4 z-[9999] bg-cyan-600 p-2 text-white rounded-md"
-        >
-          Skip to Main Content
-        </a>
+    >
+      <div
+        style={{
+          width: "100vw",
+          height: "100vh",
+          position: "relative",
+          overflow: "hidden",
+        }}
+      >
+        {/* === ACCESSIBILITY FIX: 1. SKIP TO CONTENT LINK === */}
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only fixed top-4 left-4 z-[9999] bg-cyan-600 p-2 text-white rounded-md"
+        >
+          Skip to Main Content
+        </a>
 
-        {activeTab === "game" ? (
-          <>
-            {/* ACCESSIBILITY FIX: 2. MAIN CONTENT TARGET (Game View) */}
-            <main id="main-content" tabIndex={-1}>
-              <Canvas
-                style={{ width: "100%", height: "100%", display: "block" }}
-                camera={{
-                  position: [0, 30, 60],
-                  fov: 60,
-                  near: 0.1,
-                  far: 1000,
-                }}
-                gl={{
-                  antialias: true,
-                  powerPreference: "high-performance",
-                  alpha: true,
-                }}
-              >
-                <Suspense fallback={null}>
-                  <SolarSystem />
-                </Suspense>
-              </Canvas>
-            </main>
+        {activeTab === "game" ? (
+          <>
+            {/* ACCESSIBILITY FIX: 2. MAIN CONTENT TARGET (Game View) */}
+            <main id="main-content" tabIndex={-1}>
+              <Canvas
+                style={{ width: "100%", height: "100%", display: "block" }}
+                camera={{
+                  position: [0, 30, 60],
+                  fov: 60,
+                  near: 0.1,
+                  far: 1000,
+                }}
+                gl={{
+                  antialias: true,
+                  powerPreference: "high-performance",
+                  alpha: true,
+                }}
+              >
+                <Suspense fallback={null}>
+                  <SolarSystem />
+                </Suspense>
+              </Canvas>
+            </main>
 
-            <CollapsibleGameMenu position="right" />
-            <PlanetCard />
-          </>
-        ) : (
-          /* ACCESSIBILITY FIX: 2. MAIN CONTENT TARGET (Referral View) */
-          <main id="main-content" tabIndex={-1} className="w-full h-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-auto p-4">
-            <div className="max-w-2xl mx-auto">
-              <ReferralInvite />
-            </div>
-          </main>
-        )}
+            <CollapsibleGameMenu position="right" />
+            <PlanetCard />
+          </>
+        ) : (
+          /* ACCESSIBILITY FIX: 2. MAIN CONTENT TARGET (Referral View) */
+          <main id="main-content" tabIndex={-1} className="w-full h-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-auto p-4">
+            <div className="max-w-2xl mx-auto">
+              <ReferralInvite />
+            </div>
+          </main>
+        )}
 
-        {/* This is your main navigation block (Tabs) */}
-        <div className="fixed bottom-4 left-4 z-50">
-          <Tabs
-            value={activeTab}
-            onValueChange={setActiveTab}
-            className="bg-slate-900/80 border border-cyan-500/30 rounded-lg"
-          >
-            <TabsList className="bg-slate-800 p-1">
-              <TabsTrigger
-                value="game"
-                className="data-[state=active]:bg-cyan-600"
-              >
-                🎮 Game
-              </TabsTrigger>
-              <TabsTrigger
-                value="referral"
-                className="data-[state=active]:bg-purple-600"
-              >
-                🎯 Referral
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
-        </div>
+        {/* This is your main navigation block (Tabs) */}
+        <div className="fixed bottom-4 left-4 z-50">
+          <Tabs
+            value={activeTab}
+            onValueChange={setActiveTab}
+            className="bg-slate-900/80 border border-cyan-500/30 rounded-lg"
+          >
+            <TabsList className="bg-slate-800 p-1">
+              <TabsTrigger
+                value="game"
+                className="data-[state=active]:bg-cyan-600"
+              >
+                🎮 Game
+              </TabsTrigger>
+              <TabsTrigger
+                value="referral"
+                className="data-[state=active]:bg-purple-600"
+              >
+                🎯 Referral
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
+        </div>
 
-        <GameOnboarding />
-        <DailyLoginReward />
-        <AudioManager />
-        <SoundManager />
-        <TokenParticles />
-        <TokenTutorial />
-        <ModelDiagnostics />
-        <APIHealthCheck />
-        <Toaster />
-        <Analytics />
-      </div>
-    </TonConnectUIProvider>
-  );
+        <GameOnboarding />
+        <DailyLoginReward />
+        <AudioManager />
+        <SoundManager />
+        <TokenParticles />
+        <TokenTutorial />
+        <ModelDiagnostics />
+        <APIHealthCheck />
+        <Toaster />
+        <Analytics />
+      </div>
+    </TonConnectUIProvider>
+  );
 }
 
 export default App;
