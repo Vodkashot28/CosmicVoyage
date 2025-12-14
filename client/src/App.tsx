@@ -1,7 +1,7 @@
 // client/src/App.tsx
 import { Canvas } from "@react-three/fiber";
 import { Suspense, useState, useMemo, useEffect } from "react";
-import { TonConnectUIProvider } from "@tonconnect/ui-react"; // CHAIN removed as it's not used here
+import { TonConnectUIProvider } from "@tonconnect/ui-react"; 
 import { Analytics } from "@vercel/analytics/react";
 import "@fontsource/inter";
 import { SolarSystem } from "./components/SolarSystem";
@@ -47,7 +47,7 @@ function App() {
   return (
     <TonConnectUIProvider
       manifestUrl={manifestUrl}
-      // network={CHAIN.TESTNET} <--- REMOVED: This prop is not supported by TonConnectUIProvider
+      // network={CHAIN.TESTNET} 
       actionsConfiguration={{
         // keep valid keys only here if needed
       }}
@@ -55,7 +55,6 @@ function App() {
       <div
         style={{
           width: "100vw",
-          height: "100vh",
           position: "relative",
           overflow: "hidden",
         }}
@@ -144,4 +143,3 @@ function App() {
 }
 
 export default App;
-

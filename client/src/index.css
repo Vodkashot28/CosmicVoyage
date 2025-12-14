@@ -13,7 +13,10 @@
     padding: 0;
     overflow: hidden;
     width: 100vw;
-    height: 100vh;
+    /* --- FIX: Use 100dvh (Dynamic Viewport Height) for mobile browser address bar correction --- */
+    height: 100vh;  /* Fallback */
+    height: 100dvh; /* Dynamic Height Fix */
+    /* ----------------------------------------------------------------------------------------- */
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: none;
   }

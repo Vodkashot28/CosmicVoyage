@@ -111,12 +111,12 @@ export const TOKEN_CONFIG = {
   passiveIncomePerHour: 50, // 50 STAR per hour per NFT
 } as const;
 
-// NFT Configuration  
+// NFT Configuration
 export const NFT_CONFIG = {
   collectionName: "Cosmic Voyage Planets",
   collectionDescription: "Explore planets and earn rewards in the TON blockchain",
   royaltyPercent: 5,
-  baseURI: "https://solarsystemexplorer.com/nft/",
+  baseURI: "https://solar-system.xyz/nft/",
 } as const;
 
 // Genesis bonus configuration
@@ -134,5 +134,3 @@ export const REFERRAL_CONFIG = {
   tier3: { min: 7, max: 100, bonus: 10 },
   maxReferralBonus: 50, // 50 STAR max per referrer
 } as const;
-
-export default CONTRACT_ADDRESSES;
