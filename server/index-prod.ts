@@ -1,27 +1,27 @@
-import fs from "node:fs";
-import path from "node:path";
-import { type Server } from "node:http";
+// server/index-prod.ts
+// Optimized for Vercel Serverless Function deployment
 
-import express, { type Express } from "express";
-import runApp from "./app";
+import { type Express } from "express";
 
-export async function serveStatic(app: Express, _server: Server) {
-  const distPath = path.resolve(import.meta.dirname, "../dist");
+// IMPORTANT: We assume that the 'runApp' import is refactored 
+// in its source file (e.g., server/app.ts) to:
+// 1. NOT call app.listen()
+// 2. Return the configured Express app instance (app)
+// 3. The 'serveStatic' function passed here is now a no-op 
+//    since Vercel handles static file serving.
+import getApp from "./app"; 
 
-  if (!fs.existsSync(distPath)) {
-    throw new Error(
-      `Could not find the build directory: ${distPath}, make sure to build the client first`,
-    );
-  }
+// 1. Define a simple handler that satisfies the expected argument type of getApp (if needed)
+// On Vercel, static files are served directly, so this function does nothing.
+const noopStaticHandler = async (app: Express, server: any) => {
+    console.log("Static file serving skipped: Vercel handles static assets.");
+    // You could put Vercel-specific logging/setup here if needed.
+};
 
-  app.use(express.static(distPath));
+// 2. Execute the app setup function to get the Express app instance.
+// We use await since the setup is async (e.g., database connection).
+const app = await getApp(noopStaticHandler);
 
-  // fall through to index.html if the file doesn't exist
-  app.use("*", (_req, res) => {
-    res.sendFile(path.resolve(distPath, "index.html"));
-  });
-}
-
-(async () => {
-  await runApp(serveStatic);
-})();
+// 3. CRITICAL FIX: Export the Express app instance as the default export 
+// required by the Vercel Node.js serverless runtime.
+export default app;
