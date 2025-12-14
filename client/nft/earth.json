@@ -1,0 +1,11 @@
+{
+  "name": "Earth",
+  "description": "Cosmic Voyage Planet NFT",
+  "image": "https://solar-system.xyz/models/earth.glb",
+  "preview_image": "https://solar-system.xyz/previews/earth.png",
+  "external_url": "https://solar-system.xyz/nft/earth",
+  "attributes": [
+    { "trait_type": "Planet Type", "value": "Terrestrial" },
+    { "trait_type": "Orbit Position", "value": "3rd from Sun" }
+  ]
+}

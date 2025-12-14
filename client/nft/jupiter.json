@@ -1,0 +1,11 @@
+{
+  "name": "Jupiter",
+  "description": "Cosmic Voyage Planet NFT",
+  "image": "https://solar-system.xyz/models/jupiter.glb",
+  "preview_image": "https://solar-system.xyz/previews/jupiter.png",
+  "external_url": "https://solar-system.xyz/nft/jupiter",
+  "attributes": [
+    { "trait_type": "Planet Type", "value": "Gas Giant" },
+    { "trait_type": "Orbit Position", "value": "5th from Sun" }
+  ]
+}

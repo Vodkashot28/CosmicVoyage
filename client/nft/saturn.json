@@ -1,0 +1,12 @@
+{
+  "name": "Saturn",
+  "description": "Cosmic Voyage Planet NFT",
+  "image": "https://solar-system.xyz/models/saturn.glb",
+  "preview_image": "https://solar-system.xyz/previews/saturn.png",
+  "external_url": "https://solar-system.xyz/nft/saturn",
+  "attributes": [
+    { "trait_type": "Planet Type", "value": "Gas Giant" },
+    { "trait_type": "Orbit Position", "value": "6th from Sun" },
+    { "trait_type": "Rings", "value": "Prominent" }
+  ]
+}

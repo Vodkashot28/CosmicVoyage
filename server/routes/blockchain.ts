@@ -4,7 +4,7 @@
  */
 
 import { Router } from "express";
-import ContractManager, { CONTRACT_ADDRESSES } from "../lib/contractIntegration";
+import ContractManager, { CONTRACT_ADDRESSES } from "../lib/ContractIntegration";
 
 const router = Router();
 

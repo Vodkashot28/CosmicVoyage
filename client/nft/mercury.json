@@ -1,0 +1,11 @@
+{
+  "name": "Mercury",
+  "description": "Cosmic Voyage Planet NFT",
+  "image": "https://solar-system.xyz/models/mercury.glb",
+  "preview_image": "https://solar-system.xyz/previews/mercury.png",
+  "external_url": "https://solar-system.xyz/nft/mercury",
+  "attributes": [
+    { "trait_type": "Planet Type", "value": "Terrestrial" },
+    { "trait_type": "Orbit Position", "value": "1st from Sun" }
+  ]
+}
