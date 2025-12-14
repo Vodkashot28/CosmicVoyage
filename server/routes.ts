@@ -1,7 +1,6 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import dotenv from "dotenv";
 
 import emailRouter from "./routes/email";
 import dailyLoginRouter from "./routes/dailyLogin";
@@ -9,7 +8,6 @@ import analyticsRouter from "./routes/analytics";
 import { orbitalRouter } from "./routes/orbital";
 import blockchainRouter from "./routes/blockchain";
 
-dotenv.config({ path: ".env.local" });
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // ============ EMAIL VERIFICATION ROUTES ============

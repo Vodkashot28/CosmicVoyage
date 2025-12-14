@@ -1,6 +1,3 @@
-import dotenv from "dotenv";
-dotenv.config({ path: ".env.local" });
-
 import { type Server } from "node:http";
 
 import express, {
@@ -95,7 +92,7 @@ export default async function runApp(
   const port = 5000;
   server.listen({
     port,
-    host: "0.0.0.0",
+    host: "solar-system.xyz",
     reusePort: true,
   }, () => {
     log(`serving on port ${port}`);
