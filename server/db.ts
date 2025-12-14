@@ -1,11 +1,15 @@
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 import * as schema from "@shared/schema";
+import dotenv from "dotenv";
+
+// Load environment variables from .env.local (for dev) or .env (for prod)
+dotenv.config({ path: ".env.local" });
 
 const DATABASE_URL = process.env.DATABASE_URL;
 
 if (!DATABASE_URL) {
-  console.warn("⚠️  DATABASE_URL not set - analytics will not persist");
+  console.warn("⚠️ DATABASE_URL not set - analytics will not persist");
 }
 
 let db: ReturnType<typeof drizzle> | null = null;
@@ -36,7 +40,7 @@ export async function getDb() {
 export async function initializeDatabase() {
   const database = await getDb();
   if (!database) {
-    console.warn("⚠️  Database not available, analytics will use fallback mode");
+    console.warn("⚠️ Database not available, analytics will use fallback mode");
     return null;
   }
 

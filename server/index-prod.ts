@@ -1,3 +1,6 @@
+import dotenv from "dotenv";
+dotenv.config({ path: ".env.local" });
+
 import fs from "node:fs";
 import path from "node:path";
 import { type Server } from "node:http";
