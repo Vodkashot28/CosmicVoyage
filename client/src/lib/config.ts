@@ -2,7 +2,7 @@
 
 // API base URL: switches between local dev and production
 export const API_BASE =
-  import.meta.env.MODE === "development"
+  import.meta.env.MODE === "production"
     ? "http://localhost:5000/api"
     : "https://solar-system.xyz/api";
 
