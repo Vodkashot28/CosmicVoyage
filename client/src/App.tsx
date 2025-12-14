@@ -1,6 +1,7 @@
+// client/src/App.tsx
 import { Canvas } from "@react-three/fiber";
 import { Suspense, useState, useMemo, useEffect } from "react";
-import { TonConnectUIProvider, CHAIN } from "@tonconnect/ui-react";
+import { TonConnectUIProvider } from "@tonconnect/ui-react"; // CHAIN removed as it's not used here
 import { Analytics } from "@vercel/analytics/react";
 import "@fontsource/inter";
 import { SolarSystem } from "./components/SolarSystem";
@@ -20,6 +21,8 @@ import { ModelDiagnostics } from "@/components/ModelDiagnostics";
 import { APIHealthCheck } from "@/components/APIHealthCheck";
 import { useWalletSync } from "@/hooks/useWalletSync";
 
+// Assume MANIFEST_URL is defined somewhere or you're getting the local one dynamically
+
 function App() {
   const [activeTab, setActiveTab] = useState("game");
 
@@ -35,6 +38,7 @@ function App() {
       (window.location.hostname === "localhost" ||
         window.location.hostname === "127.0.0.1")
     ) {
+      // NOTE: Ensure your local manifest is served correctly
       return `${window.location.origin}/tonconnect-manifest.json`;
     }
     return "https://solar-system.xyz/tonconnect-manifest.json";
@@ -43,7 +47,7 @@ function App() {
   return (
     <TonConnectUIProvider
       manifestUrl={manifestUrl}
-      network={CHAIN.TESTNET} // ✅ switched to Testnet
+      // network={CHAIN.TESTNET} <--- REMOVED: This prop is not supported by TonConnectUIProvider
       actionsConfiguration={{
         // keep valid keys only here if needed
       }}
@@ -140,3 +144,4 @@ function App() {
 }
 
 export default App;
+
