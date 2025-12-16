@@ -6,7 +6,10 @@ import { nanoid } from "nanoid";
 import { type Express } from "express";
 import { createServer as createViteServer, createLogger } from "vite";
 
-import viteConfig from "../vite.config";
+// FIX: Change default import to star import to handle module resolution correctly
+import * as viteModule from "../vite.config";
+const viteConfig = viteModule.default;
+
 import runApp from "./app";
 
 export async function setupVite(app: Express, server: Server) {

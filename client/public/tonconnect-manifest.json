@@ -1,8 +1,9 @@
 {
   "url": "https://solar-system.xyz",
   "name": "Cosmic Voyage",
-  "iconUrl": "https://solar-system.xyz/icons/sun.png",
+  "iconUrl": "https://solar-system.xyz/favicon-96x96.png",
   "termsOfUseUrl": "https://solar-system.xyz/terms.html",
   "privacyPolicyUrl": "https://solar-system.xyz/privacy.html",
   "manifestVersion": 2
+  "network": "testnet"
 }

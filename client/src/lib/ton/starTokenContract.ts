@@ -1,34 +1,78 @@
 // STAR Token Contract Integration
 // Handles interaction with the STAR token contract on TON blockchain
-// @ton/core is lazy-loaded only when needed to avoid Buffer polyfill issues
+// @ton/core and @ton/ton are lazy-loaded to avoid Buffer polyfill issues
 
-// Function to get testnet address at runtime (avoids process.env access at module load time)
+// --- CONFIGURATION ---
+
 export function getStarTokenAddress(): string {
   const envAddress = import.meta.env.VITE_STAR_TOKEN_ADDRESS;
   if (!envAddress) {
+    console.error("STAR token address missing. Check .env file.");
     throw new Error("STAR token address not set in environment variables");
   }
   return envAddress;
 }
 
 export const STAR_TOKEN_CONFIG = {
-  // Token Properties
   name: "STAR Token",
   symbol: "STAR",
   decimals: 0,
-  totalSupply: 1_000_000_000, // 1 billion
+  totalSupply: 1_000_000_000, 
 
-  // Contract Addresses
+  // Dynamic getter ensures runtime access to env
   get testnetAddress() {
     return getStarTokenAddress();
   },
-  mainnetAddress: "0:STAR_TOKEN_MAINNET_ADDRESS",
+  
+  // Hardcoded gas constants (NanoTON) to prevent 'Out of Gas' errors
+  gasConstants: {
+    transfer: "0.1",       // Gas for transfer operation (increased for safety)
+    burn: "0.05",          // Gas for burn operation
+    forward: "0.01",       // Amount forwarded to recipient for notifications
+  },
 
   // Deployer (same as NFT deployer)
   deployerAddress: "0:fa146529b8e269ffcd7a5eacf9473b641e35389c302d7e8c3df56eb3de9c7f01",
 };
 
-// Interfaces
+// --- CLIENT & ADDRESS UTILITIES ---
+
+let tonClient: any = null;
+
+// Lazy load the TON client to avoid initialization errors
+async function getTonClient() {
+  if (tonClient) return tonClient;
+  
+  const { TonClient } = await import("@ton/ton");
+  // Default to testnet center for development
+  tonClient = new TonClient({
+    endpoint: "https://testnet.toncenter.com/api/v2/jsonRPC", 
+  });
+  return tonClient;
+}
+
+/**
+ * CRITICAL: Calculates the User's Jetton Wallet Address.
+ * Transfers and Burns MUST be sent to this address, NOT the Master address.
+ */
+export async function getUserJettonWallet(userWalletAddress: string): Promise<string> {
+  const { Address, JettonMaster } = await import("@ton/ton");
+  const client = await getTonClient();
+
+  const masterAddress = Address.parse(STAR_TOKEN_CONFIG.testnetAddress);
+  const userAddress = Address.parse(userWalletAddress);
+
+  // Open the Master Contract instance
+  const masterContract = client.open(JettonMaster.create(masterAddress));
+  
+  // Ask the Master Contract: "What is the wallet address for this user?"
+  const jettonWalletAddress = await masterContract.getWalletAddress(userAddress);
+  
+  return jettonWalletAddress.toString();
+}
+
+// --- INTERFACES ---
+
 export interface TokenBalance {
   address: string;
   amount: number;
@@ -50,28 +94,33 @@ export interface PassiveIncomeRecord {
   lastClaimed: number;
 }
 
+// --- TRANSACTION CREATORS ---
+
 // Create token transfer message
 export async function createTokenTransferMessage(
   destination: string,
   amount: number,
-  walletAddress: string
+  senderWalletAddress: string // Needed to calculate the sender's Jetton Wallet
 ) {
   const { Address, beginCell, toNano } = await import("@ton/core");
 
+  // 1. Get the Sender's Jetton Wallet Address (The actual target for transfers)
+  const senderJettonWallet = await getUserJettonWallet(senderWalletAddress);
+
   const body = beginCell()
     .storeUint(0x0f8a7ea5, 32) // op::transfer
-    .storeUint(0, 64) // queryId
-    .storeCoins(toNano(amount.toString()))
-    .storeAddress(Address.parse(destination))
-    .storeAddress(Address.parse(walletAddress)) // responseDestination
+    .storeUint(0, 64)          // queryId
+    .storeCoins(toNano(amount.toString())) // Amount of Jettons
+    .storeAddress(Address.parse(destination)) // Recipient
+    .storeAddress(Address.parse(senderWalletAddress)) // Response destination
     .storeUint(0, 1) // customPayload (null)
-    .storeCoins(toNano("0.001")) // forwardTonAmount
+    .storeCoins(toNano(STAR_TOKEN_CONFIG.gasConstants.forward)) // Forward amount
     .storeUint(0, 1) // forwardPayload (empty)
     .endCell();
 
   return {
-    to: STAR_TOKEN_CONFIG.testnetAddress,
-    amount: toNano("0.05").toString(), // gas fee
+    to: senderJettonWallet, // TARGET IS USER'S JETTON WALLET
+    amount: toNano(STAR_TOKEN_CONFIG.gasConstants.transfer).toString(), 
     body,
   };
 }
@@ -79,27 +128,31 @@ export async function createTokenTransferMessage(
 // Create token burn message
 export async function createTokenBurnMessage(
   amount: number,
-  walletAddress: string,
+  senderWalletAddress: string,
   utility?: string
 ) {
   const { Address, beginCell, toNano } = await import("@ton/core");
 
+  // 1. Get the Sender's Jetton Wallet Address (The actual target for burns)
+  const senderJettonWallet = await getUserJettonWallet(senderWalletAddress);
+
   const body = beginCell()
     .storeUint(0x595f07f9, 32) // op::burn
-    .storeUint(0, 64) // queryId
+    .storeUint(0, 64)          // queryId
     .storeCoins(toNano(amount.toString()))
-    .storeAddress(Address.parse(walletAddress))
+    .storeAddress(Address.parse(senderWalletAddress)) // Response destination
     .storeUint(0, 1) // customPayload
     .endCell();
 
   return {
-    to: STAR_TOKEN_CONFIG.testnetAddress,
-    amount: toNano("0.05").toString(),
+    to: senderJettonWallet, // TARGET IS USER'S JETTON WALLET
+    amount: toNano(STAR_TOKEN_CONFIG.gasConstants.burn).toString(),
     body,
   };
 }
 
-// Cosmic Utility Burn Amounts
+// --- GAMEPLAY UTILITIES ---
+
 export const COSMIC_UTILITY_COSTS = {
   "cosmic-boost": 25,
   "void-jump": 50,
@@ -111,7 +164,6 @@ export const COSMIC_UTILITY_COSTS = {
   "dwarf-planet-unlock": 200,
 } as const;
 
-// Passive income calculations
 export function calculatePassiveIncome(nftCount: number, hoursElapsed: number): number {
   const baseRate = 0.5; // 0.5 STAR per hour per NFT
   return Math.floor(nftCount * baseRate * hoursElapsed);
@@ -128,7 +180,6 @@ export function canAffordAction(balance: number, actionCost: number): boolean {
   return balance >= actionCost;
 }
 
-// Token info
 export function getTokenInfo() {
   return {
     name: STAR_TOKEN_CONFIG.name,
@@ -138,27 +189,28 @@ export function getTokenInfo() {
   };
 }
 
-// Mint message (admin only)
+// --- ADMIN FUNCTIONS ---
+// (These correctly target the Master Contract as only Admin can mint)
+
 export async function createMintMessage(receiver: string, amount: number) {
   const { Address, beginCell, toNano } = await import("@ton/core");
 
   const body = beginCell()
     .storeUint(0x642bda77, 32) // op::mint
-    .storeUint(0, 64) // queryId
+    .storeUint(0, 64)          // queryId
     .storeCoins(toNano(amount.toString()))
     .storeAddress(Address.parse(receiver))
     .storeCoins(toNano("0.001")) // forwardTonAmount
-    .storeUint(0, 1) // forwardPayload (empty)
+    .storeUint(0, 1)             // forwardPayload (empty)
     .endCell();
 
   return {
-    to: STAR_TOKEN_CONFIG.testnetAddress,
+    to: STAR_TOKEN_CONFIG.testnetAddress, // Minting TARGETS Master Contract
     amount: toNano("0.05").toString(),
     body,
   };
 }
 
-// Passive income distribution (admin only)
 export async function createDistributePassiveIncomeMessage(nftHolder: string, amount: number) {
   const { Address, beginCell, toNano } = await import("@ton/core");
 
@@ -176,7 +228,6 @@ export async function createDistributePassiveIncomeMessage(nftHolder: string, am
   };
 }
 
-// Helpers
 export function formatTokenAmount(amount: number): string {
   return `${amount.toLocaleString()} ⭐`;
 }
@@ -185,7 +236,7 @@ export function isValidTokenAmount(amount: number): boolean {
   return Number.isInteger(amount) && amount > 0 && amount <= STAR_TOKEN_CONFIG.totalSupply;
 }
 
-// Contract ABI
+// Contract ABI (Reference)
 export const STAR_TOKEN_ABI = {
   methods: {
     transfer: ["destination:Address", "amount:Int"],

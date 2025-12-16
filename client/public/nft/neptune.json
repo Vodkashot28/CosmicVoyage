@@ -1,0 +1,11 @@
+{
+  "name": "Neptune",
+  "description": "Cosmic Voyage Planet NFT",
+  "image": "https://solar-system.xyz/models/neptune.glb",
+  "preview_image": "https://solar-system.xyz/previews/neptune.png",
+  "external_url": "https://solar-system.xyz/nft/neptune",
+  "attributes": [
+    { "trait_type": "Planet Type", "value": "Ice Giant" },
+    { "trait_type": "Orbit Position", "value": "8th from Sun" }
+  ]
+}

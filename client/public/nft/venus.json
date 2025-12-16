@@ -1,0 +1,11 @@
+{
+  "name": "Venus",
+  "description": "Cosmic Voyage Planet NFT",
+  "image": "https://solar-system.xyz/models/venus.glb",
+  "preview_image": "https://solar-system.xyz/previews/venus.png",
+  "external_url": "https://solar-system.xyz/nft/venus",
+  "attributes": [
+    { "trait_type": "Planet Type", "value": "Terrestrial" },
+    { "trait_type": "Orbit Position", "value": "2nd from Sun" }
+  ]
+}

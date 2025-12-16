@@ -39,6 +39,7 @@ export const postApiAction = async <T>(endpoint: string, body: object): Promise<
             body: JSON.stringify(body),
         });
 
+<<<<<<< HEAD
         // Attempt to parse the response body first, whether success or error
         let data: any;
         try {
@@ -69,29 +70,82 @@ export const postApiAction = async <T>(endpoint: string, body: object): Promise<
 };
 =======
 export async function claimGenesis(walletAddress: string) {
+=======
+import { API_BASE } from "../config";
+
+// Use Omit to ensure our custom body type (Record<string, any>)
+// does not conflict with the built-in RequestInit's body type (BodyInit | null | undefined).
+interface FetchOptions extends Omit<RequestInit, "body"> {
+  body?: Record<string, any>;
+}
+
+/**
+ * Executes a centralized API fetch call with unified error handling.
+ * @param endpoint The API endpoint path (e.g., '/player/profile/...')
+ * @param options Fetch options including method, headers, and body data.
+ * @returns The JSON response data.
+ */
+async function apiFetch<T = any>(
+  endpoint: string,
+  options: FetchOptions = {}
+): Promise<T> {
+  const url = `${API_BASE}${endpoint}`;
+  const { body: requestBodyObject, ...restOfOptions } = options;
+
+  const fetchOptions: RequestInit = {
+    ...restOfOptions,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  };
+
+  if (requestBodyObject && options.method !== "GET" && options.method !== "HEAD") {
+    fetchOptions.body = JSON.stringify(requestBodyObject);
+  } else {
+    delete fetchOptions.body;
+  }
+
+>>>>>>> 96b2ad9b94c94a209902dbbb49ed5d3a9858ab35
   try {
-    const response = await fetch(`${API_BASE}/player/claim-genesis`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ walletAddress }),
-    });
-    
+    const response = await fetch(url, fetchOptions);
+
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || `HTTP ${response.status}`);
+      let errorData;
+      try {
+        errorData = await response.json();
+      } catch {
+        throw new Error(`HTTP Error ${response.status}: Failed to parse error response.`);
+      }
+      throw new Error(errorData.error || `HTTP Error ${response.status}`);
     }
-    
+
+    if (response.status === 204 || response.headers.get("Content-Length") === "0") {
+      return {} as T;
+    }
+
     return response.json();
   } catch (error) {
-    console.error("Genesis claim failed:", error);
+    if (error instanceof Error) {
+      console.error(`API Call failed for ${url}:`, error.message);
+    } else {
+      console.error(`API Call failed for ${url}:`, error);
+    }
     throw error;
   }
 }
 
+// ============ GENESIS FAUCET ENDPOINTS ============
+
+export async function claimGenesis(walletAddress: string) {
+  return apiFetch("/player/claim-genesis", {
+    method: "POST",
+    body: { walletAddress },
+  });
+}
+
 export async function getGenesisStatus(walletAddress: string) {
-  const response = await fetch(`${API_BASE}/player/genesis-status/${walletAddress}`);
-  if (!response.ok) throw new Error(`HTTP ${response.status}`);
-  return response.json();
+  return apiFetch(`/player/genesis-status/${walletAddress}`);
 }
 >>>>>>> d66ef91 (Assistant checkpoint: Wire frontend-backend with CORS and health check)
 
@@ -104,39 +158,27 @@ export const claimDailyLogin = async (walletAddress: string): Promise<DailyLogin
 };
 =======
 export async function getPlayerProfile(walletAddress: string) {
-  const response = await fetch(`${API_BASE}/player/profile/${walletAddress}`);
-  if (!response.ok) throw new Error(`HTTP ${response.status}`);
-  return response.json();
+  return apiFetch(`/player/profile/${walletAddress}`);
 }
 
 // ============ STAR TOKEN ENDPOINTS ============
 
 export async function getStarBalance(walletAddress: string) {
-  const response = await fetch(`${API_BASE}/player/star-balance/${walletAddress}`);
-  if (!response.ok) throw new Error(`HTTP ${response.status}`);
-  return response.json();
+  return apiFetch(`/player/star-balance/${walletAddress}`);
 }
 
 export async function updateStarBalance(walletAddress: string, amount: number) {
-  const response = await fetch(`${API_BASE}/player/update-star-balance`, {
+  return apiFetch("/player/update-star-balance", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ walletAddress, amount }),
+    body: { walletAddress, amount },
   });
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || `HTTP ${response.status}`);
-  }
-  return response.json();
 }
 
 export async function burnStar(walletAddress: string, amount: number, utility: string) {
-  const response = await fetch(`${API_BASE}/player/burn-star`, {
+  return apiFetch("/player/burn-star", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ walletAddress, amount, utility }),
+    body: { walletAddress, amount, utility },
   });
-  return response.json();
 }
 
 // ============ DISCOVERY ENDPOINTS ============
@@ -147,17 +189,14 @@ export async function recordDiscovery(
   discoveryOrder: number,
   tokenReward: number
 ) {
-  const response = await fetch(`${API_BASE}/discovery/record`, {
+  return apiFetch("/discovery/record", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ walletAddress, celestialObjectName, discoveryOrder, tokenReward }),
+    body: { walletAddress, celestialObjectName, discoveryOrder, tokenReward },
   });
-  return response.json();
 }
 
 export async function getDiscoveryList(walletAddress: string) {
-  const response = await fetch(`${API_BASE}/discovery/list/${walletAddress}`);
-  return response.json();
+  return apiFetch(`/discovery/list/${walletAddress}`);
 }
 
 // ============ NFT ENDPOINTS ============
@@ -168,72 +207,59 @@ export async function recordNFTMint(
   discoveryOrder: number,
   tokenId: string
 ) {
-  const response = await fetch(`${API_BASE}/nft/mint`, {
+  return apiFetch("/nft/mint", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ walletAddress, celestialObjectName, discoveryOrder, tokenId }),
+    body: { walletAddress, celestialObjectName, discoveryOrder, tokenId },
   });
-  return response.json();
 }
 
 export async function getNFTList(walletAddress: string) {
-  const response = await fetch(`${API_BASE}/nft/list/${walletAddress}`);
-  return response.json();
+  return apiFetch(`/nft/list/${walletAddress}`);
 }
 
 // ============ PASSIVE INCOME ENDPOINTS ============
 
 export async function claimPassiveIncome(walletAddress: string) {
-  const response = await fetch(`${API_BASE}/passive-income/claim`, {
+  return apiFetch("/passive-income/claim", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ walletAddress }),
+    body: { walletAddress },
   });
-  return response.json();
 }
 
 export async function getPassiveIncomeStats(walletAddress: string) {
-  const response = await fetch(`${API_BASE}/passive-income/stats/${walletAddress}`);
-  return response.json();
+  return apiFetch(`/passive-income/stats/${walletAddress}`);
 }
 
 // ============ REFERRAL ENDPOINTS ============
 
 export async function claimGenesisWithReferral(walletAddress: string, referralCode?: string) {
-  const response = await fetch(`${API_BASE}/player/claim-genesis-with-referral`, {
+  return apiFetch("/player/claim-genesis-with-referral", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ walletAddress, referralCode }),
+    body: { walletAddress, referralCode },
   });
-  return response.json();
 }
 
 export async function getReferralStats(walletAddress: string) {
-  const response = await fetch(`${API_BASE}/player/referral-stats/${walletAddress}`);
-  return response.json();
+  return apiFetch(`/player/referral-stats/${walletAddress}`);
 }
 
 // ============ LEADERBOARD ENDPOINTS ============
 
 export async function getReferralLeaderboard() {
-  const response = await fetch(`${API_BASE}/leaderboard/referrals`);
-  return response.json();
+  return apiFetch("/leaderboard/referrals");
 }
 
 export async function getDiscoveryLeaderboard() {
-  const response = await fetch(`${API_BASE}/leaderboard/discoveries`);
-  return response.json();
+  return apiFetch("/leaderboard/discoveries");
 }
 
 export async function getCollectionLeaderboard() {
-  const response = await fetch(`${API_BASE}/leaderboard/collections`);
-  return response.json();
+  return apiFetch("/leaderboard/collections");
 }
 
 // ============ HEALTH CHECK ============
 
 export async function checkHealth() {
-  const response = await fetch(`${API_BASE}/health`);
-  return response.json();
+  return apiFetch("/health");
 }
 >>>>>>> d66ef91 (Assistant checkpoint: Wire frontend-backend with CORS and health check)

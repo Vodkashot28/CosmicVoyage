@@ -1,6 +1,7 @@
+// client/src/App.tsx
 import { Canvas } from "@react-three/fiber";
 import { Suspense, useState, useMemo, useEffect } from "react";
-import { TonConnectUIProvider } from "@tonconnect/ui-react";
+import { TonConnectUIProvider } from "@tonconnect/ui-react"; 
 import { Analytics } from "@vercel/analytics/react";
 import "@fontsource/inter";
 import { SolarSystem } from "./components/SolarSystem";
@@ -18,71 +19,89 @@ import { ReferralInvite } from "./components/ReferralInvite";
 import { initDracoDecoder } from "./lib/draco-setup";
 import { ModelDiagnostics } from "@/components/ModelDiagnostics";
 import { APIHealthCheck } from "@/components/APIHealthCheck";
-import { useWalletSync } from "@/hooks/useWalletSync"; // Import useWalletSync hook
+import { useWalletSync } from "@/hooks/useWalletSync";
+
+// Assume MANIFEST_URL is defined somewhere or you're getting the local one dynamically
 
 function App() {
   const [activeTab, setActiveTab] = useState("game");
 
-  // Initialize Draco decoder for compressed .glb models
   useEffect(() => {
     initDracoDecoder();
   }, []);
 
-  // Auto-sync stores when wallet connects
   useWalletSync();
 
-  // Dynamically construct manifest URL based on environment
   const manifestUrl = useMemo(() => {
-    // Use current origin for development, production domain in production
-    if (typeof window !== 'undefined') {
-      const isDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-      return isDev
-        ? `${window.location.origin}/tonconnect-manifest.json`
-        : "https://solar-system.xyz/tonconnect-manifest.json";
+    if (
+      typeof window !== "undefined" &&
+      (window.location.hostname === "localhost" ||
+        window.location.hostname === "127.0.0.1")
+    ) {
+      // NOTE: Ensure your local manifest is served correctly
+      return `${window.location.origin}/tonconnect-manifest.json`;
     }
-    return "/tonconnect-manifest.json";
+    return "https://solar-system.xyz/tonconnect-manifest.json";
   }, []);
 
   return (
-    <TonConnectUIProvider manifestUrl={manifestUrl}>
+    <TonConnectUIProvider
+      manifestUrl={manifestUrl}
+      // network={CHAIN.TESTNET} 
+      actionsConfiguration={{
+        // keep valid keys only here if needed
+      }}
+    >
       <div
         style={{
           width: "100vw",
-          height: "100vh",
           position: "relative",
           overflow: "hidden",
         }}
       >
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only fixed top-4 left-4 z-[9999] bg-cyan-600 p-2 text-white rounded-md"
+        >
+          Skip to Main Content
+        </a>
+
         {activeTab === "game" ? (
           <>
-            <Canvas
-              style={{ width: "100%", height: "100%", display: "block" }}
-              camera={{
-                position: [0, 30, 60],
-                fov: 60,
-                near: 0.1,
-                far: 1000,
-              }}
-              gl={{
-                antialias: true,
-                powerPreference: "high-performance",
-                alpha: true,
-              }}
-            >
-              <Suspense fallback={null}>
-                <SolarSystem />
-              </Suspense>
-            </Canvas>
+            <main id="main-content" tabIndex={-1}>
+              <Canvas
+                style={{ width: "100%", height: "100%", display: "block" }}
+                camera={{
+                  position: [0, 30, 60],
+                  fov: 60,
+                  near: 0.1,
+                  far: 1000,
+                }}
+                gl={{
+                  antialias: true,
+                  powerPreference: "high-performance",
+                  alpha: true,
+                }}
+              >
+                <Suspense fallback={null}>
+                  <SolarSystem />
+                </Suspense>
+              </Canvas>
+            </main>
 
             <CollapsibleGameMenu position="right" />
             <PlanetCard />
           </>
         ) : (
-          <div className="w-full h-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-auto p-4">
+          <main
+            id="main-content"
+            tabIndex={-1}
+            className="w-full h-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-auto p-4"
+          >
             <div className="max-w-2xl mx-auto">
               <ReferralInvite />
             </div>
-          </div>
+          </main>
         )}
 
         <div className="fixed bottom-4 left-4 z-50">

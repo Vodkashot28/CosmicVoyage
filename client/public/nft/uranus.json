@@ -1,0 +1,11 @@
+{
+  "name": "Uranus",
+  "description": "Cosmic Voyage Planet NFT",
+  "image": "https://solar-system.xyz/models/uranus.glb",
+  "preview_image": "https://solar-system.xyz/previews/uranus.png",
+  "external_url": "https://solar-system.xyz/nft/uranus",
+  "attributes": [
+    { "trait_type": "Planet Type", "value": "Ice Giant" },
+    { "trait_type": "Orbit Position", "value": "7th from Sun" }
+  ]
+}

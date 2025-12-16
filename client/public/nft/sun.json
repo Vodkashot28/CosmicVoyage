@@ -1,0 +1,11 @@
+{
+  "name": "Sun",
+  "description": "Cosmic Voyage Star NFT",
+  "image": "https://solar-system.xyz/models/sun.glb",
+  "preview_image": "https://solar-system.xyz/previews/sun.png",
+  "external_url": "https://solar-system.xyz/nft/sun",
+  "attributes": [
+    { "trait_type": "Type", "value": "Star" },
+    { "trait_type": "Orbit Position", "value": "Center of Solar System" }
+  ]
+}

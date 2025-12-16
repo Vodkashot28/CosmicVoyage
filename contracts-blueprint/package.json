@@ -1,18 +1,24 @@
 {
-  "name": "ton-contracts",
-  "version": "0.1.0",
+  "name": "contracts-blueprint",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
   "scripts": {
     "build": "blueprint build",
-    "deploy": "blueprint run deployAll",
-    "test": "blueprint test"
+    "test": "echo 'Error: no test specified' && exit 1"
   },
-  "devDependencies": {
-    "@ton/blueprint": "^0.41.0",
-    "@ton/ton": "^16.0.0",
-    "ts-node": "^10.0.0",
-    "typescript": "^5.0.0"
-  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
   "dependencies": {
-    "@tact-lang/compiler": "^1.6.13"
+    "@tact-lang/compiler": "^1.6.13",
+    "@ton/blueprint": "^0.41.0",
+    "@ton/ton": "^16.1.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
   }
 }
