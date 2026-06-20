@@ -1,9 +1,61 @@
-node_modules
-dist
-.DS_Store
-server/public
+# ── Dependencies ──────────────────────────────────────────
+node_modules/
+.pnp
+.pnp.js
+
+# ── Build output ──────────────────────────────────────────
+dist/
+build/
+server/public/
+stats.html
+
+# ── Vite / bundler cache ───────────────────────────────────
+.vite/
 vite.config.ts.*
-*.tar.gz
+
+# ── Environment variables ──────────────────────────────────
 .env
-package.json
-package-lock.json
+.env.local
+.env.*.local
+# Keep .env.example tracked
+!.env.example
+
+# ── TypeScript ────────────────────────────────────────────
+*.tsbuildinfo
+
+# ── Logs ──────────────────────────────────────────────────
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ── OS / editor artifacts ─────────────────────────────────
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# ── Test / coverage ───────────────────────────────────────
+coverage/
+.nyc_output/
+
+# ── TON / Tact smart contract build artifacts ─────────────
+ton-build/
+*.boc
+*.abi
+build/contracts/
+
+# ── Large 3D model files (use Git LFS or external storage) ─
+# Uncomment the line below if you store models outside the repo
+# client/public/models/*.glb
+
+# ── Misc ──────────────────────────────────────────────────
+*.tar.gz
+*.zip
