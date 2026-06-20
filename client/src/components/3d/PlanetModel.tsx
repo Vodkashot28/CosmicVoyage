@@ -55,14 +55,6 @@ export default function PlanetModel({
     console.log(`[PlanetModel] 🔄 Attempting to load ${name} from ${modelPath}`);
     gltf = useGLTF(modelPath);
     if (gltf?.scene) {
-<<<<<<< HEAD
-<<<<<<< HEAD
-      // console.log(`[PlanetModel] ✅ Loaded ${name} successfully`);
-    }
-  } catch (err) {
-    loadError = true;
-    // console.log(`[PlanetModel] ⚠️ Failed to load ${name}, using fallback sphere`);
-=======
       console.log(`[PlanetModel] ✅ Successfully loaded ${name} model`);
     } else {
       console.warn(`[PlanetModel] ⚠️ Model loaded but no scene found for ${name}`);
@@ -70,16 +62,6 @@ export default function PlanetModel({
   } catch (err) {
     loadError = true;
     console.error(`[PlanetModel] ❌ Failed to load ${name}:`, err);
->>>>>>> a1a131e (Restored to 'e3cfd37ca5cfda57e811b540d61d9c3a3c5a6f9b')
-=======
-      console.log(`[PlanetModel] ✅ Successfully loaded ${name} model`);
-    } else {
-      console.warn(`[PlanetModel] ⚠️ Model loaded but no scene found for ${name}`);
-    }
-  } catch (err) {
-    loadError = true;
-    console.error(`[PlanetModel] ❌ Failed to load ${name}:`, err);
->>>>>>> d66ef91b4bb991a9d794bc921a6519562bc8fb78
   }
 
   useEffect(() => {

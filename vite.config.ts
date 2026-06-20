@@ -40,8 +40,6 @@ export default defineConfig({
   define: {
     // Defines 'global' as the browser's global scope
     global: 'globalThis',
-    // FIXED: Defines the global 'Buffer' constructor
-    'Buffer': 'Buffer',
   },
 
   // --- Project Structure ---
