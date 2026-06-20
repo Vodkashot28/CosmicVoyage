@@ -18,20 +18,9 @@ export function SolarSystem() {
     return () => console.log('[SolarSystem] 🛑 Unmounting');
   }, []);
 
-  // TEMPRARY: Show all planets with actual .glb models
-  // Available models: Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, Neptune
-  const AVAILABLE_MODELS = ["Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune"];
-
-  const visiblePlanets = allCelestialObjects.filter(celestialObject => 
-    AVAILABLE_MODELS.includes(celestialObject.name)
-  );
-
-  useEffect(() => {
-    console.log('[SolarSystem] 🪐 Visible planets:', {
-      count: visiblePlanets.length,
-      names: visiblePlanets.map(p => p.name)
-    });
-  }, [visiblePlanets]);
+  // Show all 28 celestial objects — PlanetModel handles missing .glb files
+  // by rendering a coloured sphere fallback automatically
+  const visiblePlanets = allCelestialObjects;
 
   // Listen for mint events to trigger dynamic loading
   useEffect(() => {
