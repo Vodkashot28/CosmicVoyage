@@ -1,19 +1,16 @@
-import { useRef, useMemo } from 'react';
+import { useRef, useMemo, Suspense } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 import { SUN } from './bodies';
 
-useGLTF.preload(SUN.glbPath);
-
-// ── GLB Sun ───────────────────────────────────────────────────────────────────
+// ── GLB Sun (suspends while loading) ─────────────────────────────────────────
 function GLBSun() {
-  const groupRef = useRef<THREE.Group>(null);
-  const { scene } = useGLTF(SUN.glbPath); // suspends until loaded
+  const spinRef = useRef<THREE.Group>(null);
+  const { scene } = useGLTF(SUN.glbUrl!);
 
   const clone = useMemo(() => {
     const c = scene.clone(true);
-    // Normalise to desired diameter
     const box = new THREE.Box3().setFromObject(c);
     const sz  = new THREE.Vector3();
     box.getSize(sz);
@@ -38,30 +35,25 @@ function GLBSun() {
     return c;
   }, [scene]);
 
-  useFrame(() => {
-    if (groupRef.current) groupRef.current.rotation.y += SUN.rotationSpeed * 0.016;
+  useFrame((_, delta) => {
+    if (spinRef.current) spinRef.current.rotation.y += SUN.spinSpeed * delta;
   });
 
   return (
-    <group ref={groupRef}>
+    <group ref={spinRef} rotation-z={SUN.tilt}>
       <primitive object={clone} />
     </group>
   );
 }
 
-// ── Fallback sphere (shown while GLB loads) ──────────────────────────────────
-function FallbackSun() {
+// ── Sphere fallback ───────────────────────────────────────────────────────────
+function SphereSun() {
   const ref = useRef<THREE.Mesh>(null);
-  useFrame(() => { if (ref.current) ref.current.rotation.y += 0.002; });
+  useFrame((_, delta) => { if (ref.current) ref.current.rotation.y += SUN.spinSpeed * delta; });
   return (
     <mesh ref={ref}>
       <sphereGeometry args={[SUN.radius, 48, 48]} />
-      <meshStandardMaterial
-        color="#FFA500"
-        emissive="#FF6600"
-        emissiveIntensity={3}
-        toneMapped={false}
-      />
+      <meshStandardMaterial color="#FFA500" emissive="#FF6600" emissiveIntensity={3} toneMapped={false} />
     </mesh>
   );
 }
@@ -70,33 +62,25 @@ function FallbackSun() {
 export function Sun() {
   return (
     <>
-      {/* Lights emanating from the Sun */}
       <pointLight position={[0, 0, 0]} intensity={3.5} distance={450} color="#FDB813" />
       <pointLight position={[0, 0, 0]} intensity={1}   distance={80}  color="#FF8800" />
 
-      {/* GLB model — Suspense fallback is the orange sphere */}
-      <GLBSun />
+      {SUN.glbUrl ? (
+        <Suspense fallback={<SphereSun />}>
+          <GLBSun />
+        </Suspense>
+      ) : (
+        <SphereSun />
+      )}
 
-      {/* Outer corona glow (purely additive backside sphere) */}
+      {/* Corona layers */}
       <mesh>
         <sphereGeometry args={[SUN.radius * 1.35, 32, 32]} />
-        <meshBasicMaterial
-          color="#FFA500"
-          transparent
-          opacity={0.13}
-          side={THREE.BackSide}
-          depthWrite={false}
-        />
+        <meshBasicMaterial color="#FFA500" transparent opacity={0.13} side={THREE.BackSide} depthWrite={false} />
       </mesh>
       <mesh>
         <sphereGeometry args={[SUN.radius * 1.75, 32, 32]} />
-        <meshBasicMaterial
-          color="#FF6600"
-          transparent
-          opacity={0.06}
-          side={THREE.BackSide}
-          depthWrite={false}
-        />
+        <meshBasicMaterial color="#FF6600" transparent opacity={0.06} side={THREE.BackSide} depthWrite={false} />
       </mesh>
     </>
   );
