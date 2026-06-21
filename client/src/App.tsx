@@ -1,5 +1,6 @@
 // client/src/App.tsx
 import { Canvas } from "@react-three/fiber";
+import { HelmetProvider } from "react-helmet-async";
 import { Component, Suspense, useState, useEffect, useMemo } from "react";
 import type { ReactNode, ErrorInfo } from "react";
 import { TonConnectUIProvider } from "@tonconnect/ui-react";
@@ -181,12 +182,14 @@ function App() {
   }, []);
 
   return (
-    <TonConnectUIProvider
-      manifestUrl={manifestUrl}
-      actionsConfiguration={{}}
-    >
-      <AppInner />
-    </TonConnectUIProvider>
+    <HelmetProvider>
+      <TonConnectUIProvider
+        manifestUrl={manifestUrl}
+        actionsConfiguration={{}}
+      >
+        <AppInner />
+      </TonConnectUIProvider>
+    </HelmetProvider>
   );
 }
 
