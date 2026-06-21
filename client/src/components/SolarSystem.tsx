@@ -1,60 +1,106 @@
-import { Suspense, useEffect } from "react";
-import { OrbitControls, Stars } from "@react-three/drei";
+import { Suspense } from "react";
+import { OrbitControls, Stars, Line } from "@react-three/drei";
+import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import { CelestialObject } from "./CelestialObject";
 import { SunModel } from "./3d/SunModel";
-import { allCelestialObjects } from "@/data/planets";
-import { useSolarSystem } from "@/lib/stores/useSolarSystem";
+import { planetsData } from "@/data/planets";
+import * as THREE from "three";
 
-// Fallback sun shown while sun.glb loads
-function SunFallback() {
+// Only the 8 main planets
+const PLANETS = planetsData.filter((p) => p.type === "planet");
+
+// Faint orbit ring — thin white circle at low opacity
+function OrbitRing({ radius }: { radius: number }) {
+  const points: THREE.Vector3[] = [];
+  const SEG = 128;
+  for (let i = 0; i <= SEG; i++) {
+    const a = (i / SEG) * Math.PI * 2;
+    points.push(new THREE.Vector3(Math.cos(a) * radius, 0, Math.sin(a) * radius));
+  }
   return (
-    <mesh position={[0, 0, 0]}>
-      <sphereGeometry args={[4, 32, 32]} />
-      <meshStandardMaterial color="#FFA500" emissive="#FF6B00" emissiveIntensity={2} toneMapped={false} />
-    </mesh>
+    <Line
+      points={points}
+      color="#ffffff"
+      lineWidth={0.4}
+      transparent
+      opacity={0.12}
+    />
   );
 }
 
 export function SolarSystem() {
-  const { ownedNFTs, discoveredPlanets } = useSolarSystem();
-
-  useEffect(() => {
-    console.log('[SolarSystem] Mounted —', allCelestialObjects.length, 'objects');
-  }, []);
-
   return (
     <>
-      <color attach="background" args={["#0a0e27"]} />
+      {/* ── Background ───────────────────────────────── */}
+      <color attach="background" args={["#000008"]} />
+      <Stars
+        radius={400}
+        depth={60}
+        count={7000}
+        factor={5}
+        saturation={0.1}
+        fade
+        speed={0.4}
+      />
 
-      <ambientLight intensity={0.3} />
-      <pointLight position={[0, 0, 0]} intensity={2} distance={300} />
-      <directionalLight position={[10, 10, 10]} intensity={0.5} />
+      {/* ── Lighting ─────────────────────────────────── */}
+      {/* Low ambient so dark-side of planets is visible but dim */}
+      <ambientLight intensity={0.12} />
+      {/* Sun's warm light reaching all planets */}
+      <pointLight
+        position={[0, 0, 0]}
+        intensity={3}
+        distance={400}
+        color="#FDB813"
+      />
 
-      <Stars radius={500} depth={80} count={8000} factor={8} saturation={0.15} fade speed={0.3} />
-
-      {/* Sun — own Suspense so planets aren't blocked by its load */}
-      <Suspense fallback={<SunFallback />}>
+      {/* ── Sun (GLB + bloom glow) ────────────────────── */}
+      <Suspense
+        fallback={
+          <mesh>
+            <sphereGeometry args={[4, 32, 32]} />
+            <meshStandardMaterial
+              color="#FFA500"
+              emissive="#FF8800"
+              emissiveIntensity={4}
+              toneMapped={false}
+            />
+          </mesh>
+        }
+      >
         <SunModel />
       </Suspense>
 
-      {/* Each planet/object in its own Suspense so one slow/missing model
-          doesn't block the others from appearing */}
-      {allCelestialObjects.map((obj) => (
-        <Suspense key={obj.name} fallback={null}>
-          <CelestialObject data={obj} />
+      {/* ── Planets: orbit ring + planet (handles own orbit motion) ── */}
+      {PLANETS.map((p) => (
+        <Suspense key={p.name} fallback={null}>
+          <OrbitRing radius={p.orbitRadius} />
+          <CelestialObject data={p} />
         </Suspense>
       ))}
 
+      {/* ── Camera ───────────────────────────────────── */}
       <OrbitControls
         enablePan
         enableZoom
         enableRotate
-        minDistance={10}
-        maxDistance={200}
+        minDistance={12}
+        maxDistance={220}
         zoomSpeed={0.8}
         rotateSpeed={0.5}
         target={[0, 0, 0]}
       />
+
+      {/* ── Post-processing ──────────────────────────── */}
+      {/* Bloom picks up any mesh with toneMapped=false + bright emissive (the Sun) */}
+      <EffectComposer>
+        <Bloom
+          luminanceThreshold={0.6}
+          luminanceSmoothing={0.4}
+          intensity={1.2}
+          mipmapBlur
+        />
+      </EffectComposer>
     </>
   );
 }

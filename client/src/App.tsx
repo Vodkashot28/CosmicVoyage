@@ -97,10 +97,10 @@ function AppInner() {
               <Canvas
                 style={{ width: "100%", height: "100%", display: "block" }}
                 camera={{
-                  position: [0, 30, 60],
-                  fov: 60,
+                  position: [0, 75, 110],
+                  fov: 65,
                   near: 0.1,
-                  far: 1000,
+                  far: 2000,
                 }}
                 gl={{
                   antialias: true,
