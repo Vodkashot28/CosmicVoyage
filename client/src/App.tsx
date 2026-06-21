@@ -21,6 +21,7 @@ import { initDracoDecoder } from "./lib/draco-setup";
 import { ModelDiagnostics } from "@/components/ModelDiagnostics";
 import { APIHealthCheck } from "@/components/APIHealthCheck";
 import { useWalletSync } from "@/hooks/useWalletSync";
+import { TourHUD } from "./components/CinematicTour";
 
 class CanvasErrorBoundary extends Component<
   { children: ReactNode; fallback: ReactNode },
@@ -115,6 +116,8 @@ function AppInner() {
 
           <CollapsibleGameMenu position="right" />
           <PlanetCard />
+          {/* Cinematic tour HUD — pause/resume button + planet info panel */}
+          <TourHUD />
         </>
       ) : (
         <main

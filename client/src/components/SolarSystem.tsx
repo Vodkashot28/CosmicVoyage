@@ -4,74 +4,49 @@ import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import { CelestialObject } from "./CelestialObject";
 import { SunModel } from "./3d/SunModel";
 import { planetsData } from "@/data/planets";
+import { useTourStore } from "@/lib/stores/useTourStore";
+import { CinematicCameraController } from "./CinematicTour";
 import * as THREE from "three";
 
-// Only the 8 main planets
 const PLANETS = planetsData.filter((p) => p.type === "planet");
 
-// Faint orbit ring — thin white circle at low opacity
 function OrbitRing({ radius }: { radius: number }) {
   const points: THREE.Vector3[] = [];
-  const SEG = 128;
-  for (let i = 0; i <= SEG; i++) {
-    const a = (i / SEG) * Math.PI * 2;
+  for (let i = 0; i <= 128; i++) {
+    const a = (i / 128) * Math.PI * 2;
     points.push(new THREE.Vector3(Math.cos(a) * radius, 0, Math.sin(a) * radius));
   }
   return (
-    <Line
-      points={points}
-      color="#ffffff"
-      lineWidth={0.4}
-      transparent
-      opacity={0.12}
-    />
+    <Line points={points} color="#ffffff" lineWidth={0.4} transparent opacity={0.12} />
   );
 }
 
 export function SolarSystem() {
+  const { paused } = useTourStore();
+
   return (
     <>
-      {/* ── Background ───────────────────────────────── */}
+      {/* Background */}
       <color attach="background" args={["#000008"]} />
-      <Stars
-        radius={400}
-        depth={60}
-        count={7000}
-        factor={5}
-        saturation={0.1}
-        fade
-        speed={0.4}
-      />
+      <Stars radius={400} depth={60} count={7000} factor={5} saturation={0.1} fade speed={0.4} />
 
-      {/* ── Lighting ─────────────────────────────────── */}
-      {/* Low ambient so dark-side of planets is visible but dim */}
+      {/* Lighting */}
       <ambientLight intensity={0.12} />
-      {/* Sun's warm light reaching all planets */}
-      <pointLight
-        position={[0, 0, 0]}
-        intensity={3}
-        distance={400}
-        color="#FDB813"
-      />
+      <pointLight position={[0, 0, 0]} intensity={3} distance={400} color="#FDB813" />
 
-      {/* ── Sun (GLB + bloom glow) ────────────────────── */}
+      {/* Sun */}
       <Suspense
         fallback={
           <mesh>
             <sphereGeometry args={[4, 32, 32]} />
-            <meshStandardMaterial
-              color="#FFA500"
-              emissive="#FF8800"
-              emissiveIntensity={4}
-              toneMapped={false}
-            />
+            <meshStandardMaterial color="#FFA500" emissive="#FF8800" emissiveIntensity={4} toneMapped={false} />
           </mesh>
         }
       >
         <SunModel />
       </Suspense>
 
-      {/* ── Planets: orbit ring + planet (handles own orbit motion) ── */}
+      {/* Orbit rings + planets */}
       {PLANETS.map((p) => (
         <Suspense key={p.name} fallback={null}>
           <OrbitRing radius={p.orbitRadius} />
@@ -79,8 +54,12 @@ export function SolarSystem() {
         </Suspense>
       ))}
 
-      {/* ── Camera ───────────────────────────────────── */}
+      {/* Camera controller — active when tour is running */}
+      <CinematicCameraController />
+
+      {/* OrbitControls — only enabled when tour is paused */}
       <OrbitControls
+        enabled={paused}
         enablePan
         enableZoom
         enableRotate
@@ -91,15 +70,9 @@ export function SolarSystem() {
         target={[0, 0, 0]}
       />
 
-      {/* ── Post-processing ──────────────────────────── */}
-      {/* Bloom picks up any mesh with toneMapped=false + bright emissive (the Sun) */}
+      {/* Post-processing bloom — makes the Sun glow */}
       <EffectComposer>
-        <Bloom
-          luminanceThreshold={0.6}
-          luminanceSmoothing={0.4}
-          intensity={1.2}
-          mipmapBlur
-        />
+        <Bloom luminanceThreshold={0.6} luminanceSmoothing={0.4} intensity={1.2} mipmapBlur />
       </EffectComposer>
     </>
   );
