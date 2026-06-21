@@ -1,0 +1,136 @@
+{
+  "generated_at": "2026-06-21 07:55:33.884437",
+  "bodies": [
+    {
+      "id": "sun",
+      "name": "Sun",
+      "known_type": "Star",
+      "ai_label": "Star",
+      "confidence": 1.0,
+      "probabilities": {
+        "Star": 1.0
+      },
+      "match": true
+    },
+    {
+      "id": "mercury",
+      "name": "Mercury",
+      "known_type": "Planet",
+      "ai_label": "Planet",
+      "confidence": 1.0,
+      "probabilities": {
+        "Asteroid": 0.0,
+        "Comet": 0.0,
+        "DwarfPlanet": 0.0,
+        "Moon": 0.0,
+        "Planet": 1.0
+      },
+      "match": true
+    },
+    {
+      "id": "venus",
+      "name": "Venus",
+      "known_type": "Planet",
+      "ai_label": "Planet",
+      "confidence": 1.0,
+      "probabilities": {
+        "Asteroid": 0.0,
+        "Comet": 0.0,
+        "DwarfPlanet": 0.0,
+        "Moon": 0.0,
+        "Planet": 1.0
+      },
+      "match": true
+    },
+    {
+      "id": "earth",
+      "name": "Earth",
+      "known_type": "Planet",
+      "ai_label": "Planet",
+      "confidence": 1.0,
+      "probabilities": {
+        "Asteroid": 0.0,
+        "Comet": 0.0,
+        "DwarfPlanet": 0.0,
+        "Moon": 0.0,
+        "Planet": 1.0
+      },
+      "match": true
+    },
+    {
+      "id": "mars",
+      "name": "Mars",
+      "known_type": "Planet",
+      "ai_label": "Planet",
+      "confidence": 1.0,
+      "probabilities": {
+        "Asteroid": 0.0,
+        "Comet": 0.0,
+        "DwarfPlanet": 0.0,
+        "Moon": 0.0,
+        "Planet": 1.0
+      },
+      "match": true
+    },
+    {
+      "id": "jupiter",
+      "name": "Jupiter",
+      "known_type": "Planet",
+      "ai_label": "Planet",
+      "confidence": 1.0,
+      "probabilities": {
+        "Asteroid": 0.0,
+        "Comet": 0.0,
+        "DwarfPlanet": 0.0,
+        "Moon": 0.0,
+        "Planet": 1.0
+      },
+      "match": true
+    },
+    {
+      "id": "saturn",
+      "name": "Saturn",
+      "known_type": "Planet",
+      "ai_label": "Planet",
+      "confidence": 1.0,
+      "probabilities": {
+        "Asteroid": 0.0,
+        "Comet": 0.0,
+        "DwarfPlanet": 0.0,
+        "Moon": 0.0,
+        "Planet": 1.0
+      },
+      "match": true
+    },
+    {
+      "id": "uranus",
+      "name": "Uranus",
+      "known_type": "Planet",
+      "ai_label": "Planet",
+      "confidence": 1.0,
+      "probabilities": {
+        "Asteroid": 0.0,
+        "Comet": 0.0,
+        "DwarfPlanet": 0.0,
+        "Moon": 0.0,
+        "Planet": 1.0
+      },
+      "match": true
+    },
+    {
+      "id": "neptune",
+      "name": "Neptune",
+      "known_type": "Planet",
+      "ai_label": "Planet",
+      "confidence": 1.0,
+      "probabilities": {
+        "Asteroid": 0.0,
+        "Comet": 0.0,
+        "DwarfPlanet": 0.0,
+        "Moon": 0.0,
+        "Planet": 1.0
+      },
+      "match": true
+    }
+  ]
+}

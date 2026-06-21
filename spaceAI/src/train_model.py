@@ -1,92 +1,102 @@
+"""
+Train celestial object classifier + orbital predictor.
+Run from the spaceAI/ root:  python src/train_model.py
+"""
 
-"""
-Train celestial object classifier
-Simple script to train and save the ML model
-"""
 import os
 import sys
+import json
+import numpy as np
 import pandas as pd
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score, classification_report
 import joblib
+from pathlib import Path
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
+from sklearn.preprocessing import LabelEncoder, StandardScaler
+from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.metrics import accuracy_score, classification_report
 
-def main():
-    print("🚀 Starting celestial classifier training...")
-    
-    # Create directories
-    os.makedirs("../data", exist_ok=True)
-    os.makedirs("../models", exist_ok=True)
-    
-    # Load or create dataset
-    csv_path = "../data/celestial_objects.csv"
-    
-    if os.path.exists(csv_path):
-        print(f"📂 Loading existing dataset from {csv_path}")
-        df = pd.read_csv(csv_path)
-    else:
-        print("📝 Creating new sample dataset...")
-        data = {
-            "orbital_period": [365, 27.3, 687, 4332, 11.9, 248, 1682, 10759, 30685, 60190],
-            "axial_tilt": [23.5, 6.7, 25.2, 3.1, 0.0, 119.6, 97.9, 28.3, 29.6, 17.1],
-            "mass": [5.97e24, 7.35e22, 6.42e23, 1.90e27, 3.30e23, 1.31e22, 8.68e25, 1.02e26, 6.42e23, 1.31e22],
-            "type": ["Planet", "Moon", "Planet", "Planet", "Asteroid", "DwarfPlanet", "Planet", "Planet", "Planet", "DwarfPlanet"]
-        }
-        df = pd.DataFrame(data)
-        df.to_csv(csv_path, index=False)
-        print(f"✅ Dataset created: {csv_path}")
-    
-    print(f"\n📊 Dataset info:")
-    print(f"   Total samples: {len(df)}")
-    print(f"   Object types: {df['type'].value_counts().to_dict()}")
-    
-    # Prepare features and labels
-    X = df[['orbital_period', 'axial_tilt', 'mass']]
-    y = df['type']
-    
-    # Split dataset
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.3, random_state=42
+ROOT = Path(__file__).parent.parent
+DATA_PATH = ROOT / "data" / "celestial_objects.csv"
+MODEL_DIR = ROOT / "models"
+MODEL_DIR.mkdir(parents=True, exist_ok=True)
+
+
+def load_and_prepare(csv_path: Path):
+    df = pd.read_csv(csv_path)
+
+    # Coerce 'unknown' axial_tilt → fill with per-type median
+    df["axial_tilt"] = pd.to_numeric(df["axial_tilt"], errors="coerce")
+    tilt_medians = df.groupby("type")["axial_tilt"].transform("median")
+    df["axial_tilt"] = df["axial_tilt"].fillna(tilt_medians)
+
+    # Log-scale to compress large dynamic range
+    df["log_mass"]   = np.log10(pd.to_numeric(df["mass"],   errors="coerce").fillna(1e10))
+    df["log_radius"] = np.log10(pd.to_numeric(df["radius"], errors="coerce").fillna(1.0))
+    df["log_period"] = np.log10(pd.to_numeric(df["orbital_period"], errors="coerce").fillna(365))
+
+    features = ["log_period", "axial_tilt", "log_mass", "log_radius"]
+    X = df[features].values
+    y = df["type"].values
+    return X, y, features, df
+
+
+def train(csv_path: Path = DATA_PATH):
+    print("🚀 SpaceAI — Training celestial classifier")
+    print(f"   Dataset : {csv_path}")
+
+    X, y, features, df = load_and_prepare(csv_path)
+
+    print(f"\n📊 Dataset — {len(df)} objects")
+    for t, n in df["type"].value_counts().items():
+        print(f"   {t:18s} {n}")
+
+    le     = LabelEncoder()
+    y_enc  = le.fit_transform(y)
+    scaler = StandardScaler()
+    X_sc   = scaler.fit_transform(X)
+
+    X_tr, X_te, y_tr, y_te = train_test_split(
+        X_sc, y_enc, test_size=0.25, random_state=42, stratify=y_enc
     )
-    
-    print(f"\n🔀 Train/test split:")
-    print(f"   Training samples: {len(X_train)}")
-    print(f"   Testing samples: {len(X_test)}")
-    
-    # Train model
-    print("\n🤖 Training DecisionTreeClassifier...")
-    model = DecisionTreeClassifier(random_state=42, max_depth=5)
-    model.fit(X_train, y_train)
-    
-    # Evaluate
-    predictions = model.predict(X_test)
-    accuracy = accuracy_score(y_test, predictions)
-    
-    print(f"\n✨ Training complete!")
-    print(f"   Accuracy: {accuracy:.2%}")
-    
-    # Save model
-    model_path = "../models/celestial_classifier.pkl"
-    joblib.dump(model, model_path)
-    print(f"\n💾 Model saved to: {model_path}")
-    
-    # Test prediction
-    print("\n🔮 Testing predictions:")
-    test_samples = [
-        ([365, 23.5, 5.97e24], "Earth-like"),
-        ([687, 25.2, 6.42e23], "Mars-like"),
-        ([4332, 3.1, 1.90e27], "Jupiter-like")
-    ]
-    
-    for features, description in test_samples:
-        pred = model.predict([features])[0]
-        print(f"   {description}: {pred}")
-    
-    print("\n✅ Training pipeline completed successfully!")
+
+    candidates = {
+        "DecisionTree":     DecisionTreeClassifier(random_state=42, max_depth=6),
+        "RandomForest":     RandomForestClassifier(n_estimators=100, random_state=42),
+        "GradientBoosting": GradientBoostingClassifier(n_estimators=100, random_state=42),
+    }
+
+    best_name, best_model, best_acc = None, None, 0.0
+    print("\n🤖 Training candidates:")
+    for name, clf in candidates.items():
+        cv = cross_val_score(clf, X_sc, y_enc, cv=min(5, len(X) // 3))
+        clf.fit(X_tr, y_tr)
+        acc = accuracy_score(y_te, clf.predict(X_te))
+        print(f"   {name:20s}  cv={cv.mean():.2f}±{cv.std():.2f}  test={acc:.2f}")
+        if acc > best_acc:
+            best_acc, best_name, best_model = acc, name, clf
+
+    print(f"\n✅ Best model : {best_name}  (test accuracy {best_acc:.2f})")
+    print(classification_report(y_te, best_model.predict(X_te), target_names=le.classes_))
+
+    # Save artefacts
+    joblib.dump(best_model, MODEL_DIR / "celestial_classifier.pkl")
+    joblib.dump(le,         MODEL_DIR / "label_encoder.pkl")
+    joblib.dump(scaler,     MODEL_DIR / "scaler.pkl")
+
+    meta = {
+        "model":    best_name,
+        "accuracy": round(best_acc, 4),
+        "features": features,
+        "classes":  le.classes_.tolist(),
+        "n_train":  int(len(X_tr)),
+        "n_test":   int(len(X_te)),
+    }
+    (MODEL_DIR / "meta.json").write_text(json.dumps(meta, indent=2))
+    print(f"\n💾 Artefacts saved → {MODEL_DIR}/")
+    return meta
+
 
 if __name__ == "__main__":
-    try:
-        main()
-    except Exception as e:
-        print(f"\n❌ Error: {e}", file=sys.stderr)
-        sys.exit(1)
+    csv = Path(sys.argv[1]) if len(sys.argv) > 1 else DATA_PATH
+    train(csv)

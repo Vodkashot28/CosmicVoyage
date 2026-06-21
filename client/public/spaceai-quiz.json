@@ -1,0 +1,116 @@
+{
+  "questions": [
+    {
+      "id": "mercury",
+      "question": "What type of celestial object is Mercury?",
+      "options": [
+        "Planet",
+        "DwarfPlanet",
+        "Asteroid",
+        "Moon",
+        "Star"
+      ],
+      "answer": "Planet",
+      "hint": "Its orbital period is 88 days and radius is 2440 km.",
+      "ai_confidence": 1.0
+    },
+    {
+      "id": "venus",
+      "question": "What type of celestial object is Venus?",
+      "options": [
+        "Planet",
+        "DwarfPlanet",
+        "Asteroid",
+        "Moon",
+        "Star"
+      ],
+      "answer": "Planet",
+      "hint": "Its orbital period is 225 days and radius is 6052 km.",
+      "ai_confidence": 1.0
+    },
+    {
+      "id": "earth",
+      "question": "What type of celestial object is Earth?",
+      "options": [
+        "Planet",
+        "DwarfPlanet",
+        "Asteroid",
+        "Moon",
+        "Star"
+      ],
+      "answer": "Planet",
+      "hint": "Its orbital period is 365 days and radius is 6371 km.",
+      "ai_confidence": 1.0
+    },
+    {
+      "id": "mars",
+      "question": "What type of celestial object is Mars?",
+      "options": [
+        "Planet",
+        "DwarfPlanet",
+        "Asteroid",
+        "Moon",
+        "Star"
+      ],
+      "answer": "Planet",
+      "hint": "Its orbital period is 687 days and radius is 3390 km.",
+      "ai_confidence": 1.0
+    },
+    {
+      "id": "jupiter",
+      "question": "What type of celestial object is Jupiter?",
+      "options": [
+        "Planet",
+        "DwarfPlanet",
+        "Asteroid",
+        "Moon",
+        "Star"
+      ],
+      "answer": "Planet",
+      "hint": "Its orbital period is 4333 days and radius is 69911 km.",
+      "ai_confidence": 1.0
+    },
+    {
+      "id": "saturn",
+      "question": "What type of celestial object is Saturn?",
+      "options": [
+        "Planet",
+        "DwarfPlanet",
+        "Asteroid",
+        "Moon",
+        "Star"
+      ],
+      "answer": "Planet",
+      "hint": "Its orbital period is 10759 days and radius is 58232 km.",
+      "ai_confidence": 1.0
+    },
+    {
+      "id": "uranus",
+      "question": "What type of celestial object is Uranus?",
+      "options": [
+        "Planet",
+        "DwarfPlanet",
+        "Asteroid",
+        "Moon",
+        "Star"
+      ],
+      "answer": "Planet",
+      "hint": "Its orbital period is 30688 days and radius is 25362 km.",
+      "ai_confidence": 1.0
+    },
+    {
+      "id": "neptune",
+      "question": "What type of celestial object is Neptune?",
+      "options": [
+        "Planet",
+        "DwarfPlanet",
+        "Asteroid",
+        "Moon",
+        "Star"
+      ],
+      "answer": "Planet",
+      "hint": "Its orbital period is 60182 days and radius is 24622 km.",
+      "ai_confidence": 1.0
+    }
+  ]
+}

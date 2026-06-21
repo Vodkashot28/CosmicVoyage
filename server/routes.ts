@@ -41,11 +41,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      const newUser = await storage.createUser({
-        walletAddress,
-        starBalance: 10,
-        genesisClaimedAt: new Date(),
-      });
+      const newUser = await storage.createPlayerWithGenesis(walletAddress, 10, new Date());
 
       return res.json(newUser);
     } catch (err) {
@@ -66,14 +62,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       if (referralCode) {
-        await storage.recordReferral(walletAddress, referralCode);
+        await storage.recordReferral(referralCode, walletAddress, 5);
       }
 
-      const newUser = await storage.createUser({
-        walletAddress,
-        starBalance: 10,
-        genesisClaimedAt: new Date(),
-      });
+      const newUser = await storage.createPlayerWithGenesis(walletAddress, 10, new Date());
 
       return res.json(newUser);
     } catch (err) {
@@ -108,7 +100,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/player/update-star-balance", async (req, res) => {
     try {
       const { walletAddress, amount } = req.body;
-      const updated = await storage.updateStarBalance(walletAddress, amount);
+      const updated = await storage.updateStarBalance(walletAddress, Number(amount));
       return res.json(updated);
     } catch (err) {
       console.error("Update star balance error:", err);
@@ -242,4 +234,4 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Finalize and return HTTP server
   return createServer(app);
-}	
+}       

@@ -5,7 +5,11 @@ import { toast } from "sonner";
 import { X } from "lucide-react";
 import { claimGenesis } from "@/lib/api"; // Now using the SAFE wrapper
 
-// ... (interface definitions) ...
+interface GenesisBonusModalProps {
+  open: boolean;
+  walletAddress: string | null;
+  onClaimed: (newBalance: number) => void;
+}
 
 export function GenesisBonusModal({ open, walletAddress, onClaimed }: GenesisBonusModalProps) {
   const [loading, setLoading] = useState(false);

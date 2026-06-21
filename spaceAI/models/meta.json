@@ -1,0 +1,19 @@
+{
+  "model": "DecisionTree",
+  "accuracy": 1.0,
+  "features": [
+    "log_period",
+    "axial_tilt",
+    "log_mass",
+    "log_radius"
+  ],
+  "classes": [
+    "Asteroid",
+    "Comet",
+    "DwarfPlanet",
+    "Moon",
+    "Planet"
+  ],
+  "n_train": 24,
+  "n_test": 8
+}
