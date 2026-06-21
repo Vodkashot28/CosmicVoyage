@@ -108,9 +108,7 @@ function AppInner() {
                   alpha: false,
                 }}
               >
-                <Suspense fallback={null}>
-                  <SolarSystem />
-                </Suspense>
+                <SolarSystem />
               </Canvas>
             </CanvasErrorBoundary>
           </main>
